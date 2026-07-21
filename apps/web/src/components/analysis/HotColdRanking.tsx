@@ -1,9 +1,7 @@
 import type { NumberStat } from '@/hooks/useNumberStats';
 import { formatNumber, getHotColor, getMissColor } from '@/utils/format';
 
-interface Props {
-  stats: NumberStat[];
-}
+interface Props { stats: NumberStat[]; }
 
 export default function HotColdRanking({ stats }: Props) {
   const hotTop10 = [...stats].sort((a, b) => b.hotScore - a.hotScore).slice(0, 10);
@@ -11,9 +9,8 @@ export default function HotColdRanking({ stats }: Props) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {/* Hot */}
       <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
-        <h3 className="text-sm font-semibold mb-3">🔥 热号 TOP 10</h3>
+        <h3 className="text-sm font-semibold mb-3">🔥 Hot Numbers TOP 10</h3>
         <div className="space-y-1.5">
           {hotTop10.map((s, i) => (
             <div key={s.number} className="flex items-center justify-between text-sm">
@@ -22,21 +19,15 @@ export default function HotColdRanking({ stats }: Props) {
                 <span className="font-mono font-bold">{formatNumber(s.number)}</span>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-xs text-[var(--color-muted)]">
-                  近10期 {s.recent10Rate}%
-                </span>
-                <span className={`font-mono font-bold ${getHotColor(s.hotScore)}`}>
-                  {s.hotScore}
-                </span>
+                <span className="text-xs text-[var(--color-muted)]">Last 10: {s.recent10Rate}%</span>
+                <span className={`font-mono font-bold ${getHotColor(s.hotScore)}`}>{s.hotScore}</span>
               </div>
             </div>
           ))}
         </div>
       </div>
-
-      {/* Cold */}
       <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
-        <h3 className="text-sm font-semibold mb-3">❄️ 冷号 TOP 10（遗漏最大）</h3>
+        <h3 className="text-sm font-semibold mb-3">❄️ Cold Numbers TOP 10</h3>
         <div className="space-y-1.5">
           {coldTop10.map((s, i) => (
             <div key={s.number} className="flex items-center justify-between text-sm">
@@ -45,12 +36,8 @@ export default function HotColdRanking({ stats }: Props) {
                 <span className="font-mono font-bold">{formatNumber(s.number)}</span>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-xs text-[var(--color-muted)]">
-                  已遗漏 {s.currentMiss}期
-                </span>
-                <span className={`font-mono font-bold ${getMissColor(s.currentMiss)}`}>
-                  {s.missRatio}
-                </span>
+                <span className="text-xs text-[var(--color-muted)]">Missed {s.currentMiss}d</span>
+                <span className={`font-mono font-bold ${getMissColor(s.currentMiss)}`}>{s.missRatio}</span>
               </div>
             </div>
           ))}

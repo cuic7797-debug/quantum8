@@ -2,11 +2,11 @@ import { Link, useLocation } from 'react-router-dom';
 import { Home, BarChart3, Crosshair, FlaskConical, Clock } from 'lucide-react';
 
 const navItems = [
-  { path: '/', label: '首页', icon: Home },
-  { path: '/analysis', label: '走势分析', icon: BarChart3 },
-  { path: '/selection', label: '智能选号', icon: Crosshair },
-  { path: '/backtest', label: '策略回测', icon: FlaskConical },
-  { path: '/history', label: '历史记录', icon: Clock },
+  { path: '/', label: 'Home', icon: Home },
+  { path: '/analysis', label: 'Trends', icon: BarChart3 },
+  { path: '/selection', label: 'Pick', icon: Crosshair },
+  { path: '/backtest', label: 'Backtest', icon: FlaskConical },
+  { path: '/history', label: 'History', icon: Clock },
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -16,7 +16,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <header className="border-b border-[var(--color-border)] bg-[var(--color-surface)] px-6 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <h1 className="text-xl font-bold text-[var(--color-primary)]">Quantum8</h1>
-          <p className="text-xs text-[var(--color-muted)]">数据分析工具</p>
+          <p className="text-xs text-[var(--color-muted)]">Data Analytics Tool</p>
         </div>
       </header>
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6">{children}</main>

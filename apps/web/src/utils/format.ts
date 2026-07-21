@@ -10,10 +10,10 @@ export function getZoneColor(n: number): string {
 }
 
 export function getZoneLabel(n: number): string {
-  if (n <= 20) return '一区';
-  if (n <= 40) return '二区';
-  if (n <= 60) return '三区';
-  return '四区';
+  if (n <= 20) return 'Zone1';
+  if (n <= 40) return 'Zone2';
+  if (n <= 60) return 'Zone3';
+  return 'Zone4';
 }
 
 export function formatDate(dateStr: string): string {
