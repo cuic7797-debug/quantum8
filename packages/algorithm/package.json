@@ -1,0 +1,46 @@
+{
+  "name": "@quantum8/algorithm",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./probability": {
+      "types": "./dist/probability.d.ts",
+      "import": "./dist/probability.js"
+    },
+    "./miss": {
+      "types": "./dist/miss.d.ts",
+      "import": "./dist/miss.js"
+    },
+    "./network": {
+      "types": "./dist/network.d.ts",
+      "import": "./dist/network.js"
+    },
+    "./filter": {
+      "types": "./dist/filter.d.ts",
+      "import": "./dist/filter.js"
+    },
+    "./scorer": {
+      "types": "./dist/scorer.d.ts",
+      "import": "./dist/scorer.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@quantum8/types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
+  }
+}

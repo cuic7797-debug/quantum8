@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Quantum8",
+    "slug": "quantum8",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "quantum8",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.quantum8.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0f172a"
+      },
+      "package": "com.quantum8.app"
+    },
+    "plugins": ["expo-router"]
+  }
+}
