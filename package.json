@@ -2,18 +2,11 @@
   "name": "quantum8",
   "version": "0.1.0",
   "private": true,
-  "description": "Quantum8 - 快乐八智能量化分析系统",
+  "description": "Quantum8 - Happy8 Analytics System",
   "scripts": {
     "dev:web": "pnpm --filter @quantum8/web dev",
     "dev:mobile": "pnpm --filter @quantum8/mobile start",
     "build:web": "pnpm --filter @quantum8/web build",
-    "build:algorithm": "pnpm --filter @quantum8/algorithm build",
-    "lint": "biome lint .",
-    "format": "biome format --write .",
-    "check": "biome check ."
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "packageManager": "pnpm@9.0.0"
+    "build:algorithm": "pnpm --filter @quantum8/algorithm build"
+  }
 }
