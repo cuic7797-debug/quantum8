@@ -13,6 +13,19 @@ const STRATS = [
   { name: t('strat_aggressive'), hot: 8, cold: 1, balance: 1, desc: t('desc_aggressive'), icon: '🔥' },
 ];
 
+// Calculate adaptive filter ranges based on pick count
+function getAdaptiveRanges(pickCount: number) {
+  const minSum = Math.max(1, Math.round(pickCount * 10));
+  const maxSum = Math.min(800, Math.round(pickCount * 55));
+  const minOdd = Math.max(0, Math.round(pickCount * 0.2));
+  const maxOdd = Math.min(pickCount, Math.round(pickCount * 0.8));
+  return {
+    sumRange: [minSum, maxSum] as [number, number],
+    oddEvenRange: [minOdd, maxOdd] as [number, number],
+    maxConsecutive: pickCount <= 3 ? 1 : pickCount <= 6 ? 2 : 3,
+  };
+}
+
 export default function SelectionPage() {
   const { stats } = useNumberStats();
   const { draws } = useDraws(100);
@@ -28,12 +41,9 @@ export default function SelectionPage() {
   const [cHot, setCHot] = useState(6);
   const [cCold, setCCold] = useState(3);
   const [cBalance, setCBalance] = useState(1);
-  const [cSumMin, setCSumMin] = useState(400);
-  const [cSumMax, setCSumMax] = useState(1200);
-  const [cOddMin, setCOddMin] = useState(5);
-  const [cOddMax, setCOddMax] = useState(15);
 
   const pc = PT.indexOf(pt) + 1;
+  const ranges = getAdaptiveRanges(pc);
 
   function go() {
     if (!stats.length || !draws.length) return;
@@ -42,21 +52,27 @@ export default function SelectionPage() {
       let cfg;
       if (custom) {
         cfg = {
-          hotCount: cHot, coldCount: cCold, balanceCount: cBalance,
-          zoneBalance: true, sumRange: [cSumMin, cSumMax] as [number, number],
-          oddEvenRange: [cOddMin, cOddMax] as [number, number], maxConsecutive: 3,
+          hotCount: Math.min(cHot, pc), coldCount: Math.min(cCold, pc), balanceCount: Math.min(cBalance, pc),
+          zoneBalance: pc >= 4,
+          sumRange: ranges.sumRange,
+          oddEvenRange: ranges.oddEvenRange,
+          maxConsecutive: ranges.maxConsecutive,
         };
       } else {
         const s = STRATS[si];
         cfg = {
-          hotCount: s.hot, coldCount: s.cold, balanceCount: s.balance,
-          zoneBalance: true, sumRange: [400, 1200] as [number, number],
-          oddEvenRange: [5, 15] as [number, number], maxConsecutive: 3,
+          hotCount: Math.min(s.hot, pc), coldCount: Math.min(s.cold, pc), balanceCount: Math.min(s.balance, pc),
+          zoneBalance: pc >= 4,
+          sumRange: ranges.sumRange,
+          oddEvenRange: ranges.oddEvenRange,
+          maxConsecutive: ranges.maxConsecutive,
         };
       }
-      const c = generateBatch(pc, 3000);
+      const batchSize = pc <= 3 ? 5000 : 3000;
+      const c = generateBatch(pc, batchSize);
       const f = applyFilters(c, cfg);
-      setRes(f.slice(0, 80).map(x => scoreCombination(x, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore).slice(0, 10));
+      const scored = f.slice(0, 80).map(x => scoreCombination(x, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore).slice(0, 10);
+      setRes(scored);
       setGen(false);
     }, 100);
   }
@@ -116,6 +132,10 @@ export default function SelectionPage() {
             </button>
           ))}
         </div>
+        <div className="mt-2 text-[10px] text-[var(--color-muted)]">
+          自适应过滤: 和值 {ranges.sumRange[0]}-{ranges.sumRange[1]} | 奇数 {ranges.oddEvenRange[0]}-{ranges.oddEvenRange[1]} | 最大连号 {ranges.maxConsecutive}
+          {pc < 4 ? ' | 四区均衡已关闭' : ''}
+        </div>
       </div>
 
       {/* Strategy Mode Toggle */}
@@ -148,37 +168,19 @@ export default function SelectionPage() {
           <div className="space-y-4">
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <label className="text-xs text-[var(--color-muted)] block mb-1">热号数量</label>
-                <input type="number" min={0} max={10} value={cHot} onChange={e => setCHot(+e.target.value)}
+                <label className="text-xs text-[var(--color-muted)] block mb-1">热号数量（最多{pc}）</label>
+                <input type="number" min={0} max={pc} value={cHot} onChange={e => setCHot(Math.min(+e.target.value, pc))}
                   className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
               </div>
               <div>
-                <label className="text-xs text-[var(--color-muted)] block mb-1">冷号数量</label>
-                <input type="number" min={0} max={10} value={cCold} onChange={e => setCCold(+e.target.value)}
+                <label className="text-xs text-[var(--color-muted)] block mb-1">冷号数量（最多{pc}）</label>
+                <input type="number" min={0} max={pc} value={cCold} onChange={e => setCCold(Math.min(+e.target.value, pc))}
                   className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
               </div>
               <div>
-                <label className="text-xs text-[var(--color-muted)] block mb-1">平衡号数量</label>
-                <input type="number" min={0} max={10} value={cBalance} onChange={e => setCBalance(+e.target.value)}
+                <label className="text-xs text-[var(--color-muted)] block mb-1">平衡号数量（最多{pc}）</label>
+                <input type="number" min={0} max={pc} value={cBalance} onChange={e => setCBalance(Math.min(+e.target.value, pc))}
                   className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-[var(--color-muted)] block mb-1">和值范围</label>
-                <div className="flex items-center gap-1">
-                  <input type="number" value={cSumMin} onChange={e => setCSumMin(+e.target.value)} className="w-20 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-2 py-2 text-sm font-mono" />
-                  <span className="text-[var(--color-muted)]">~</span>
-                  <input type="number" value={cSumMax} onChange={e => setCSumMax(+e.target.value)} className="w-20 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-2 py-2 text-sm font-mono" />
-                </div>
-              </div>
-              <div>
-                <label className="text-xs text-[var(--color-muted)] block mb-1">奇数个数范围</label>
-                <div className="flex items-center gap-1">
-                  <input type="number" min={0} max={20} value={cOddMin} onChange={e => setCOddMin(+e.target.value)} className="w-20 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-2 py-2 text-sm font-mono" />
-                  <span className="text-[var(--color-muted)]">~</span>
-                  <input type="number" min={0} max={20} value={cOddMax} onChange={e => setCOddMax(+e.target.value)} className="w-20 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-2 py-2 text-sm font-mono" />
-                </div>
               </div>
             </div>
           </div>
@@ -242,6 +244,12 @@ export default function SelectionPage() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {res.length === 0 && !gen && (
+        <div className="text-center py-8 text-[var(--color-muted)] text-sm">
+          选择玩法和策略后，点击上方按钮生成推荐号码
         </div>
       )}
     </div>
