@@ -34,7 +34,6 @@ export default function HistoryPage() {
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
     a.download = `quantum8_picks_${new Date().toISOString().slice(0, 10)}.txt`; a.click();
   }
-
   function deletePick(index: number) {
     const updated = picks.filter((_, i) => i !== index);
     setPicks(updated);
@@ -67,15 +66,12 @@ export default function HistoryPage() {
           </div>
           <div>
             <label className="text-sm text-[var(--color-muted)] mb-1 block">{t('enter_numbers')}</label>
-            <input type="text" value={cn} onChange={e => setCn(e.target.value)}
-              placeholder="1 5 12 23 34 45 56 67 78 80"
+            <input type="text" value={cn} onChange={e => setCn(e.target.value)} placeholder="1 5 12 23 34 45 56 67 78 80"
               className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
           </div>
-          <button onClick={go}
-            className="w-full py-2.5 rounded-xl bg-[var(--color-primary)] text-white font-semibold hover:bg-[var(--color-primary)]/80 transition-all shadow">
+          <button onClick={go} className="w-full py-2.5 rounded-xl bg-[var(--color-primary)] text-white font-semibold hover:bg-[var(--color-primary)]/80 transition-all shadow">
             {t('check')}
           </button>
-
           {cr && (
             <div className="bg-[var(--color-bg)] rounded-xl p-4 space-y-3">
               <div className="flex items-center justify-between">
@@ -84,21 +80,13 @@ export default function HistoryPage() {
                   {t('hit_count')}: {cr.h} {t('pcs')}
                 </div>
               </div>
-              {cr.h > 0 ? (
-                <div className="flex flex-wrap gap-1">
-                  {cr.m.map(n => <NumberBall key={n} number={n} size="md" highlight />)}
-                </div>
-              ) : (
-                <div className="text-sm text-[var(--color-muted)]">{t('no_match')}</div>
-              )}
+              {cr.h > 0 ? <div className="flex flex-wrap gap-1">{cr.m.map(n => <NumberBall key={n} number={n} size="md" highlight />)}</div> : <div className="text-sm text-[var(--color-muted)]">{t('no_match')}</div>}
             </div>
           )}
           {sd && (
             <div className="bg-[var(--color-bg)] rounded-xl p-4">
               <div className="text-xs text-[var(--color-muted)] mb-2">{t('draw_numbers')}</div>
-              <div className="flex flex-wrap gap-1">
-                {draws.find(d => d.draw_number === sd)?.numbers.map(n => <NumberBall key={n} number={n} size="md" />)}
-              </div>
+              <div className="flex flex-wrap gap-1">{draws.find(d => d.draw_number === sd)?.numbers.map(n => <NumberBall key={n} number={n} size="md" />)}</div>
             </div>
           )}
         </div>
@@ -108,16 +96,15 @@ export default function HistoryPage() {
         <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
           {picks.length === 0 ? (
             <div className="text-center py-8 text-[var(--color-muted)] text-sm">
-              {t('no_records')}<br />
-              <span className="text-xs">在「智能选号」页面生成号码后点击「保存」</span>
+              {t('no_records')}<br /><span className="text-xs">{t('pick_save_hint')}</span>
             </div>
           ) : (
             <>
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-sm font-semibold text-[var(--color-muted)]">已保存的选号</h3>
+                <h3 className="text-sm font-semibold text-[var(--color-muted)]">{t('saved_picks')}</h3>
                 <div className="flex gap-2">
-                  <button onClick={exportPicks} className="text-xs text-[var(--color-primary)] hover:underline">导出TXT</button>
-                  <button onClick={clearPicks} className="text-xs text-red-400 hover:underline">清空</button>
+                  <button onClick={exportPicks} className="text-xs text-[var(--color-primary)] hover:underline">{t('export_txt')}</button>
+                  <button onClick={clearPicks} className="text-xs text-red-400 hover:underline">{t('clear_all')}</button>
                 </div>
               </div>
               <div className="space-y-3">
@@ -127,9 +114,7 @@ export default function HistoryPage() {
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <span className="text-xs text-[var(--color-muted)]">{new Date(p.time).toLocaleDateString()}</span>
                         <span className="text-xs bg-[var(--color-primary)]/20 text-[var(--color-primary)] px-2 py-0.5 rounded">{p.playType}</span>
-                        <span className={`text-xs px-2 py-0.5 rounded ${p.risk === '低' ? 'bg-emerald-500/20 text-emerald-400' : p.risk === '中' ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}`}>
-                          {p.risk}风险
-                        </span>
+                        <span className={`text-xs px-2 py-0.5 rounded ${p.risk === '低' ? 'bg-emerald-500/20 text-emerald-400' : p.risk === '中' ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}`}>{p.risk}{p.risk === '低' ? '风险' : p.risk === '中' ? '风险' : '风险'}</span>
                         {p.strategy && <span className="text-xs text-[var(--color-muted)]">| {p.strategy}</span>}
                       </div>
                       <div className="flex gap-1 flex-wrap">{p.numbers.map(n => <NumberBall key={n} number={n} size="sm" />)}</div>
@@ -137,9 +122,9 @@ export default function HistoryPage() {
                     <div className="flex items-center gap-3 shrink-0 ml-2">
                       <div className="text-right">
                         <div className="font-bold font-mono">{p.score}</div>
-                        <div className="text-[10px] text-[var(--color-muted)]">评分</div>
+                        <div className="text-[10px] text-[var(--color-muted)]">{t('score')}</div>
                       </div>
-                      <button onClick={() => deletePick(i)} className="text-xs text-red-400 hover:underline">删除</button>
+                      <button onClick={() => deletePick(i)} className="text-xs text-red-400 hover:underline">{t('delete')}</button>
                     </div>
                   </div>
                 ))}

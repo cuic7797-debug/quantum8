@@ -7,19 +7,10 @@ import type { ScoreResult, PlayType } from '@quantum8/types';
 import { t } from '@/hooks/useI18n';
 
 interface Strategy {
-  id: string;
-  name: string;
-  description: string;
-  playType: PlayType;
-  hotCount: number;
-  coldCount: number;
-  balanceCount: number;
-  zoneBalance: boolean;
-  sumRange: [number, number];
-  oddEvenRange: [number, number];
-  maxConsecutive: number;
-  createdAt: string;
-  lastResult?: ScoreResult[];
+  id: string; name: string; description: string; playType: PlayType;
+  hotCount: number; coldCount: number; balanceCount: number; zoneBalance: boolean;
+  sumRange: [number, number]; oddEvenRange: [number, number]; maxConsecutive: number;
+  createdAt: string; lastResult?: ScoreResult[];
 }
 
 const STORAGE_KEY = 'quantum8_strategies';
@@ -33,7 +24,6 @@ export default function StrategyPage() {
   const [editing, setEditing] = useState<Strategy | null>(null);
   const [generating, setGenerating] = useState(false);
   const [compareIds, setCompareIds] = useState<string[]>([]);
-
   const [formName, setFormName] = useState('');
   const [formDesc, setFormDesc] = useState('');
   const [formPlayType, setFormPlayType] = useState<PlayType>(t('play10') as PlayType);
@@ -48,9 +38,7 @@ export default function StrategyPage() {
   const [formMaxConsec, setFormMaxConsec] = useState(3);
 
   useEffect(() => {
-    try {
-      setStrategies(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
-    } catch { setStrategies([]); }
+    try { setStrategies(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')); } catch { setStrategies([]); }
   }, []);
 
   function saveStrategies(list: Strategy[]) {
@@ -67,21 +55,12 @@ export default function StrategyPage() {
   function handleSave() {
     if (!formName.trim()) return;
     const s: Strategy = {
-      id: editing?.id || Date.now().toString(),
-      name: formName.trim(),
-      description: formDesc.trim(),
-      playType: formPlayType,
-      hotCount: formHot,
-      coldCount: formCold,
-      balanceCount: formBalance,
-      zoneBalance: formZoneBalance,
-      sumRange: [formSumMin, formSumMax],
-      oddEvenRange: [formOddMin, formOddMax],
-      maxConsecutive: formMaxConsec,
-      createdAt: editing?.createdAt || new Date().toISOString(),
+      id: editing?.id || Date.now().toString(), name: formName.trim(), description: formDesc.trim(),
+      playType: formPlayType, hotCount: formHot, coldCount: formCold, balanceCount: formBalance,
+      zoneBalance: formZoneBalance, sumRange: [formSumMin, formSumMax], oddEvenRange: [formOddMin, formOddMax],
+      maxConsecutive: formMaxConsec, createdAt: editing?.createdAt || new Date().toISOString(),
     };
-    const list = editing ? strategies.map(x => x.id === editing.id ? s : x) : [...strategies, s];
-    saveStrategies(list);
+    saveStrategies(editing ? strategies.map(x => x.id === editing.id ? s : x) : [...strategies, s]);
     setShowCreate(false); setEditing(null); resetForm();
   }
 
@@ -103,15 +82,12 @@ export default function StrategyPage() {
     setGenerating(true);
     setTimeout(() => {
       const pc = PT.indexOf(s.playType) + 5;
-      const cfg = {
-        hotCount: s.hotCount, coldCount: s.coldCount, balanceCount: s.balanceCount,
-        zoneBalance: s.zoneBalance, sumRange: s.sumRange, oddEvenRange: s.oddEvenRange, maxConsecutive: s.maxConsecutive,
-      };
+      const cfg = { hotCount: s.hotCount, coldCount: s.coldCount, balanceCount: s.balanceCount,
+        zoneBalance: s.zoneBalance, sumRange: s.sumRange, oddEvenRange: s.oddEvenRange, maxConsecutive: s.maxConsecutive };
       const c = generateBatch(pc, 3000);
       const f = applyFilters(c, cfg);
       const results = f.slice(0, 80).map(x => scoreCombination(x, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore).slice(0, 10);
-      const updated = strategies.map(x => x.id === s.id ? { ...x, lastResult: results } : x);
-      saveStrategies(updated);
+      saveStrategies(strategies.map(x => x.id === s.id ? { ...x, lastResult: results } : x));
       setGenerating(false);
     }, 100);
   }
@@ -125,33 +101,31 @@ export default function StrategyPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">策略实验室</h2>
+        <h2 className="text-xl font-bold">{t('strategy_lab')}</h2>
         <button onClick={() => { resetForm(); setEditing(null); setShowCreate(true); }}
           className="px-4 py-2 rounded-xl bg-[var(--color-primary)] text-white text-sm font-semibold hover:bg-[var(--color-primary)]/80 transition-all shadow">
-          + 新建策略
+          + {t('new_strategy')}
         </button>
       </div>
-      <div className="text-xs text-[var(--color-muted)] bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-2">
-        ⚠ 策略实验室仅供数据分析研究，不构成投注建议。回测结果基于历史数据模拟。
-      </div>
+      <div className="text-xs text-[var(--color-muted)] bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-2">{t('strategy_lab_ref')}</div>
 
       {showCreate && (
         <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
-          <h3 className="font-semibold">{editing ? '编辑策略' : '新建策略'}</h3>
+          <h3 className="font-semibold">{editing ? t('edit_strategy') : t('new_strategy')}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-sm text-[var(--color-muted)] mb-1 block">策略名称 *</label>
-              <input type="text" value={formName} onChange={e => setFormName(e.target.value)} placeholder="如：均衡追热策略"
+              <label className="text-sm text-[var(--color-muted)] mb-1 block">{t('strategy_name')} *</label>
+              <input type="text" value={formName} onChange={e => setFormName(e.target.value)} placeholder={t('strategy_name_placeholder')}
                 className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm" />
             </div>
             <div>
-              <label className="text-sm text-[var(--color-muted)] mb-1 block">说明</label>
-              <input type="text" value={formDesc} onChange={e => setFormDesc(e.target.value)} placeholder="策略说明（可选）"
+              <label className="text-sm text-[var(--color-muted)] mb-1 block">{t('strategy_desc')}</label>
+              <input type="text" value={formDesc} onChange={e => setFormDesc(e.target.value)} placeholder={t('strategy_desc_placeholder')}
                 className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm" />
             </div>
           </div>
           <div>
-            <label className="text-sm text-[var(--color-muted)] mb-2 block">玩法</label>
+            <label className="text-sm text-[var(--color-muted)] mb-2 block">{t('play')}</label>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
               {PT.map(p => (
                 <button key={p} onClick={() => setFormPlayType(p as PlayType)}
@@ -163,24 +137,24 @@ export default function StrategyPage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="text-sm text-[var(--color-muted)] mb-1 block">热号数量</label>
+              <label className="text-sm text-[var(--color-muted)] mb-1 block">{t('hot_count')}</label>
               <input type="number" min={0} max={10} value={formHot} onChange={e => setFormHot(+e.target.value)}
                 className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
             </div>
             <div>
-              <label className="text-sm text-[var(--color-muted)] mb-1 block">冷号数量</label>
+              <label className="text-sm text-[var(--color-muted)] mb-1 block">{t('cold_count')}</label>
               <input type="number" min={0} max={10} value={formCold} onChange={e => setFormCold(+e.target.value)}
                 className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
             </div>
             <div>
-              <label className="text-sm text-[var(--color-muted)] mb-1 block">平衡号数量</label>
+              <label className="text-sm text-[var(--color-muted)] mb-1 block">{t('balance_count')}</label>
               <input type="number" min={0} max={10} value={formBalance} onChange={e => setFormBalance(+e.target.value)}
                 className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-sm text-[var(--color-muted)] mb-1 block">和值范围</label>
+              <label className="text-sm text-[var(--color-muted)] mb-1 block">{t('sum_range')}</label>
               <div className="flex items-center gap-2">
                 <input type="number" value={formSumMin} onChange={e => setFormSumMin(+e.target.value)} className="w-20 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
                 <span className="text-[var(--color-muted)]">~</span>
@@ -188,7 +162,7 @@ export default function StrategyPage() {
               </div>
             </div>
             <div>
-              <label className="text-sm text-[var(--color-muted)] mb-1 block">奇数个数范围</label>
+              <label className="text-sm text-[var(--color-muted)] mb-1 block">{t('odd_range')}</label>
               <div className="flex items-center gap-2">
                 <input type="number" min={0} max={20} value={formOddMin} onChange={e => setFormOddMin(+e.target.value)} className="w-20 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
                 <span className="text-[var(--color-muted)]">~</span>
@@ -199,20 +173,20 @@ export default function StrategyPage() {
           <div className="flex items-center gap-6">
             <label className="flex items-center gap-2 text-sm cursor-pointer">
               <input type="checkbox" checked={formZoneBalance} onChange={e => setFormZoneBalance(e.target.checked)} className="rounded" />
-              四区均衡过滤
+              {t('zone_balance')}
             </label>
             <div className="flex items-center gap-2">
-              <label className="text-sm text-[var(--color-muted)]">最大连号</label>
+              <label className="text-sm text-[var(--color-muted)]">{t('max_consecutive')}</label>
               <input type="number" min={1} max={10} value={formMaxConsec} onChange={e => setFormMaxConsec(+e.target.value)}
                 className="w-16 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
             </div>
           </div>
           <div className="flex gap-3">
             <button onClick={handleSave} className="px-6 py-2.5 rounded-xl bg-[var(--color-primary)] text-white font-semibold hover:bg-[var(--color-primary)]/80 transition-all shadow">
-              {editing ? '保存修改' : '创建策略'}
+              {editing ? t('save_edit') : t('create_strategy')}
             </button>
             <button onClick={() => { setShowCreate(false); setEditing(null); resetForm(); }} className="px-6 py-2.5 rounded-xl bg-[var(--color-bg)] text-[var(--color-muted)] hover:bg-[var(--color-border)] transition-all">
-              取消
+              {t('cancel')}
             </button>
           </div>
         </div>
@@ -221,8 +195,8 @@ export default function StrategyPage() {
       {strategies.length === 0 && !showCreate ? (
         <div className="text-center py-16 text-[var(--color-muted)]">
           <div className="text-4xl mb-4">🧪</div>
-          <div className="text-lg mb-2">还没有策略</div>
-          <div className="text-sm">点击「新建策略」创建你的第一个自定义策略</div>
+          <div className="text-lg mb-2">{t('no_strategies')}</div>
+          <div className="text-sm">{t('no_strategies_hint')}</div>
         </div>
       ) : (
         <div className="space-y-4">
@@ -230,7 +204,7 @@ export default function StrategyPage() {
             <div key={s.id} className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <input type="checkbox" checked={compareIds.includes(s.id)} onChange={() => toggleCompare(s.id)} className="rounded" title="选中用于对比" />
+                  <input type="checkbox" checked={compareIds.includes(s.id)} onChange={() => toggleCompare(s.id)} className="rounded" />
                   <div>
                     <h3 className="font-semibold">{s.name}</h3>
                     {s.description && <p className="text-xs text-[var(--color-muted)]">{s.description}</p>}
@@ -242,29 +216,29 @@ export default function StrategyPage() {
                 </div>
               </div>
               <div className="flex flex-wrap gap-2 mb-3 text-xs">
-                <span className="bg-blue-500/10 text-blue-400 px-2 py-1 rounded">热号 {s.hotCount}</span>
-                <span className="bg-sky-500/10 text-sky-400 px-2 py-1 rounded">冷号 {s.coldCount}</span>
-                <span className="bg-amber-500/10 text-amber-400 px-2 py-1 rounded">平衡 {s.balanceCount}</span>
-                <span className="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded">和值 {s.sumRange[0]}-{s.sumRange[1]}</span>
-                <span className="bg-rose-500/10 text-rose-400 px-2 py-1 rounded">奇偶 {s.oddEvenRange[0]}-{s.oddEvenRange[1]}</span>
-                <span className="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">最大连号 {s.maxConsecutive}</span>
-                {s.zoneBalance && <span className="bg-indigo-500/10 text-indigo-400 px-2 py-1 rounded">四区均衡</span>}
+                <span className="bg-blue-500/10 text-blue-400 px-2 py-1 rounded">{t('hot_count')} {s.hotCount}</span>
+                <span className="bg-sky-500/10 text-sky-400 px-2 py-1 rounded">{t('cold_count')} {s.coldCount}</span>
+                <span className="bg-amber-500/10 text-amber-400 px-2 py-1 rounded">{t('balance_count')} {s.balanceCount}</span>
+                <span className="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded">{t('sum_range')} {s.sumRange[0]}-{s.sumRange[1]}</span>
+                <span className="bg-rose-500/10 text-rose-400 px-2 py-1 rounded">{t('odd_range')} {s.oddEvenRange[0]}-{s.oddEvenRange[1]}</span>
+                <span className="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">{t('max_consecutive')} {s.maxConsecutive}</span>
+                {s.zoneBalance && <span className="bg-indigo-500/10 text-indigo-400 px-2 py-1 rounded">{t('zone_balance')}</span>}
               </div>
               <div className="flex gap-2">
                 <button onClick={() => runStrategy(s)} disabled={generating}
                   className="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white text-sm font-semibold hover:bg-[var(--color-primary)]/80 disabled:opacity-50 transition-all">
-                  {generating ? '生成中...' : '运行策略'}
+                  {generating ? t('generating_') : t('run_strategy')}
                 </button>
                 <button onClick={() => handleEdit(s)} className="px-4 py-2 rounded-lg bg-[var(--color-bg)] text-[var(--color-muted)] text-sm hover:bg-[var(--color-border)] transition-all">
-                  编辑
+                  {t('edit')}
                 </button>
                 <button onClick={() => handleDelete(s.id)} className="px-4 py-2 rounded-lg bg-red-500/10 text-red-400 text-sm hover:bg-red-500/20 transition-all">
-                  删除
+                  {t('delete_strategy')}
                 </button>
               </div>
               {s.lastResult && s.lastResult.length > 0 && (
                 <div className="mt-4 space-y-2">
-                  <div className="text-xs text-[var(--color-muted)] font-semibold">最近生成结果（TOP 10）</div>
+                  <div className="text-xs text-[var(--color-muted)] font-semibold">{t('last_results')}</div>
                   {s.lastResult.map((r, i) => (
                     <div key={i} className="flex items-center justify-between py-2 px-3 bg-[var(--color-bg)] rounded-lg">
                       <div className="flex items-center gap-2">
@@ -272,7 +246,7 @@ export default function StrategyPage() {
                         <div className="flex gap-0.5">{r.numbers.map(n => <NumberBall key={n} number={n} size="sm" />)}</div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className={`text-xs font-medium ${r.riskLevel === '低' ? 'text-emerald-400' : r.riskLevel === '中' ? 'text-amber-400' : 'text-red-400'}`}>{r.riskLevel}风险</span>
+                        <span className={`text-xs font-medium ${r.riskLevel === '低' ? 'text-emerald-400' : r.riskLevel === '中' ? 'text-amber-400' : 'text-red-400'}`}>{r.riskLevel}{t('risk_low') === '低风险' ? '风险' : ''}</span>
                         <span className="font-bold font-mono text-sm">{r.totalScore}</span>
                       </div>
                     </div>
@@ -286,51 +260,30 @@ export default function StrategyPage() {
 
       {compared.length >= 2 && (
         <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
-          <h3 className="font-semibold">策略对比（{compared.length}个）</h3>
+          <h3 className="font-semibold">{t('strategy_compare')}（{compared.length}）</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-[var(--color-muted)] text-xs">
-                  <th className="text-left py-2 px-3">指标</th>
+                  <th className="text-left py-2 px-3">{t('indicator')}</th>
                   {compared.map(s => <th key={s.id} className="text-center py-2 px-3">{s.name}</th>)}
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-t border-[var(--color-border)]">
-                  <td className="py-2 px-3 text-[var(--color-muted)]">玩法</td>
-                  {compared.map(s => <td key={s.id} className="text-center py-2 px-3 font-mono">{s.playType}</td>)}
-                </tr>
-                <tr className="border-t border-[var(--color-border)]">
-                  <td className="py-2 px-3 text-[var(--color-muted)]">热号/冷号/平衡</td>
-                  {compared.map(s => <td key={s.id} className="text-center py-2 px-3 font-mono">{s.hotCount}/{s.coldCount}/{s.balanceCount}</td>)}
-                </tr>
-                <tr className="border-t border-[var(--color-border)]">
-                  <td className="py-2 px-3 text-[var(--color-muted)]">和值范围</td>
-                  {compared.map(s => <td key={s.id} className="text-center py-2 px-3 font-mono">{s.sumRange[0]}-{s.sumRange[1]}</td>)}
-                </tr>
-                <tr className="border-t border-[var(--color-border)]">
-                  <td className="py-2 px-3 text-[var(--color-muted)]">奇偶范围</td>
-                  {compared.map(s => <td key={s.id} className="text-center py-2 px-3 font-mono">{s.oddEvenRange[0]}-{s.oddEvenRange[1]}</td>)}
-                </tr>
-                <tr className="border-t border-[var(--color-border)]">
-                  <td className="py-2 px-3 text-[var(--color-muted)]">最大连号</td>
-                  {compared.map(s => <td key={s.id} className="text-center py-2 px-3 font-mono">{s.maxConsecutive}</td>)}
-                </tr>
-                <tr className="border-t border-[var(--color-border)]">
-                  <td className="py-2 px-3 text-[var(--color-muted)]">TOP 1 平均分</td>
-                  {compared.map(s => {
-                    const avg = s.lastResult && s.lastResult.length > 0 ? (s.lastResult.reduce((a, b) => a + b.totalScore, 0) / s.lastResult.length).toFixed(1) : '-';
-                    return <td key={s.id} className="text-center py-2 px-3 font-mono font-bold">{avg}</td>;
-                  })}
-                </tr>
-                <tr className="border-t border-[var(--color-border)]">
-                  <td className="py-2 px-3 text-[var(--color-muted)]">低风险占比</td>
-                  {compared.map(s => {
-                    if (!s.lastResult || s.lastResult.length === 0) return <td key={s.id} className="text-center py-2 px-3">-</td>;
-                    const low = s.lastResult.filter(r => r.riskLevel === '低').length;
-                    return <td key={s.id} className="text-center py-2 px-3 font-mono">{((low / s.lastResult.length) * 100).toFixed(0)}%</td>;
-                  })}
-                </tr>
+                {[
+                  { label: t('play'), fn: (s: Strategy) => s.playType },
+                  { label: t('hot_cold_balance'), fn: (s: Strategy) => `${s.hotCount}/${s.coldCount}/${s.balanceCount}` },
+                  { label: t('sum_range'), fn: (s: Strategy) => `${s.sumRange[0]}-${s.sumRange[1]}` },
+                  { label: t('odd_range'), fn: (s: Strategy) => `${s.oddEvenRange[0]}-${s.oddEvenRange[1]}` },
+                  { label: t('max_consecutive'), fn: (s: Strategy) => String(s.maxConsecutive) },
+                  { label: 'TOP 1 平均分', fn: (s: Strategy) => s.lastResult && s.lastResult.length > 0 ? (s.lastResult.reduce((a, b) => a + b.totalScore, 0) / s.lastResult.length).toFixed(1) : '-' },
+                  { label: t('low_risk_ratio'), fn: (s: Strategy) => { if (!s.lastResult || !s.lastResult.length) return '-'; const low = s.lastResult.filter(r => r.riskLevel === '低').length; return `${((low / s.lastResult.length) * 100).toFixed(0)}%`; } },
+                ].map((row, i) => (
+                  <tr key={i} className="border-t border-[var(--color-border)]">
+                    <td className="py-2 px-3 text-[var(--color-muted)]">{row.label}</td>
+                    {compared.map(s => <td key={s.id} className="text-center py-2 px-3 font-mono">{row.fn(s)}</td>)}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

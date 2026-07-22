@@ -35,33 +35,24 @@ export default function BacktestPage() {
       const rows: Row[] = [];
       let th = 0, tp = 0, mp = 0;
       const hitDist: Record<number, number> = {};
-
       for (let i = 0; i < td.length; i++) {
         const tgt = td[i].numbers;
-        let bh = 0;
-        let bhHits: number[] = [];
+        let bh = 0, bhHits: number[] = [];
         for (let b = 0; b < bc; b++) {
           const p = generateRandomCombination(pc);
           const hits = p.filter(n => tgt.includes(n));
           if (hits.length > bh) { bh = hits.length; bhHits = hits; }
         }
         const pr = tbl[bh] || 0;
-        th += bh > 0 ? 1 : 0;
-        tp += pr;
+        th += bh > 0 ? 1 : 0; tp += pr;
         if (pr > mp) mp = pr;
         hitDist[bh] = (hitDist[bh] || 0) + 1;
         if (i < 30) rows.push({ p: td[i].draw_number, n: tgt, h: bh, pr, hits: bhHits });
       }
-
-      const tb = td.length * bc;
-      const tc = tb * 2;
-      setRes({
-        r: td.length, b: tb, hi: th,
-        hr: parseFloat(((th / td.length) * 100).toFixed(2)),
-        c: tc, pr: tp,
-        roi: tc > 0 ? parseFloat((((tp - tc) / tc) * 100).toFixed(2)) : 0,
-        rows, maxPrize: mp, hitDistribution: hitDist,
-      });
+      const tb = td.length * bc, tc = tb * 2;
+      setRes({ r: td.length, b: tb, hi: th, hr: parseFloat(((th / td.length) * 100).toFixed(2)),
+        c: tc, pr: tp, roi: tc > 0 ? parseFloat((((tp - tc) / tc) * 100).toFixed(2)) : 0,
+        rows, maxPrize: mp, hitDistribution: hitDist });
       setRun(false);
     }, 200);
   }
@@ -69,9 +60,7 @@ export default function BacktestPage() {
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-bold">{t('backtest')}</h2>
-      <div className="text-xs text-[var(--color-muted)] bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-2">
-        {t('backtest_ref')}
-      </div>
+      <div className="text-xs text-[var(--color-muted)] bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-2">{t('backtest_ref')}</div>
 
       <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
         <div>
@@ -103,35 +92,29 @@ export default function BacktestPage() {
       </div>
 
       {res && <>
-        {/* Summary Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
           <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4 text-center">
-            <div className="text-2xl font-bold">{res.r}</div>
-            <div className="text-xs text-[var(--color-muted)]">{t('test_rounds')}</div>
+            <div className="text-2xl font-bold">{res.r}</div><div className="text-xs text-[var(--color-muted)]">{t('test_rounds')}</div>
           </div>
           <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4 text-center">
-            <div className="text-2xl font-bold text-blue-400">{res.hr}%</div>
-            <div className="text-xs text-[var(--color-muted)]">{t('hit_rate')}</div>
+            <div className="text-2xl font-bold text-blue-400">{res.hr}%</div><div className="text-xs text-[var(--color-muted)]">{t('hit_rate')}</div>
           </div>
           <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4 text-center">
-            <div className="text-2xl font-bold font-mono">¥{res.c}</div>
-            <div className="text-xs text-[var(--color-muted)]">{t('total_cost')}</div>
+            <div className="text-2xl font-bold font-mono">¥{res.c}</div><div className="text-xs text-[var(--color-muted)]">{t('total_cost')}</div>
           </div>
           <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4 text-center">
             <div className={`text-2xl font-bold font-mono ${res.roi >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
               {res.roi >= 0 ? '+' : ''}{res.roi}%
-            </div>
-            <div className="text-xs text-[var(--color-muted)]">{t('roi')}</div>
+            </div><div className="text-xs text-[var(--color-muted)]">{t('roi')}</div>
           </div>
           <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4 text-center">
             <div className="text-2xl font-bold font-mono text-amber-400">{res.maxPrize > 0 ? `¥${res.maxPrize}` : '-'}</div>
-            <div className="text-xs text-[var(--color-muted)]">最高奖金</div>
+            <div className="text-xs text-[var(--color-muted)]">{t('max_prize')}</div>
           </div>
         </div>
 
-        {/* Hit Distribution */}
         <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
-          <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">命中分布</h3>
+          <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">{t('hit_distribution')}</h3>
           <div className="flex items-end gap-2 h-32">
             {Object.entries(res.hitDistribution).sort((a, b) => Number(a[0]) - Number(b[0])).map(([hit, count]) => {
               const maxCount = Math.max(...Object.values(res.hitDistribution));
@@ -148,20 +131,18 @@ export default function BacktestPage() {
           </div>
         </div>
 
-        {/* Prize Table */}
         <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
-          <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">奖金对照表（{pt}）</h3>
+          <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">{t('prize_table')}（{pt}）</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {Object.entries(PRIZE[pt] || {}).reverse().map(([k, v]) => (
               <div key={k} className="bg-[var(--color-bg)] rounded-lg p-2 text-center">
-                <div className="text-xs text-[var(--color-muted)]">中{k}个</div>
+                <div className="text-xs text-[var(--color-muted)]">{t('hit')}{k}{t('pcs')}</div>
                 <div className="font-bold font-mono text-sm">¥{v}</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Detail */}
         <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
           <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">{t('recent_detail')}</h3>
           <div className="space-y-2">
