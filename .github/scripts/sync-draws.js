@@ -4,20 +4,31 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 const CWL_API = 'https://www.cwl.gov.cn/cwl_admin/front/cwlkj/search/kjxx/findDrawNotice?name=kl8&issueCount=10';
 
+console.log('SUPABASE_URL:', SUPABASE_URL ? 'set' : 'MISSING');
+console.log('SUPABASE_KEY:', SUPABASE_KEY ? 'set' : 'MISSING');
+
 function fetchJSON(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, {
+    console.log('Fetching:', url);
+    const req = https.get(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Referer': 'https://www.cwl.gov.cn/',
         'Accept': 'application/json, text/javascript, */*; q=0.01',
-        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
       },
+      timeout: 15000,
     }, (res) => {
+      console.log('Response status:', res.statusCode);
       let data = '';
       res.on('data', chunk => data += chunk);
-      res.on('end', () => { try { resolve(JSON.parse(data)); } catch(e) { reject(new Error(`Parse error: ${data.slice(0,200)}`)); } });
-    }).on('error', reject);
+      res.on('end', () => {
+        console.log('Response length:', data.length);
+        try { resolve(JSON.parse(data)); }
+        catch(e) { console.log('Raw response:', data.slice(0,500)); reject(new Error(`Parse error: ${e.message}`)); }
+      });
+    });
+    req.on('error', (e) => { console.error('Request error:', e.message); reject(e); });
+    req.on('timeout', () => { req.destroy(); reject(new Error('Request timeout')); });
   });
 }
 
@@ -68,27 +79,24 @@ function calcFeatures(numbers) {
 async function main() {
   console.log(`[${new Date().toISOString()}] Starting sync...`);
 
-  // 1. Fetch from CWL API
   let data;
   try {
     data = await fetchJSON(CWL_API);
   } catch (e) {
-    console.error('Failed to fetch CWL API:', e.message);
+    console.error('FATAL: CWL API error:', e.message);
     process.exit(1);
   }
 
   if (!data?.result?.length) {
-    console.log('No data from CWL API');
+    console.log('No data from CWL API, response:', JSON.stringify(data).slice(0,200));
     process.exit(0);
   }
 
   console.log(`Fetched ${data.result.length} draws`);
 
-  // 2. Get existing
   const existing = await supabaseReq('GET', '/rest/v1/draws?select=draw_number');
   const existSet = new Set(existing.map(d => d.draw_number));
 
-  // 3. Insert new
   let inserted = 0, skipped = 0;
   for (const d of data.result) {
     if (existSet.has(d.code)) { skipped++; continue; }
@@ -103,7 +111,6 @@ async function main() {
 
   console.log(`Inserted: ${inserted}, Skipped: ${skipped}`);
 
-  // 4. Update stats if new data
   if (inserted > 0) {
     console.log('Updating number stats...');
     const allDraws = await supabaseReq('GET', '/rest/v1/draws?select=*&order=draw_date.desc&limit=200');
@@ -147,4 +154,4 @@ async function main() {
   console.log('Sync complete!');
 }
 
-main().catch(e => { console.error('Error:', e.message); process.exit(1); });
+main().catch(e => { console.error('FATAL:', e.message); process.exit(1); });
