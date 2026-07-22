@@ -1,10 +1,11 @@
 import type { Draw } from '@/hooks/useDraws';
 import NumberBall from '@/components/common/NumberBall';
+import { t } from '@/hooks/useI18n';
 interface Props { draws: Draw[]; }
 export default function DrawHistory({ draws }: Props) {
   return (
     <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
-      <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-4">历史开奖</h3>
+      <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-4">{t('history')}</h3>
       <div className="space-y-2">
         {draws.map((draw) => (
           <div key={draw.id} className="flex items-center gap-3 py-2 border-b border-[var(--color-border)] last:border-0">
