@@ -7,6 +7,7 @@ import NumberGrid from '@/components/analysis/NumberGrid';
 import HotColdRanking from '@/components/analysis/HotColdRanking';
 import { SkeletonCard, SkeletonGrid } from '@/components/common/Skeleton';
 import { supabase } from '@/utils/supabase';
+import { fetchFromCWL, cacheDraws, getCacheTime } from '@/utils/dataFetch';
 import { t } from '@/hooks/useI18n';
 
 export default function HomePage() {
@@ -17,7 +18,9 @@ export default function HomePage() {
 
   async function handleSync() {
     setSyncing(true);
-    setSyncMsg('');
+    setSyncMsg('正在从福彩官网获取数据...');
+
+    // Method 1: Try Edge Function
     try {
       const resp = await fetch('https://gomowvpstlmwcvvgnujo.supabase.co/functions/v1/sync-draws', {
         method: 'POST',
@@ -27,15 +30,40 @@ export default function HomePage() {
         },
       });
       const data = await resp.json();
-      if (data.error) {
-        setSyncMsg(`同步失败: ${data.error}`);
-      } else {
-        setSyncMsg(`同步完成: 新增 ${data.inserted} 期，跳过 ${data.skipped} 期`);
+      if (!data.error) {
+        setSyncMsg(`✅ 同步完成: 新增 ${data.inserted} 期，跳过 ${data.skipped} 期`);
         refetchDraws();
         refetchStats();
+        setSyncing(false);
+        setTimeout(() => setSyncMsg(''), 5000);
+        return;
       }
-    } catch (err) {
-      setSyncMsg('同步失败，请检查网络');
+    } catch {}
+
+    // Method 2: Direct CWL API fetch + cache locally
+    setSyncMsg('Edge Function 不可用，尝试直接抓取...');
+    const result = await fetchFromCWL(200);
+    if (result.error) {
+      setSyncMsg(`❌ 同步失败: ${result.error}`);
+    } else {
+      cacheDraws(result.draws);
+      setSyncMsg(`✅ 获取到 ${result.count} 期数据（已缓存到本地）`);
+      // Try to insert into Supabase
+      let inserted = 0;
+      const { data: existing } = await supabase.from('draws').select('draw_number');
+      const existingSet = new Set((existing || []).map((d: any) => d.draw_number));
+      for (const draw of result.draws) {
+        if (existingSet.has(draw.draw_number)) continue;
+        const { error } = await supabase.from('draws').insert(draw);
+        if (!error) inserted++;
+      }
+      if (inserted > 0) {
+        setSyncMsg(`✅ 获取 ${result.count} 期，新增 ${inserted} 期到数据库`);
+        refetchDraws();
+        refetchStats();
+      } else {
+        setSyncMsg(`✅ 获取 ${result.count} 期数据（已缓存到本地）`);
+      }
     }
     setSyncing(false);
     setTimeout(() => setSyncMsg(''), 5000);
@@ -57,8 +85,9 @@ export default function HomePage() {
       <div className="text-[var(--color-muted)]">{t('no_data')}</div>
       <button onClick={handleSync} disabled={syncing}
         className="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white text-sm font-semibold hover:bg-[var(--color-primary)]/80 disabled:opacity-50">
-        {syncing ? '同步中...' : '同步数据'}
+        {syncing ? '同步中...' : '🔄 同步数据'}
       </button>
+      {syncMsg && <div className="text-xs text-[var(--color-muted)]">{syncMsg}</div>}
     </div>;
 
   const latestDraw = draws[0];
@@ -68,8 +97,7 @@ export default function HomePage() {
   const hotNumbers = [...freqMap.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
   const sumTrend = recent10.map(d => d.sum_value);
   const avgSum = Math.round(sumTrend.reduce((a, b) => a + b, 0) / sumTrend.length);
-
-  const lastUpdate = latestDraw?.draw_date || '';
+  const cacheTime = getCacheTime();
 
   return (
     <div className="space-y-6">
@@ -80,7 +108,8 @@ export default function HomePage() {
       {/* Data Status Bar */}
       <div className="flex items-center justify-between bg-[var(--color-surface)] rounded-lg px-4 py-2 border border-[var(--color-border)]">
         <div className="text-xs text-[var(--color-muted)]">
-          数据截至: {lastUpdate} | 共 {draws.length} 期
+          数据截至: {latestDraw.draw_date} | 共 {draws.length} 期
+          {cacheTime && <span className="ml-2">| 本地缓存: {new Date(cacheTime).toLocaleTimeString()}</span>}
         </div>
         <button onClick={handleSync} disabled={syncing}
           className="text-xs px-3 py-1 rounded-lg bg-[var(--color-primary)]/15 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/25 disabled:opacity-50 transition-all">
@@ -89,7 +118,7 @@ export default function HomePage() {
       </div>
 
       {syncMsg && (
-        <div className={`text-xs text-center py-2 rounded-lg ${syncMsg.includes('失败') ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
+        <div className={`text-xs text-center py-2 rounded-lg ${syncMsg.includes('❌') ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
           {syncMsg}
         </div>
       )}
