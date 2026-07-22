@@ -10,6 +10,7 @@ const BacktestPage = lazy(() => import('./pages/BacktestPage'));
 const HistoryPage = lazy(() => import('./pages/HistoryPage'));
 const StrategyPage = lazy(() => import('./pages/StrategyPage'));
 const ReportPage = lazy(() => import('./pages/ReportPage'));
+const DataPage = lazy(() => import('./pages/DataPage'));
 
 function Loading() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/strategy" element={<StrategyPage />} />
           <Route path="/backtest" element={<BacktestPage />} />
           <Route path="/report" element={<ReportPage />} />
+          <Route path="/data" element={<DataPage />} />
           <Route path="/history" element={<HistoryPage />} />
         </Routes>
       </Suspense>

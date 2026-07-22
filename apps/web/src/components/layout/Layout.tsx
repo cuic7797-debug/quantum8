@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, BarChart3, Crosshair, FlaskConical, Clock, Beaker, FileText, Menu, X } from 'lucide-react';
+import { Home, BarChart3, Crosshair, FlaskConical, Clock, Beaker, FileText, Database, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { t } from '@/hooks/useI18n';
 
@@ -10,7 +10,8 @@ const navItems = [
   { path: '/strategy', label: t('nav.strategy'), icon: Beaker, key: '4' },
   { path: '/backtest', label: t('nav.backtest'), icon: FlaskConical, key: '5' },
   { path: '/report', label: '分析报告', icon: FileText, key: '6' },
-  { path: '/history', label: t('nav.history'), icon: Clock, key: '7' },
+  { path: '/data', label: '数据管理', icon: Database, key: '7' },
+  { path: '/history', label: t('nav.history'), icon: Clock, key: '8' },
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -18,7 +19,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Keyboard shortcuts
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement) return;
@@ -37,7 +37,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <h1 className="text-xl font-bold text-[var(--color-primary)]">Quantum8</h1>
           <p className="text-[10px] text-[var(--color-muted)] mt-0.5">{t('app.subtitle')}</p>
         </div>
-        <nav className="flex-1 py-3">
+        <nav className="flex-1 py-3 overflow-y-auto">
           {navItems.map(({ path, label, icon: Icon, key }) => (
             <Link key={path} to={path}
               className={`flex items-center gap-3 px-5 py-2.5 text-sm transition-all mx-2 rounded-lg group ${
@@ -56,7 +56,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             ⚠ 数据分析工具<br />不构成投注建议
           </div>
           <div className="text-[10px] text-[var(--color-muted)] mt-2 opacity-50">
-            快捷键: 1-7 切换页面
+            快捷键: 1-8 切换页面
           </div>
         </div>
       </aside>
@@ -73,10 +73,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <p className="text-[10px] text-[var(--color-muted)]">{t('app.subtitle')}</p>
         </header>
 
-        {/* Mobile Menu Overlay */}
         {mobileOpen && (
           <div className="lg:hidden fixed inset-0 z-20 bg-black/50" onClick={() => setMobileOpen(false)}>
-            <nav className="absolute left-0 top-0 bottom-0 w-56 bg-[var(--color-surface)] border-r border-[var(--color-border)] py-4 shadow-2xl"
+            <nav className="absolute left-0 top-0 bottom-0 w-56 bg-[var(--color-surface)] border-r border-[var(--color-border)] py-4 shadow-2xl overflow-y-auto"
               onClick={e => e.stopPropagation()}>
               <div className="px-5 pb-4 border-b border-[var(--color-border)]">
                 <h2 className="text-lg font-bold text-[var(--color-primary)]">Quantum8</h2>
@@ -99,7 +98,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
         )}
 
-        {/* Main Content */}
         <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6">
           {children}
         </main>
