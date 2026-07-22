@@ -13,7 +13,10 @@ export default function HotColdRanking({ stats }: Props) {
           {hotTop10.map((s, i) => (
             <div key={s.number} className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2"><span className="text-xs text-[var(--color-muted)] w-4">{i + 1}</span><span className="font-mono font-bold">{formatNumber(s.number)}</span></div>
-              <div className="flex items-center gap-3"><span className="text-xs text-[var(--color-muted)]">{t('recent_10')} {s.recent10Rate}%</span><span className={`font-mono font-bold ${getHotColor(s.hotScore)}`}>{s.hotScore}</span></div>
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-[var(--color-muted)]">{t('recent_10')} {s.recent10Rate}%</span>
+                <span className={`font-mono font-bold ${getHotColor(s.hotScore)}`}>{s.hotScore}</span>
+              </div>
             </div>
           ))}
         </div>
@@ -24,7 +27,10 @@ export default function HotColdRanking({ stats }: Props) {
           {coldTop10.map((s, i) => (
             <div key={s.number} className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2"><span className="text-xs text-[var(--color-muted)] w-4">{i + 1}</span><span className="font-mono font-bold">{formatNumber(s.number)}</span></div>
-              <div className="flex items-center gap-3"><span className="text-xs text-[var(--color-muted)]">{t('missed')} {s.currentMiss}{t('periods')}</span><span className={`font-mono font-bold ${getMissColor(s.currentMiss)}`}>{s.missRatio}</span></div>
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-[var(--color-muted)]">{t('missed')} {s.currentMiss}{t('periods')}</span>
+                <span className={`font-mono font-bold ${getMissColor(s.currentMiss)}`}>{s.missRatio || '-'}</span>
+              </div>
             </div>
           ))}
         </div>

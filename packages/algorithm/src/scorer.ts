@@ -7,17 +7,14 @@ export function scoreCombination(
 ): ScoreResult {
   const selected = stats.filter((s) => numbers.includes(s.number));
 
-  // 1. Probability Score: based on hot/cold balance
   const avgHot = selected.reduce((sum, s) => sum + s.hotScore, 0) / selected.length;
-  const probabilityScore = Math.min(100, avgHot);
+  const probabilityScore = Math.min(100, Math.max(0, avgHot));
 
-  // 2. Hot/Cold Balance: prefer balanced distribution
   const hotCount = selected.filter(s => s.hotScore >= 60).length;
   const coldCount = selected.filter(s => s.currentMiss >= 5).length;
   const balance = Math.abs(hotCount - coldCount);
   const hotColdScore = Math.max(0, 100 - balance * 10);
 
-  // 3. Structure Score: zone balance + odd/even balance
   const zones = [0, 0, 0, 0];
   numbers.forEach((n) => {
     if (n <= 20) zones[0]++;
@@ -31,14 +28,13 @@ export function scoreCombination(
   const odd = numbers.filter((n) => n % 2 === 1).length;
   const oddEvenBalance = Math.abs(odd - numbers.length / 2);
   const oddEvenScore = Math.max(0, 100 - oddEvenBalance * 15);
-
   const structureScore = (zoneScore * 0.6 + oddEvenScore * 0.4);
 
-  // 4. History Similarity: based on miss ratio
-  const avgMissRatio = selected.reduce((sum, s) => sum + s.missRatio, 0) / selected.length;
-  const historySimilarity = Math.min(100, avgMissRatio);
+  const avgMissRatio = selected.length > 0
+    ? selected.reduce((sum, s) => sum + (isNaN(s.missRatio) ? 50 : s.missRatio), 0) / selected.length
+    : 50;
+  const historySimilarity = Math.min(100, Math.max(0, avgMissRatio));
 
-  // 5. Total Score
   const totalScore = parseFloat(
     (probabilityScore * 0.3 + hotColdScore * 0.25 + structureScore * 0.25 + historySimilarity * 0.2).toFixed(1)
   );
