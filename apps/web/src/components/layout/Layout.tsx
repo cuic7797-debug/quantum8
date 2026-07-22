@@ -1,11 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, BarChart3, Crosshair, FlaskConical, Clock } from 'lucide-react';
+import { Home, BarChart3, Crosshair, FlaskConical, Clock, Beaker } from 'lucide-react';
 import { t } from '@/hooks/useI18n';
 
 const navItems = [
   { path: '/', label: t('nav.home'), icon: Home },
   { path: '/analysis', label: t('nav.trends'), icon: BarChart3 },
   { path: '/selection', label: t('nav.pick'), icon: Crosshair },
+  { path: '/strategy', label: '策略', icon: Beaker },
   { path: '/backtest', label: t('nav.backtest'), icon: FlaskConical },
   { path: '/history', label: t('nav.history'), icon: Clock },
 ];

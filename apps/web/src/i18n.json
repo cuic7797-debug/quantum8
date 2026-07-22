@@ -4,6 +4,7 @@
   "nav.pick": "智能选号",
   "nav.backtest": "策略回测",
   "nav.history": "历史记录",
+  "nav.strategy": "策略",
   "app.subtitle": "数据分析工具",
   "disclaimer": "⚠ 本工具仅提供历史数据统计分析，不构成投注建议。彩票有风险，投注需理性。",
   "latest": "最新一期",

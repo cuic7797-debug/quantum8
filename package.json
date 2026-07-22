@@ -7,6 +7,7 @@
     "dev:web": "pnpm --filter @quantum8/web dev",
     "dev:mobile": "pnpm --filter @quantum8/mobile start",
     "build:web": "pnpm --filter @quantum8/web build",
-    "build:algorithm": "pnpm --filter @quantum8/algorithm build"
+    "build:algorithm": "pnpm --filter @quantum8/algorithm build",
+    "build:types": "pnpm --filter @quantum8/types build"
   }
 }

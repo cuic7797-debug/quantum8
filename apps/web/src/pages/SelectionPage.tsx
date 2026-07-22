@@ -6,12 +6,13 @@ import { applyFilters, generateBatch, scoreCombination } from '@quantum8/algorit
 import type { ScoreResult, PlayType } from '@quantum8/types';
 import { t } from '@/hooks/useI18n';
 
-const PT = [t('play1'),t('play2'),t('play3'),t('play4'),t('play5'),t('play6'),t('play7'),t('play8'),t('play9'),t('play10')];
+const PT = [t('play1'), t('play2'), t('play3'), t('play4'), t('play5'), t('play6'), t('play7'), t('play8'), t('play9'), t('play10')];
 const STRATS = [
   { name: t('strat_conservative'), hot: 4, cold: 4, balance: 2, desc: t('desc_conservative'), icon: '🛡️' },
   { name: t('strat_balanced'), hot: 6, cold: 3, balance: 1, desc: t('desc_balanced'), icon: '⚖️' },
   { name: t('strat_aggressive'), hot: 8, cold: 1, balance: 1, desc: t('desc_aggressive'), icon: '🔥' },
 ];
+
 export default function SelectionPage() {
   const { stats } = useNumberStats();
   const { draws } = useDraws(100);
@@ -19,6 +20,7 @@ export default function SelectionPage() {
   const [si, setSi] = useState(1);
   const [res, setRes] = useState<ScoreResult[]>([]);
   const [gen, setGen] = useState(false);
+  const [showSaveMsg, setShowSaveMsg] = useState<number | null>(null);
   const pc = PT.indexOf(pt) + 1;
 
   function go() {
@@ -26,7 +28,11 @@ export default function SelectionPage() {
     setGen(true);
     setTimeout(() => {
       const s = STRATS[si];
-      const cfg = { hotCount: s.hot, coldCount: s.cold, balanceCount: s.balance, zoneBalance: true, sumRange: [400, 1200] as [number, number], oddEvenRange: [5, 15] as [number, number], maxConsecutive: 3 };
+      const cfg = {
+        hotCount: s.hot, coldCount: s.cold, balanceCount: s.balance,
+        zoneBalance: true, sumRange: [400, 1200] as [number, number],
+        oddEvenRange: [5, 15] as [number, number], maxConsecutive: 3,
+      };
       const c = generateBatch(pc, 3000);
       const f = applyFilters(c, cfg);
       setRes(f.slice(0, 80).map(x => scoreCombination(x, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore).slice(0, 10));
@@ -34,18 +40,40 @@ export default function SelectionPage() {
     }, 100);
   }
 
-  // Save to localStorage
-  function savePick(r: ScoreResult) {
+  function savePick(r: ScoreResult, index: number) {
     const key = 'quantum8_picks';
     const existing = JSON.parse(localStorage.getItem(key) || '[]');
-    existing.unshift({ numbers: r.numbers, playType: pt, score: r.totalScore, risk: r.riskLevel, time: new Date().toISOString() });
+    existing.unshift({
+      numbers: r.numbers, playType: pt, score: r.totalScore,
+      risk: r.riskLevel, time: new Date().toISOString(),
+      strategy: STRATS[si].name,
+    });
     localStorage.setItem(key, JSON.stringify(existing.slice(0, 50)));
+    setShowSaveMsg(index);
+    setTimeout(() => setShowSaveMsg(null), 1500);
+  }
+
+  function saveAll() {
+    const key = 'quantum8_picks';
+    const existing = JSON.parse(localStorage.getItem(key) || '[]');
+    res.forEach(r => {
+      existing.unshift({
+        numbers: r.numbers, playType: pt, score: r.totalScore,
+        risk: r.riskLevel, time: new Date().toISOString(),
+        strategy: STRATS[si].name,
+      });
+    });
+    localStorage.setItem(key, JSON.stringify(existing.slice(0, 50)));
+    setShowSaveMsg(-1);
+    setTimeout(() => setShowSaveMsg(null), 1500);
   }
 
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-bold">{t('smart_pick')}</h2>
-      <div className="text-xs text-[var(--color-muted)] bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-2">{t('pick_ref_only')}</div>
+      <div className="text-xs text-[var(--color-muted)] bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-2">
+        {t('pick_ref_only')}
+      </div>
 
       {/* Step 1: Play Type */}
       <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
@@ -70,6 +98,11 @@ export default function SelectionPage() {
               <div className="text-2xl mb-2">{s.icon}</div>
               <div className="font-semibold mb-1">{s.name}</div>
               <div className="text-xs text-[var(--color-muted)]">{s.desc}</div>
+              <div className="flex gap-1 mt-2">
+                <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded">热{s.hot}</span>
+                <span className="text-[10px] bg-sky-500/10 text-sky-400 px-1.5 py-0.5 rounded">冷{s.cold}</span>
+                <span className="text-[10px] bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded">平{s.balance}</span>
+              </div>
             </button>
           ))}
         </div>
@@ -84,20 +117,30 @@ export default function SelectionPage() {
       {/* Results */}
       {res.length > 0 && (
         <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
-          <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-4">AI {t('recommend')} {pt}（共{res.length}组）</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-[var(--color-muted)]">AI {t('recommend')} {pt}（共{res.length}组）</h3>
+            <button onClick={saveAll} className="text-xs text-[var(--color-primary)] hover:underline">全部保存</button>
+          </div>
+
+          {showSaveMsg === -1 && (
+            <div className="mb-3 text-center text-sm text-emerald-400 bg-emerald-500/10 rounded-lg py-2">
+              ✓ 已保存全部{res.length}组号码
+            </div>
+          )}
+
           <div className="space-y-3">
             {res.map((r, i) => (
               <div key={i} className="bg-[var(--color-bg)] rounded-xl p-4 hover:bg-[var(--color-border)] transition-colors">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${i===0?'bg-amber-500 text-black':i<3?'bg-[var(--color-muted)] text-black':'bg-[var(--color-border)] text-[var(--color-muted)]'}`}>{i+1}</span>
+                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? 'bg-amber-500 text-black' : i < 3 ? 'bg-[var(--color-muted)] text-black' : 'bg-[var(--color-border)] text-[var(--color-muted)]'}`}>{i + 1}</span>
                     <div className="flex gap-1 flex-wrap">
                       {r.numbers.map(n => <NumberBall key={n} number={n} size="sm" />)}
                     </div>
                   </div>
                   <div className="text-right shrink-0 ml-2">
                     <div className="text-lg font-bold font-mono">{r.totalScore}</div>
-                    <div className={`text-xs font-medium ${r.riskLevel==='低'?'text-emerald-400':r.riskLevel==='中'?'text-amber-400':'text-red-400'}`}>{r.riskLevel}风险</div>
+                    <div className={`text-xs font-medium ${r.riskLevel === '低' ? 'text-emerald-400' : r.riskLevel === '中' ? 'text-amber-400' : 'text-red-400'}`}>{r.riskLevel}风险</div>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
@@ -106,14 +149,28 @@ export default function SelectionPage() {
                       <span key={ri} className="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full">✓ {reason}</span>
                     ))}
                   </div>
-                  <button onClick={() => savePick(r)} className="text-xs text-[var(--color-primary)] hover:underline ml-2 shrink-0">保存</button>
+                  <button onClick={() => savePick(r, i)} className="text-xs text-[var(--color-primary)] hover:underline ml-2 shrink-0">
+                    {showSaveMsg === i ? '✓ 已保存' : '保存'}
+                  </button>
                 </div>
                 {/* Score breakdown */}
                 <div className="grid grid-cols-4 gap-2 mt-2 text-[10px]">
-                  <div className="text-center"><div className="text-[var(--color-muted)]">概率</div><div className="font-mono font-bold">{r.probabilityScore}</div></div>
-                  <div className="text-center"><div className="text-[var(--color-muted)]">冷热</div><div className="font-mono font-bold">{r.hotColdScore}</div></div>
-                  <div className="text-center"><div className="text-[var(--color-muted)]">结构</div><div className="font-mono font-bold">{r.structureScore}</div></div>
-                  <div className="text-center"><div className="text-[var(--color-muted)]">遗漏</div><div className="font-mono font-bold">{r.historySimilarity}</div></div>
+                  <div className="text-center">
+                    <div className="text-[var(--color-muted)]">概率</div>
+                    <div className="font-mono font-bold">{r.probabilityScore}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-[var(--color-muted)]">冷热</div>
+                    <div className="font-mono font-bold">{r.hotColdScore}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-[var(--color-muted)]">结构</div>
+                    <div className="font-mono font-bold">{r.structureScore}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-[var(--color-muted)]">遗漏</div>
+                    <div className="font-mono font-bold">{r.historySimilarity}</div>
+                  </div>
                 </div>
               </div>
             ))}

@@ -5,6 +5,7 @@ import AnalysisPage from './pages/AnalysisPage';
 import SelectionPage from './pages/SelectionPage';
 import BacktestPage from './pages/BacktestPage';
 import HistoryPage from './pages/HistoryPage';
+import StrategyPage from './pages/StrategyPage';
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/analysis" element={<AnalysisPage />} />
         <Route path="/selection" element={<SelectionPage />} />
+        <Route path="/strategy" element={<StrategyPage />} />
         <Route path="/backtest" element={<BacktestPage />} />
         <Route path="/history" element={<HistoryPage />} />
       </Routes>
