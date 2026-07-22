@@ -1,3 +1,4 @@
+import NumberTrendMini from '@/components/analysis/NumberTrendMini';
 import { useState } from 'react';
 import { useDraws } from '@/hooks/useDraws';
 import { useNumberStats } from '@/hooks/useNumberStats';
@@ -150,6 +151,7 @@ export default function HomePage() {
       </div>
 
       <LatestDrawCard draw={latestDraw} />
+      <NumberTrendMini count={10} />
       {stats.length > 0 && <NumberGrid stats={stats} />}
       {stats.length > 0 && <HotColdRanking stats={stats} />}
       <DrawHistory draws={draws.slice(1)} />
