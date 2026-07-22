@@ -26,16 +26,27 @@ export function useDraws(limit = 20) {
   const [error, setError] = useState<string | null>(null);
 
   const fetchDraws = useCallback(async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('draws')
-      .select('*')
-      .order('draw_date', { ascending: false })
-      .limit(limit);
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('draws')
+        .select('*')
+        .order('draw_date', { ascending: false })
+        .limit(limit);
 
-    if (error) setError(error.message);
-    else { setDraws(data || []); setError(null); }
-    setLoading(false);
+      if (error) {
+        setError(error.message);
+        setDraws([]);
+      } else {
+        setDraws(data || []);
+        setError(null);
+      }
+    } catch (e: any) {
+      setError(e.message || 'Network error');
+      setDraws([]);
+    } finally {
+      setLoading(false);
+    }
   }, [limit]);
 
   useEffect(() => { fetchDraws(); }, [fetchDraws]);

@@ -25,13 +25,22 @@ export function useNumberStats() {
   const [loading, setLoading] = useState(true);
 
   const fetchStats = useCallback(async () => {
-    setLoading(true);
-    const { data } = await supabase
-      .from('number_stats')
-      .select('*')
-      .order('number', { ascending: true });
-    setStats((data || []).map(mapRow));
-    setLoading(false);
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('number_stats')
+        .select('*')
+        .order('number', { ascending: true });
+      if (error) {
+        setStats([]);
+      } else {
+        setStats((data || []).map(mapRow));
+      }
+    } catch {
+      setStats([]);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => { fetchStats(); }, [fetchStats]);
