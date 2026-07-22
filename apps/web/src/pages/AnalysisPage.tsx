@@ -9,10 +9,10 @@ export default function AnalysisPage() {
   const { stats, loading: statsLoading } = useNumberStats();
 
   if (drawsLoading || statsLoading) {
-    return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">Loading...</div>;
+    return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">加载中...</div>;
   }
   if (draws.length === 0 || stats.length === 0) {
-    return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">No data</div>;
+    return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">暂无数据</div>;
   }
 
   let has2 = 0, has3 = 0, noConsec = 0;
@@ -34,33 +34,19 @@ export default function AnalysisPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold">Trend Analysis</h2>
+      <h2 className="text-xl font-bold">走势分析</h2>
       <NumberGrid stats={stats} />
       <HotColdRanking stats={stats} />
-
       <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
-        <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">Consecutive Stats (Last {draws.length} draws)</h3>
+        <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">连号统计（近{draws.length}期）</h3>
         <div className="grid grid-cols-3 gap-4">
-          <div className="text-center bg-[var(--color-bg)] rounded-lg p-3">
-            <div className="text-2xl font-bold">{has2}</div>
-            <div className="text-xs text-[var(--color-muted)]">2-consec</div>
-            <div className="text-xs text-[var(--color-muted)]">{((has2 / draws.length) * 100).toFixed(1)}%</div>
-          </div>
-          <div className="text-center bg-[var(--color-bg)] rounded-lg p-3">
-            <div className="text-2xl font-bold">{has3}</div>
-            <div className="text-xs text-[var(--color-muted)]">3+-consec</div>
-            <div className="text-xs text-[var(--color-muted)]">{((has3 / draws.length) * 100).toFixed(1)}%</div>
-          </div>
-          <div className="text-center bg-[var(--color-bg)] rounded-lg p-3">
-            <div className="text-2xl font-bold">{noConsec}</div>
-            <div className="text-xs text-[var(--color-muted)]">No consec</div>
-            <div className="text-xs text-[var(--color-muted)]">{((noConsec / draws.length) * 100).toFixed(1)}%</div>
-          </div>
+          <div className="text-center bg-[var(--color-bg)] rounded-lg p-3"><div className="text-2xl font-bold">{has2}</div><div className="text-xs text-[var(--color-muted)]">含2连号</div><div className="text-xs text-[var(--color-muted)]">{((has2 / draws.length) * 100).toFixed(1)}%</div></div>
+          <div className="text-center bg-[var(--color-bg)] rounded-lg p-3"><div className="text-2xl font-bold">{has3}</div><div className="text-xs text-[var(--color-muted)]">含3连号+</div><div className="text-xs text-[var(--color-muted)]">{((has3 / draws.length) * 100).toFixed(1)}%</div></div>
+          <div className="text-center bg-[var(--color-bg)] rounded-lg p-3"><div className="text-2xl font-bold">{noConsec}</div><div className="text-xs text-[var(--color-muted)]">无连号</div><div className="text-xs text-[var(--color-muted)]">{((noConsec / draws.length) * 100).toFixed(1)}%</div></div>
         </div>
       </div>
-
       <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
-        <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">Odd/Even Trend (Last 15)</h3>
+        <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">奇偶分布趋势（近15期）</h3>
         <div className="space-y-1">
           {oddEvenTrend.map((t) => (
             <div key={t.draw} className="flex items-center gap-2 text-sm">
@@ -74,19 +60,17 @@ export default function AnalysisPage() {
           ))}
         </div>
         <div className="flex justify-between mt-2 text-[10px] text-[var(--color-muted)]">
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-blue-500 inline-block" /> Odd</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-rose-500 inline-block" /> Even</span>
+          <span>奇数</span><span>偶数</span>
         </div>
       </div>
-
       <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
-        <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">Miss Ranking TOP 20</h3>
+        <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">遗漏排行 TOP 20</h3>
         <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
           {[...stats].sort((a, b) => b.currentMiss - a.currentMiss).slice(0, 20).map((s, i) => (
             <div key={s.number} className="flex items-center gap-2 text-sm">
               <span className="text-xs text-[var(--color-muted)] w-4">{i + 1}</span>
               <NumberBall number={s.number} size="sm" />
-              <span className="font-mono text-xs">{s.currentMiss}d</span>
+              <span className="font-mono text-xs">{s.currentMiss}期</span>
             </div>
           ))}
         </div>
