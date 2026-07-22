@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
+import ScrollToTop from './components/common/ScrollToTop';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const AnalysisPage = lazy(() => import('./pages/AnalysisPage'));
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/history" element={<HistoryPage />} />
         </Routes>
       </Suspense>
+      <ScrollToTop />
     </Layout>
   );
 }
