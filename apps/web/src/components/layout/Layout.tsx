@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, BarChart3, Crosshair, FlaskConical, Clock, Beaker, FileText, Database, Menu, X } from 'lucide-react';
+import { Home, BarChart3, Crosshair, FlaskConical, Clock, Beaker, FileText, Database, Menu, X, User } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 import { t } from '@/hooks/useI18n';
 
 const navItems = [
@@ -18,6 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, loading } = useAuth();
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
@@ -51,7 +53,30 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </Link>
           ))}
         </nav>
-        <div className="px-5 py-4 border-t border-[var(--color-border)]">
+        <div className="px-3 py-3 border-t border-[var(--color-border)]">
+          <Link to="/auth"
+            className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-all rounded-lg ${
+              location.pathname === '/auth'
+                ? 'bg-[var(--color-primary)]/15 text-[var(--color-primary)] font-semibold'
+                : 'text-[var(--color-muted)] hover:text-white hover:bg-white/5'
+            }`}>
+            <div className="w-7 h-7 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center shrink-0">
+              {loading ? (
+                <div className="w-3 h-3 border border-[var(--color-muted)] border-t-transparent rounded-full animate-spin" />
+              ) : user ? (
+                <span className="text-xs font-bold text-[var(--color-primary)]">
+                  {user.email?.charAt(0).toUpperCase()}
+                </span>
+              ) : (
+                <User size={14} />
+              )}
+            </div>
+            <span className="flex-1 text-xs truncate">
+              {loading ? '加载中...' : user ? user.email : '登录 / 注册'}
+            </span>
+          </Link>
+        </div>
+        <div className="px-5 py-3 border-t border-[var(--color-border)]">
           <div className="text-[10px] text-[var(--color-muted)] leading-relaxed">
             ⚠ 数据分析工具<br />不构成投注建议
           </div>
@@ -70,7 +95,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </button>
             <h1 className="text-lg font-bold text-[var(--color-primary)]">Quantum8</h1>
           </div>
-          <p className="text-[10px] text-[var(--color-muted)]">{t('app.subtitle')}</p>
+          <Link to="/auth" className="text-[var(--color-muted)] hover:text-white">
+            <div className="w-7 h-7 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center">
+              {user ? (
+                <span className="text-xs font-bold text-[var(--color-primary)]">
+                  {user.email?.charAt(0).toUpperCase()}
+                </span>
+              ) : (
+                <User size={14} />
+              )}
+            </div>
+          </Link>
         </header>
 
         {mobileOpen && (
@@ -91,6 +126,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <span>{label}</span>
                 </Link>
               ))}
+              <Link to="/auth" onClick={() => setMobileOpen(false)}
+                className={`flex items-center gap-3 px-5 py-3 text-sm transition-all border-t border-[var(--color-border)] mt-4 ${
+                  location.pathname === '/auth'
+                    ? 'bg-[var(--color-primary)]/15 text-[var(--color-primary)] font-semibold'
+                    : 'text-[var(--color-muted)] hover:text-white hover:bg-white/5'
+                }`}>
+                <User size={18} />
+                <span>{user ? user.email : '登录 / 注册'}</span>
+              </Link>
               <div className="px-5 py-4 border-t border-[var(--color-border)] mt-4">
                 <div className="text-[10px] text-[var(--color-muted)]">⚠ 数据分析工具，不构成投注建议</div>
               </div>
