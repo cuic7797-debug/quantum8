@@ -5,13 +5,13 @@ import { generateRandomCombination } from '@quantum8/algorithm';
 import type { PlayType } from '@quantum8/types';
 import { t } from '@/hooks/useI18n';
 
-const PT: PlayType[] = [t('play5'),t('play6'),t('play7'),t('play8'),t('play9'),t('play10')];
+const PT = [t('play5') as PlayType,t('play6'),t('play7'),t('play8'),t('play9'),t('play10')];
 const PRIZE: Record<string, Record<number, number>> = { [t('play5')]:{5:1000,4:30,3:3},[t('play6')]:{6:3000,5:200,4:10,3:1},[t('play7')]:{7:10000,6:800,5:50,4:5,3:1},[t('play8')]:{8:50000,7:3000,6:200,5:20,4:3},[t('play9')]:{9:200000,8:3000,7:200,6:20,5:5,4:1},[t('play10')]:{10:500000,9:10000,8:500,7:30,6:5,5:1} };
 interface Row { p: string; n: number[]; h: number; pr: number; }
 interface Sum { r: number; b: number; hi: number; hr: number; c: number; pr: number; roi: number; rows: Row[]; }
 export default function BacktestPage() {
   const { draws } = useDraws(500);
-  const [pt, setPt] = useState<PlayType>(t('play10'));
+  const [pt, setPt] = useState(t('play10') as PlayType);
   const [bc, setBc] = useState(1);
   const [res, setRes] = useState<Sum | null>(null);
   const [run, setRun] = useState(false);
@@ -36,7 +36,7 @@ export default function BacktestPage() {
       <h2 className="text-xl font-bold">{t('backtest')}</h2>
       <div className="text-xs text-[var(--color-muted)] bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-2">{t('backtest_ref')}</div>
       <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
-        <div><h3 className="text-sm font-semibold text-[var(--color-muted)] mb-2">{t('play_type')}</h3><div className="flex flex-wrap gap-2">{PT.map(p => <button key={p} onClick={() => setPt(p)} className={`px-3 py-1.5 rounded-lg text-sm font-medium ${pt === p ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--color-bg)] text-[var(--color-muted)] hover:text-white'}`}>{p}</button>)}</div></div>
+        <div><h3 className="text-sm font-semibold text-[var(--color-muted)] mb-2">{t('play_type')}</h3><div className="flex flex-wrap gap-2">{PT.map(p => <button key={p} onClick={() => setPt(p as PlayType)} className={`px-3 py-1.5 rounded-lg text-sm font-medium ${pt === p ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--color-bg)] text-[var(--color-muted)] hover:text-white'}`}>{p}</button>)}</div></div>
         <div><h3 className="text-sm font-semibold text-[var(--color-muted)] mb-2">{t('bets_per_draw')}</h3><div className="flex gap-2">{[1,3,5,10].map(n => <button key={n} onClick={() => setBc(n)} className={`px-4 py-1.5 rounded-lg text-sm font-medium ${bc === n ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--color-bg)] text-[var(--color-muted)] hover:text-white'}`}>{n}{t('bets')}</button>)}</div></div>
         <button onClick={go} disabled={run || draws.length < 10} className="w-full py-3 rounded-xl bg-[var(--color-primary)] text-white font-semibold hover:bg-[var(--color-primary)]/80 disabled:opacity-50">{run ? t('backtesting') : `${t('run_backtest')} (${Math.min(draws.length-1,500)})`}</button>
       </div>

@@ -57,3 +57,7 @@ export function calculateProbability(draws: Draw[]): NumberStat[] {
 
   return stats;
 }
+
+export function calculateFromRaw(draws: Draw[]): NumberStat[] {
+  return calculateProbability(draws);
+}

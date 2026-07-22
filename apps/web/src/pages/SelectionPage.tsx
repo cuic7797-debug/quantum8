@@ -6,7 +6,7 @@ import { applyFilters, generateBatch, scoreCombination } from '@quantum8/algorit
 import type { ScoreResult, PlayType } from '@quantum8/types';
 import { t } from '@/hooks/useI18n';
 
-const PT: PlayType[] = [t('play1'),t('play2'),t('play3'),t('play4'),t('play5'),t('play6'),t('play7'),t('play8'),t('play9'),t('play10')];
+const PT = [t('play1') as PlayType,t('play2'),t('play3'),t('play4'),t('play5'),t('play6'),t('play7'),t('play8'),t('play9'),t('play10')];
 const STRATS = [
   { name: t('strat_conservative'), hot: 4, cold: 4, balance: 2, desc: t('desc_conservative') },
   { name: t('strat_balanced'), hot: 6, cold: 3, balance: 1, desc: t('desc_balanced') },
@@ -15,7 +15,7 @@ const STRATS = [
 export default function SelectionPage() {
   const { stats } = useNumberStats();
   const { draws } = useDraws(100);
-  const [pt, setPt] = useState<PlayType>(t('play10'));
+  const [pt, setPt] = useState(t('play10') as PlayType);
   const [si, setSi] = useState(1);
   const [res, setRes] = useState<ScoreResult[]>([]);
   const [gen, setGen] = useState(false);
@@ -38,7 +38,7 @@ export default function SelectionPage() {
       <div className="text-xs text-[var(--color-muted)] bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-2">{t('pick_ref_only')}</div>
       <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
         <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">{t('step1_play')}</h3>
-        <div className="flex flex-wrap gap-2">{PT.map(p => <button key={p} onClick={() => setPt(p)} className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${pt === p ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--color-bg)] text-[var(--color-muted)] hover:text-white'}`}>{p}</button>)}</div>
+        <div className="flex flex-wrap gap-2">{PT.map(p => <button key={p} onClick={() => setPt(p as PlayType)} className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${pt === p ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--color-bg)] text-[var(--color-muted)] hover:text-white'}`}>{p}</button>)}</div>
       </div>
       <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
         <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">{t('step2_strategy')}</h3>
