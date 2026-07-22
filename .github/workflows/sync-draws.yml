@@ -1,0 +1,23 @@
+name: Sync Lottery Data
+
+on:
+  schedule:
+    # 每天 21:36 北京时间 = 13:36 UTC
+    - cron: '36 13 * * *'
+  workflow_dispatch: # 支持手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Sync draws from CWL API
+        run: node .github/scripts/sync-draws.js
+        env:
+          SUPABASE_URL: https://gomowvpstlmwcvvgnujo.supabase.co
+          SUPABASE_KEY: sb_publishable_7Sl3_rntp_65_3xK4nDu2g_KXqMdgbq
