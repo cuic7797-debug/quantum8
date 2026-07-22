@@ -1,6 +1,17 @@
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { t } from '@/hooks/useI18n';
+import { supabase } from '@/utils/supabase';
+
+function translateError(msg: string): string {
+  if (msg.includes('Invalid login credentials')) return '邮箱或密码错误';
+  if (msg.includes('already registered') || msg.includes('User already registered')) return '该邮箱已注册';
+  if (msg.includes('Password should be at least')) return '密码至少需要6位';
+  if (msg.includes('Unable to validate email')) return '邮箱格式不正确';
+  if (msg.includes('Email not confirmed')) return '请先验证邮箱';
+  if (msg.includes('Signup is disabled')) return '注册功能暂时关闭';
+  if (msg.includes('rate limit')) return '操作太频繁，请稍后再试';
+  return msg || '操作失败，请重试';
+}
 
 export default function AuthPage() {
   const { signIn, signUp, user, signOut } = useAuth();
@@ -22,11 +33,11 @@ export default function AuthPage() {
           <p className="text-sm text-[var(--color-muted)]">{user.email}</p>
           <div className="grid grid-cols-2 gap-3 text-center">
             <div className="bg-[var(--color-bg)] rounded-lg p-3">
-              <div className="text-lg font-bold">云端</div>
-              <div className="text-xs text-[var(--color-muted)]">策略同步</div>
+              <div className="text-lg font-bold">☁️</div>
+              <div className="text-xs text-[var(--color-muted)]">云端同步</div>
             </div>
             <div className="bg-[var(--color-bg)] rounded-lg p-3">
-              <div className="text-lg font-bold">✓</div>
+              <div className="text-lg font-bold text-emerald-400">✓</div>
               <div className="text-xs text-[var(--color-muted)]">已登录</div>
             </div>
           </div>
@@ -50,9 +61,12 @@ export default function AuthPage() {
       : await signUp(email, password);
 
     if (result.error) {
-      setError(result.error);
+      setError(translateError(result.error));
     } else if (mode === 'register') {
-      setSuccess('注册成功！请检查邮箱确认链接。');
+      setSuccess('注册成功！正在登录...');
+      setTimeout(() => {
+        signIn(email, password);
+      }, 500);
     }
     setLoading(false);
   }

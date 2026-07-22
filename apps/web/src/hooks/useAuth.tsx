@@ -31,6 +31,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
+
+      if (_event === 'SIGNED_IN' && session?.user) {
+        supabase.from('profiles').upsert({
+          id: session.user.id,
+          email: session.user.email,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'id' });
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -42,8 +50,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signUp(email: string, password: string) {
-    const { error } = await supabase.auth.signUp({ email, password });
-    return { error: error?.message };
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) return { error: error.message };
+
+    if (data.user) {
+      await supabase.from('profiles').upsert({
+        id: data.user.id,
+        email: data.user.email,
+      }, { onConflict: 'id' });
+    }
+    return {};
   }
 
   async function signOut() {
