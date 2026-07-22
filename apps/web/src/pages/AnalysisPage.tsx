@@ -1,3 +1,4 @@
+import MissTrend from '@/components/analysis/MissTrend';
 import { useDraws } from '@/hooks/useDraws';
 import { useNumberStats } from '@/hooks/useNumberStats';
 import NumberGrid from '@/components/analysis/NumberGrid';
@@ -169,6 +170,7 @@ export default function AnalysisPage() {
       </div>
 
       <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+      {stats.length > 0 && <MissTrend stats={stats} />}
         <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">{t('miss_ranking')}</h3>
         <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
           {[...stats].sort((a, b) => b.currentMiss - a.currentMiss).slice(0, 20).map((s, i) => (
