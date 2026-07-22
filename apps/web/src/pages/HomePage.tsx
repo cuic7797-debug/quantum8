@@ -125,17 +125,20 @@ export default function HomePage() {
       )}
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4 text-center">
+        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4 text-center hover:border-[var(--color-primary)]/30 transition-colors">
+          <div className="text-lg mb-1">📊</div>
           <div className="text-xs text-[var(--color-muted)] mb-1">{t('total_draws')}</div>
           <div className="text-2xl font-bold">{draws.length}</div>
           <div className="text-xs text-[var(--color-muted)]">{t('periods')}</div>
         </div>
-        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4 text-center">
+        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4 text-center hover:border-amber-500/30 transition-colors">
+          <div className="text-lg mb-1">📈</div>
           <div className="text-xs text-[var(--color-muted)] mb-1">{t('avg_sum_10')}</div>
           <div className="text-2xl font-bold font-mono">{avgSum}</div>
           <div className="text-xs text-[var(--color-muted)]">{t('sum')}</div>
         </div>
-        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4 text-center">
+        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4 text-center hover:border-red-500/30 transition-colors">
+          <div className="text-lg mb-1">🔥</div>
           <div className="text-xs text-[var(--color-muted)] mb-1">{t('hot_numbers_10')}</div>
           <div className="flex justify-center gap-1">
             {hotNumbers.slice(0, 3).map(([n]) => (
@@ -143,7 +146,8 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4 text-center">
+        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4 text-center hover:border-blue-500/30 transition-colors">
+          <div className="text-lg mb-1">⚖️</div>
           <div className="text-xs text-[var(--color-muted)] mb-1">{t('odd_even_ratio')}</div>
           <div className="text-2xl font-bold font-mono">{latestDraw.odd_count}:{latestDraw.even_count}</div>
           <div className="text-xs text-[var(--color-muted)]">{t('latest_draw')}</div>
