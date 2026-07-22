@@ -1,47 +1,38 @@
-# ⚡ Quantum8
+# Quantum8 - 快乐八数据分析平台
 
-快乐八智能量化分析系统
+一个围绕数据分析、策略研究和历史验证构建的专业快乐八分析工具。
 
-> 基于概率统计的多层数据分析工具。本工具仅提供数据分析，不构成投注建议。彩票有风险，投注需理性。
+## 功能
+
+- **首页** - 最新开奖、号码热力图、走势概览、数据刷新
+- **走势分析** - 热号/冷号排行、频次图、和值/奇偶/大小/跨度/区间趋势、遗漏排行、遗漏趋势
+- **智能选号** - 选一到选十，3种预设策略 + 自定义模式，AI 评分排序
+- **策略实验室** - 创建/编辑/删除自定义策略，运行生成，策略对比
+- **策略回测** - 随机/策略两种模式，命中分布、奖金对照、ROI 计算
+- **AI 分析报告** - 自动生成数据摘要、热冷号分析、走势判断、常见组合
+- **历史记录** - 核奖验奖、选号记录管理、导出 TXT
 
 ## 技术栈
 
-- **Web**: React + Vite + TypeScript + Tailwind CSS
-- **Mobile**: Expo (React Native)
-- **Backend**: Supabase (PostgreSQL + Edge Functions + Auth)
-- **Algorithm**: 自研 Quantum Engine 五层分析模型
-- **Deploy**: Cloudflare Pages (Web) / EAS (Mobile)
-- **CI/CD**: GitHub Actions
+- **Web**: React + TypeScript + Vite + Tailwind CSS
+- **Mobile**: Expo (规划中)
+- **后端**: Supabase (PostgreSQL + Edge Functions)
+- **算法**: Quantum Engine (概率、遗漏、网络、过滤、评分)
+- **部署**: Cloudflare Pages
 
-## 快速开始
+## 开发
 
 ```bash
-# 安装依赖
 pnpm install
-
-# 启动 Web
 pnpm dev:web
-
-# 启动 Mobile
-pnpm dev:mobile
 ```
 
-## 项目结构
+## 部署
 
-```
-quantum8/
-├── apps/
-│   ├── web/          # React + Vite 前端
-│   ├── mobile/       # Expo 移动端
-│   └── supabase/     # Edge Functions
-├── packages/
-│   ├── algorithm/    # Quantum Engine 核心算法
-│   ├── types/        # 共享类型定义
-│   └── ui/           # 共享 UI 组件
-├── scripts/          # 数据种子、工具脚本
-└── docs/             # 设计文档
-```
+1. 在 Cloudflare 创建 Pages 项目
+2. 在 GitHub Secrets 添加 `CLOUDFLARE_API_TOKEN` 和 `CLOUDFLARE_ACCOUNT_ID`
+3. Push 到 main 分支自动部署
 
-## 许可
+## 免责声明
 
-私有项目。版权所有。
+⚠ 本工具仅提供历史数据统计分析，不构成投注建议。彩票有风险，投注需理性。

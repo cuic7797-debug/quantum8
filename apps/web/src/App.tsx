@@ -1,25 +1,40 @@
+import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
-import HomePage from './pages/HomePage';
-import AnalysisPage from './pages/AnalysisPage';
-import SelectionPage from './pages/SelectionPage';
-import BacktestPage from './pages/BacktestPage';
-import HistoryPage from './pages/HistoryPage';
-import StrategyPage from './pages/StrategyPage';
-import ReportPage from './pages/ReportPage';
+
+const HomePage = lazy(() => import('./pages/HomePage'));
+const AnalysisPage = lazy(() => import('./pages/AnalysisPage'));
+const SelectionPage = lazy(() => import('./pages/SelectionPage'));
+const BacktestPage = lazy(() => import('./pages/BacktestPage'));
+const HistoryPage = lazy(() => import('./pages/HistoryPage'));
+const StrategyPage = lazy(() => import('./pages/StrategyPage'));
+const ReportPage = lazy(() => import('./pages/ReportPage'));
+
+function Loading() {
+  return (
+    <div className="flex items-center justify-center h-64">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
+        <span className="text-sm text-[var(--color-muted)]">加载中...</span>
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
   return (
     <Layout>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/analysis" element={<AnalysisPage />} />
-        <Route path="/selection" element={<SelectionPage />} />
-        <Route path="/strategy" element={<StrategyPage />} />
-        <Route path="/backtest" element={<BacktestPage />} />
-        <Route path="/report" element={<ReportPage />} />
-        <Route path="/history" element={<HistoryPage />} />
-      </Routes>
+      <Suspense fallback={<Loading />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/analysis" element={<AnalysisPage />} />
+          <Route path="/selection" element={<SelectionPage />} />
+          <Route path="/strategy" element={<StrategyPage />} />
+          <Route path="/backtest" element={<BacktestPage />} />
+          <Route path="/report" element={<ReportPage />} />
+          <Route path="/history" element={<HistoryPage />} />
+        </Routes>
+      </Suspense>
     </Layout>
   );
 }
