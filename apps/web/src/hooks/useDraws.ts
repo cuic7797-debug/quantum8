@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/utils/supabase';
 
 export interface Draw {
@@ -25,23 +25,20 @@ export function useDraws(limit = 20) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchDraws() {
-      const { data, error } = await supabase
-        .from('draws')
-        .select('*')
-        .order('draw_date', { ascending: false })
-        .limit(limit);
+  const fetchDraws = useCallback(async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('draws')
+      .select('*')
+      .order('draw_date', { ascending: false })
+      .limit(limit);
 
-      if (error) {
-        setError(error.message);
-      } else {
-        setDraws(data || []);
-      }
-      setLoading(false);
-    }
-    fetchDraws();
+    if (error) setError(error.message);
+    else { setDraws(data || []); setError(null); }
+    setLoading(false);
   }, [limit]);
 
-  return { draws, loading, error };
+  useEffect(() => { fetchDraws(); }, [fetchDraws]);
+
+  return { draws, loading, error, refetch: fetchDraws };
 }

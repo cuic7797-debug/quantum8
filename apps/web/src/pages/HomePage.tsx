@@ -1,21 +1,64 @@
+import { useState } from 'react';
 import { useDraws } from '@/hooks/useDraws';
 import { useNumberStats } from '@/hooks/useNumberStats';
 import LatestDrawCard from '@/components/draws/LatestDrawCard';
 import DrawHistory from '@/components/draws/DrawHistory';
 import NumberGrid from '@/components/analysis/NumberGrid';
 import HotColdRanking from '@/components/analysis/HotColdRanking';
+import { SkeletonCard, SkeletonGrid } from '@/components/common/Skeleton';
+import { supabase } from '@/utils/supabase';
 import { t } from '@/hooks/useI18n';
 
 export default function HomePage() {
-  const { draws, loading: drawsLoading } = useDraws(20);
-  const { stats, loading: statsLoading } = useNumberStats();
+  const { draws, loading: drawsLoading, refetch: refetchDraws } = useDraws(20);
+  const { stats, loading: statsLoading, refetch: refetchStats } = useNumberStats();
+  const [syncing, setSyncing] = useState(false);
+  const [syncMsg, setSyncMsg] = useState('');
+
+  async function handleSync() {
+    setSyncing(true);
+    setSyncMsg('');
+    try {
+      const resp = await fetch('https://gomowvpstlmwcvvgnujo.supabase.co/functions/v1/sync-draws', {
+        method: 'POST',
+        headers: {
+          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+      });
+      const data = await resp.json();
+      if (data.error) {
+        setSyncMsg(`同步失败: ${data.error}`);
+      } else {
+        setSyncMsg(`同步完成: 新增 ${data.inserted} 期，跳过 ${data.skipped} 期`);
+        refetchDraws();
+        refetchStats();
+      }
+    } catch (err) {
+      setSyncMsg('同步失败，请检查网络');
+    }
+    setSyncing(false);
+    setTimeout(() => setSyncMsg(''), 5000);
+  }
 
   if (drawsLoading || statsLoading)
-    return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('loading')}</div>;
+    return (
+      <div className="space-y-6">
+        <SkeletonCard />
+        <SkeletonCard />
+        <SkeletonGrid />
+        <SkeletonCard />
+      </div>
+    );
+
   if (draws.length === 0)
     return <div className="flex flex-col items-center justify-center h-64 gap-4">
       <div className="text-4xl">Q8</div>
       <div className="text-[var(--color-muted)]">{t('no_data')}</div>
+      <button onClick={handleSync} disabled={syncing}
+        className="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white text-sm font-semibold hover:bg-[var(--color-primary)]/80 disabled:opacity-50">
+        {syncing ? '同步中...' : '同步数据'}
+      </button>
     </div>;
 
   const latestDraw = draws[0];
@@ -26,11 +69,30 @@ export default function HomePage() {
   const sumTrend = recent10.map(d => d.sum_value);
   const avgSum = Math.round(sumTrend.reduce((a, b) => a + b, 0) / sumTrend.length);
 
+  const lastUpdate = latestDraw?.draw_date || '';
+
   return (
     <div className="space-y-6">
       <div className="text-xs text-[var(--color-muted)] bg-[var(--color-surface)] rounded-lg px-4 py-2 border border-[var(--color-border)]">
         {t('disclaimer')}
       </div>
+
+      {/* Data Status Bar */}
+      <div className="flex items-center justify-between bg-[var(--color-surface)] rounded-lg px-4 py-2 border border-[var(--color-border)]">
+        <div className="text-xs text-[var(--color-muted)]">
+          数据截至: {lastUpdate} | 共 {draws.length} 期
+        </div>
+        <button onClick={handleSync} disabled={syncing}
+          className="text-xs px-3 py-1 rounded-lg bg-[var(--color-primary)]/15 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/25 disabled:opacity-50 transition-all">
+          {syncing ? '⏳ 同步中...' : '🔄 刷新数据'}
+        </button>
+      </div>
+
+      {syncMsg && (
+        <div className={`text-xs text-center py-2 rounded-lg ${syncMsg.includes('失败') ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
+          {syncMsg}
+        </div>
+      )}
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4 text-center">
@@ -62,6 +124,10 @@ export default function HomePage() {
       {stats.length > 0 && <NumberGrid stats={stats} />}
       {stats.length > 0 && <HotColdRanking stats={stats} />}
       <DrawHistory draws={draws.slice(1)} />
+
+      <footer className="text-center text-[10px] text-[var(--color-muted)] py-4">
+        Quantum8 v1.0 · 数据分析工具 · 不构成投注建议
+      </footer>
     </div>
   );
 }

@@ -21,6 +21,7 @@ export default function SelectionPage() {
   const [res, setRes] = useState<ScoreResult[]>([]);
   const [gen, setGen] = useState(false);
   const [showSaveMsg, setShowSaveMsg] = useState<number | null>(null);
+  const [savedCount, setSavedCount] = useState(0);
   const pc = PT.indexOf(pt) + 1;
 
   function go() {
@@ -50,6 +51,7 @@ export default function SelectionPage() {
     });
     localStorage.setItem(key, JSON.stringify(existing.slice(0, 50)));
     setShowSaveMsg(index);
+    setSavedCount(c => c + 1);
     setTimeout(() => setShowSaveMsg(null), 1500);
   }
 
@@ -65,17 +67,24 @@ export default function SelectionPage() {
     });
     localStorage.setItem(key, JSON.stringify(existing.slice(0, 50)));
     setShowSaveMsg(-1);
+    setSavedCount(res.length);
     setTimeout(() => setShowSaveMsg(null), 1500);
   }
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold">{t('smart_pick')}</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold">{t('smart_pick')}</h2>
+        {savedCount > 0 && (
+          <a href="/history" className="text-xs text-[var(--color-primary)] hover:underline">
+            已保存 {savedCount} 组 → 查看记录
+          </a>
+        )}
+      </div>
       <div className="text-xs text-[var(--color-muted)] bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-2">
         {t('pick_ref_only')}
       </div>
 
-      {/* Step 1: Play Type */}
       <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
         <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">{t('step1_play')}</h3>
         <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
@@ -88,7 +97,6 @@ export default function SelectionPage() {
         </div>
       </div>
 
-      {/* Step 2: Strategy */}
       <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
         <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">{t('step2_strategy')}</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -108,23 +116,24 @@ export default function SelectionPage() {
         </div>
       </div>
 
-      {/* Generate Button */}
       <button onClick={go} disabled={gen || !stats.length}
         className="w-full py-4 rounded-xl bg-[var(--color-primary)] text-white font-bold text-lg hover:bg-[var(--color-primary)]/80 disabled:opacity-50 transition-all shadow-lg shadow-[var(--color-primary)]/25">
         {gen ? t('generating') : `${t('generate')} ${pt} ${t('recommend')}`}
       </button>
 
-      {/* Results */}
       {res.length > 0 && (
         <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-[var(--color-muted)]">AI {t('recommend')} {pt}（共{res.length}组）</h3>
-            <button onClick={saveAll} className="text-xs text-[var(--color-primary)] hover:underline">全部保存</button>
+            <div className="flex gap-3">
+              <button onClick={saveAll} className="text-xs text-[var(--color-primary)] hover:underline">{t('save_all')}</button>
+              <a href="/history" className="text-xs text-[var(--color-muted)] hover:text-white">查看记录 →</a>
+            </div>
           </div>
 
           {showSaveMsg === -1 && (
             <div className="mb-3 text-center text-sm text-emerald-400 bg-emerald-500/10 rounded-lg py-2">
-              ✓ 已保存全部{res.length}组号码
+              ✓ {t('saved_all')}{res.length}组号码
             </div>
           )}
 
@@ -153,24 +162,11 @@ export default function SelectionPage() {
                     {showSaveMsg === i ? '✓ 已保存' : '保存'}
                   </button>
                 </div>
-                {/* Score breakdown */}
                 <div className="grid grid-cols-4 gap-2 mt-2 text-[10px]">
-                  <div className="text-center">
-                    <div className="text-[var(--color-muted)]">概率</div>
-                    <div className="font-mono font-bold">{r.probabilityScore}</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-[var(--color-muted)]">冷热</div>
-                    <div className="font-mono font-bold">{r.hotColdScore}</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-[var(--color-muted)]">结构</div>
-                    <div className="font-mono font-bold">{r.structureScore}</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-[var(--color-muted)]">遗漏</div>
-                    <div className="font-mono font-bold">{r.historySimilarity}</div>
-                  </div>
+                  <div className="text-center"><div className="text-[var(--color-muted)]">{t('probability')}</div><div className="font-mono font-bold">{r.probabilityScore}</div></div>
+                  <div className="text-center"><div className="text-[var(--color-muted)]">{t('hot_cold')}</div><div className="font-mono font-bold">{r.hotColdScore}</div></div>
+                  <div className="text-center"><div className="text-[var(--color-muted)]">{t('structure')}</div><div className="font-mono font-bold">{r.structureScore}</div></div>
+                  <div className="text-center"><div className="text-[var(--color-muted)]">{t('miss_value')}</div><div className="font-mono font-bold">{r.historySimilarity}</div></div>
                 </div>
               </div>
             ))}

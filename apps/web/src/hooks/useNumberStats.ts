@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/utils/supabase';
 import type { NumberStat } from '@quantum8/types';
 
@@ -24,17 +24,17 @@ export function useNumberStats() {
   const [stats, setStats] = useState<NumberStat[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchStats() {
-      const { data } = await supabase
-        .from('number_stats')
-        .select('*')
-        .order('number', { ascending: true });
-      setStats((data || []).map(mapRow));
-      setLoading(false);
-    }
-    fetchStats();
+  const fetchStats = useCallback(async () => {
+    setLoading(true);
+    const { data } = await supabase
+      .from('number_stats')
+      .select('*')
+      .order('number', { ascending: true });
+    setStats((data || []).map(mapRow));
+    setLoading(false);
   }, []);
 
-  return { stats, loading };
+  useEffect(() => { fetchStats(); }, [fetchStats]);
+
+  return { stats, loading, refetch: fetchStats };
 }
