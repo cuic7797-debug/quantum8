@@ -13,6 +13,10 @@ export default class ErrorBoundary extends React.Component<Props, State> {
     return { hasError: true, error };
   }
 
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    console.error('ErrorBoundary caught:', error, info);
+  }
+
   render() {
     if (this.state.hasError) {
       return (
@@ -20,13 +24,19 @@ export default class ErrorBoundary extends React.Component<Props, State> {
           <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-8 max-w-md text-center space-y-4">
             <div className="text-4xl">⚠️</div>
             <h2 className="text-xl font-bold">页面出错了</h2>
-            <p className="text-sm text-[var(--color-muted)]">
+            <p className="text-sm text-[var(--color-muted)] break-all">
               {this.state.error?.message || '发生了未知错误'}
             </p>
-            <button onClick={() => { this.setState({ hasError: false, error: null }); window.location.href = '/'; }}
-              className="px-6 py-2.5 rounded-xl bg-[var(--color-primary)] text-white font-semibold hover:bg-[var(--color-primary)]/80 transition-all">
-              返回首页
-            </button>
+            <div className="flex gap-3 justify-center">
+              <button onClick={() => this.setState({ hasError: false, error: null })}
+                className="px-4 py-2 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-muted)] hover:text-white transition-all text-sm">
+                重试
+              </button>
+              <button onClick={() => { this.setState({ hasError: false, error: null }); window.location.assign('/'); }}
+                className="px-6 py-2 rounded-xl bg-[var(--color-primary)] text-white font-semibold hover:bg-[var(--color-primary)]/80 transition-all">
+                返回首页
+              </button>
+            </div>
           </div>
         </div>
       );
