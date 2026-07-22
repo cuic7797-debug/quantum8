@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDraws } from '@/hooks/useDraws';
 import NumberBall from '@/components/common/NumberBall';
-import { generateRandomCombination } from '@quantum8/algorithm';
-import type { PlayType } from '@quantum8/types';
+import { generateRandomCombination, applyFilters } from '@quantum8/algorithm';
+import type { PlayType, StrategyConfig } from '@quantum8/types';
 import { t } from '@/hooks/useI18n';
 
 const PT = [t('play5'), t('play6'), t('play7'), t('play8'), t('play9'), t('play10')];
@@ -18,13 +18,29 @@ const PRIZE: Record<string, Record<number, number>> = {
 interface Row { p: string; n: number[]; h: number; pr: number; hits: number[]; }
 interface Sum { r: number; b: number; hi: number; hr: number; c: number; pr: number; roi: number; rows: Row[]; maxPrize: number; hitDistribution: Record<number, number>; }
 
+interface SavedStrategy {
+  id: string; name: string; playType: PlayType;
+  hotCount: number; coldCount: number; balanceCount: number; zoneBalance: boolean;
+  sumRange: [number, number]; oddEvenRange: [number, number]; maxConsecutive: number;
+}
+
 export default function BacktestPage() {
   const { draws } = useDraws(500);
   const [pt, setPt] = useState<PlayType>(t('play10') as PlayType);
   const [bc, setBc] = useState(1);
   const [res, setRes] = useState<Sum | null>(null);
   const [run, setRun] = useState(false);
+  const [useStrategy, setUseStrategy] = useState(false);
+  const [savedStrategies, setSavedStrategies] = useState<SavedStrategy[]>([]);
+  const [selectedStrategy, setSelectedStrategy] = useState<string>('');
   const pc = PT.indexOf(pt) + 5;
+
+  useEffect(() => {
+    try {
+      const all = JSON.parse(localStorage.getItem('quantum8_strategies') || '[]');
+      setSavedStrategies(all);
+    } catch { setSavedStrategies([]); }
+  }, []);
 
   function go() {
     if (draws.length < 10) return;
@@ -35,11 +51,33 @@ export default function BacktestPage() {
       const rows: Row[] = [];
       let th = 0, tp = 0, mp = 0;
       const hitDist: Record<number, number> = {};
+
+      // Get strategy config if using saved strategy
+      let strategyCfg: StrategyConfig | null = null;
+      if (useStrategy && selectedStrategy) {
+        const s = savedStrategies.find(x => x.id === selectedStrategy);
+        if (s) {
+          strategyCfg = {
+            hotCount: s.hotCount, coldCount: s.coldCount, balanceCount: s.balanceCount,
+            zoneBalance: s.zoneBalance, sumRange: s.sumRange, oddEvenRange: s.oddEvenRange,
+            maxConsecutive: s.maxConsecutive,
+          };
+        }
+      }
+
       for (let i = 0; i < td.length; i++) {
         const tgt = td[i].numbers;
         let bh = 0, bhHits: number[] = [];
         for (let b = 0; b < bc; b++) {
-          const p = generateRandomCombination(pc);
+          let p: number[];
+          if (strategyCfg) {
+            // Generate with strategy filters
+            const batch = generateRandomCombination(pc);
+            const filtered = applyFilters([batch], strategyCfg);
+            p = filtered.length > 0 ? filtered[0] : batch;
+          } else {
+            p = generateRandomCombination(pc);
+          }
           const hits = p.filter(n => tgt.includes(n));
           if (hits.length > bh) { bh = hits.length; bhHits = hits; }
         }
@@ -63,6 +101,7 @@ export default function BacktestPage() {
       <div className="text-xs text-[var(--color-muted)] bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-2">{t('backtest_ref')}</div>
 
       <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
+        {/* Play Type */}
         <div>
           <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-2">{t('play_type')}</h3>
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
@@ -74,6 +113,8 @@ export default function BacktestPage() {
             ))}
           </div>
         </div>
+
+        {/* Bets per draw */}
         <div>
           <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-2">{t('bets_per_draw')}</h3>
           <div className="flex gap-2">
@@ -85,7 +126,31 @@ export default function BacktestPage() {
             ))}
           </div>
         </div>
-        <button onClick={go} disabled={run || draws.length < 10}
+
+        {/* Strategy Selection */}
+        {savedStrategies.length > 0 && (
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <h3 className="text-sm font-semibold text-[var(--color-muted)]">使用策略回测</h3>
+              <button onClick={() => setUseStrategy(!useStrategy)}
+                className={`text-xs px-3 py-1 rounded-full transition-all ${useStrategy ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--color-bg)] text-[var(--color-muted)] hover:bg-[var(--color-border)]'}`}>
+                {useStrategy ? '策略模式' : '随机模式'}
+              </button>
+            </div>
+            {useStrategy && (
+              <div className="flex flex-wrap gap-2">
+                {savedStrategies.map(s => (
+                  <button key={s.id} onClick={() => setSelectedStrategy(s.id)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${selectedStrategy === s.id ? 'bg-[var(--color-primary)] text-white shadow' : 'bg-[var(--color-bg)] text-[var(--color-muted)] hover:bg-[var(--color-border)]'}`}>
+                    {s.name} ({s.playType})
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        <button onClick={go} disabled={run || draws.length < 10 || (useStrategy && !selectedStrategy)}
           className="w-full py-3 rounded-xl bg-[var(--color-primary)] text-white font-bold text-lg hover:bg-[var(--color-primary)]/80 disabled:opacity-50 shadow-lg">
           {run ? t('backtesting') : `${t('run_backtest')}（${Math.min(draws.length - 1, 500)}期）`}
         </button>
