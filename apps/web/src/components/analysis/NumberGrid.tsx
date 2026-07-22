@@ -19,8 +19,8 @@ export default function NumberGrid({ stats }: Props) {
         })}
       </div>
       <div className="flex justify-between mt-3 text-[10px] text-[var(--color-muted)]">
-        <span>红色=热号（近期高频）</span>
-        <span>白色=冷号（近期低频）</span>
+        <span>● 热号</span>
+        <span>○ 冷号</span>
       </div>
     </div>
   );

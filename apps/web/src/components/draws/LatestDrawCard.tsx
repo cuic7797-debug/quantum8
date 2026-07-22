@@ -16,9 +16,9 @@ export default function LatestDrawCard({ draw }: Props) {
       </div>
       <div className="grid grid-cols-4 gap-3 text-center">
         <div className="bg-[var(--color-bg)] rounded-lg p-2"><div className="text-xs text-[var(--color-muted)]">和值</div><div className="font-bold font-mono">{draw.sum_value}</div></div>
-        <div className="bg-[var(--color-bg)] rounded-lg p-2"><div className="text-xs text-[var(--color-muted)]奇偶</div><div className="font-bold font-mono">{draw.odd_count}:{draw.even_count}</div></div>
+        <div className="bg-[var(--color-bg)] rounded-lg p-2"><div className="text-xs text-[var(--color-muted)]">奇偶</div><div className="font-bold font-mono">{draw.odd_count}:{draw.even_count}</div></div>
         <div className="bg-[var(--color-bg)] rounded-lg p-2"><div className="text-xs text-[var(--color-muted)]">大小</div><div className="font-bold font-mono">{draw.big_count}:{draw.small_count}</div></div>
-        <div className="bg-[var(--color-bg)] rounded-lg p-2"><div className="text-xs text-[var(--color-muted)]">连号</div><div className="font-bold font-mono">{draw.consecutive_count}组</div></div>
+        <div className="bg-[var(--color-bg)] rounded-lg p-2"><div className="text-xs text-[var(--color-muted)]">连号</div><div className="font-bold font-mono">{draw.consecutive_count}</div></div>
       </div>
     </div>
   );

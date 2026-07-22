@@ -1,6 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Home, BarChart3, Crosshair, FlaskConical, Clock } from 'lucide-react';
-
 const navItems = [
   { path: '/', label: '首页', icon: Home },
   { path: '/analysis', label: '走势分析', icon: BarChart3 },
@@ -8,7 +7,6 @@ const navItems = [
   { path: '/backtest', label: '策略回测', icon: FlaskConical },
   { path: '/history', label: '历史记录', icon: Clock },
 ];
-
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   return (
@@ -23,8 +21,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <nav className="border-t border-[var(--color-border)] bg-[var(--color-surface)]">
         <div className="max-w-7xl mx-auto flex justify-around py-2">
           {navItems.map(({ path, label, icon: Icon }) => (
-            <Link key={path} to={path}
-              className={`flex flex-col items-center gap-1 px-3 py-1 text-xs transition-colors ${location.pathname === path ? 'text-[var(--color-primary)]' : 'text-[var(--color-muted)] hover:text-white'}`}>
+            <Link key={path} to={path} className={}>
               <Icon size={20} />
               <span>{label}</span>
             </Link>
