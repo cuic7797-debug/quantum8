@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, BarChart3, Crosshair, FlaskConical, Clock, Beaker, FileText, Database, Menu, X, User, Scissors, Grid3X3 } from 'lucide-react';
+import { Home, BarChart3, Crosshair, FlaskConical, Clock, Beaker, FileText, Database, Menu, X, User, Scissors, Grid3X3, Shrink } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { t } from '@/hooks/useI18n';
@@ -14,6 +14,7 @@ const navItems = [
   { path: '/data', label: '数据管理', icon: Database, key: '7' },
   { path: '/kill', label: '杀号工具', icon: Scissors, key: '9' },
   { path: '/matrix', label: '旋转矩阵', icon: Grid3X3, key: '0' },
+  { path: '/shrink', label: '智能缩水', icon: Shrink, key: '-' },
   { path: '/history', label: t('nav.history'), icon: Clock, key: '8' },
 ];
 

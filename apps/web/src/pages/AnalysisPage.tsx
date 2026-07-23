@@ -12,6 +12,7 @@ import ProfessionalTrends from '@/components/analysis/ProfessionalTrends';
 import MissDashboard from '@/components/analysis/MissDashboard';
 import NumberCompare from '@/components/analysis/NumberCompare';
 import NumberHeatmap from '@/components/analysis/NumberHeatmap';
+import AdvancedAnalysis from '@/components/analysis/AdvancedAnalysis';
 import { t } from '@/hooks/useI18n';
 
 export default function AnalysisPage() {
@@ -86,6 +87,10 @@ export default function AnalysisPage() {
 
       <Collapsible title="🔍 号码模式识别" step={9} defaultOpen={false}>
         <PatternDetection />
+      </Collapsible>
+
+      <Collapsible title="📊 专业数据分析（AC值/012路/尾数/重号邻号/跨度/和值区间）" defaultOpen={false}>
+        <AdvancedAnalysis />
       </Collapsible>
 
       <Collapsible title="🔗 号码共现矩阵" step={10} defaultOpen={false}>

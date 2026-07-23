@@ -2,20 +2,17 @@ export { calculateProbability, calculateFromRaw } from './probability';
 export { getMissIndex, sortByMissIndex, getMissTopN, isOverdue } from './miss';
 export { buildCoAppearMatrix, getTopPairs, getPairsForNumber } from './network';
 export {
-  generateRandomCombination,
-  generateBatch,
-  filterBySum,
-  filterByOddEven,
-  filterByZone,
-  filterByConsecutive,
-  applyFilters,
+  generateRandomCombination, generateBatch,
+  filterBySum, filterByOddEven, filterByZone, filterByConsecutive, applyFilters,
 } from './filter';
 export { scoreCombination } from './scorer';
 export {
-  markovTransition,
-  bayesianInference,
-  calculateEntropy,
-  findAssociationRules,
-  ensembleScoring,
-  trendRegression,
+  markovTransition, bayesianInference, calculateEntropy,
+  findAssociationRules, ensembleScoring, trendRegression,
 } from './advanced';
+export { greedyShrink, weightedShrink } from './shrink';
+export {
+  calcACValue, acDistribution, calc012Road, road012Trend,
+  tailAnalysis, relationAnalysis, relationTrend,
+  spanDistribution, sumProbabilityRange,
+} from './analysis';
