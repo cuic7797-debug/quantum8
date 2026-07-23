@@ -5,6 +5,8 @@ import NumberGrid from '@/components/analysis/NumberGrid';
 import HotColdRanking from '@/components/analysis/HotColdRanking';
 import NumberBall from '@/components/common/NumberBall';
 import CorrelationMatrix from '@/components/analysis/CorrelationMatrix';
+import NumberLifecycle from '@/components/analysis/NumberLifecycle';
+import TrendAnalysis from '@/components/analysis/TrendAnalysis';
 import { t } from '@/hooks/useI18n';
 
 export default function AnalysisPage() {
@@ -183,6 +185,10 @@ export default function AnalysisPage() {
           ))}
         </div>
       </div>
+
+      <TrendAnalysis />
+
+      <NumberLifecycle />
 
       <CorrelationMatrix />
     </div>
