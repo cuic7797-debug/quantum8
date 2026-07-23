@@ -1,3 +1,4 @@
+import MonteCarloSim from '@/components/backtest/MonteCarloSim';
 import { useState, useEffect } from 'react';
 import { useDraws } from '@/hooks/useDraws';
 import NumberBall from '@/components/common/NumberBall';

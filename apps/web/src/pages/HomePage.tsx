@@ -1,3 +1,4 @@
+import StatsOverview from '@/components/dashboard/StatsOverview';
 import NumberTrendMini from '@/components/analysis/NumberTrendMini';
 import { useState } from 'react';
 import { useDraws } from '@/hooks/useDraws';
