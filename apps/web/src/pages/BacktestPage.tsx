@@ -3,6 +3,8 @@ import { useDraws } from '@/hooks/useDraws';
 import NumberBall from '@/components/common/NumberBall';
 import { generateRandomCombination, applyFilters } from '@quantum8/algorithm';
 import type { PlayType, StrategyConfig } from '@quantum8/types';
+import { useAuth } from '@/hooks/useAuth';
+import { useUserStrategies } from '@/hooks/useUserStrategies';
 import { t } from '@/hooks/useI18n';
 
 const PT = [t('play5'), t('play6'), t('play7'), t('play8'), t('play9'), t('play10')];
@@ -33,14 +35,24 @@ export default function BacktestPage() {
   const [useStrategy, setUseStrategy] = useState(false);
   const [savedStrategies, setSavedStrategies] = useState<SavedStrategy[]>([]);
   const [selectedStrategy, setSelectedStrategy] = useState<string>('');
+  const { user } = useAuth();
+  const cloud = useUserStrategies();
   const pc = PT.indexOf(pt) + 5;
 
   useEffect(() => {
-    try {
-      const all = JSON.parse(localStorage.getItem('quantum8_strategies') || '[]');
-      setSavedStrategies(all);
-    } catch { setSavedStrategies([]); }
-  }, []);
+    if (user && cloud.strategies.length > 0) {
+      const mapped = cloud.strategies.map(cs => ({
+        id: cs.id, name: cs.name, playType: (cs.config as any).playType || t('play10') as PlayType,
+        hotCount: (cs.config as any).hotCount || 4, coldCount: (cs.config as any).coldCount || 4,
+        balanceCount: (cs.config as any).balanceCount || 2, zoneBalance: (cs.config as any).zoneBalance ?? true,
+        sumRange: (cs.config as any).sumRange || [400, 1200], oddEvenRange: (cs.config as any).oddEvenRange || [5, 15],
+        maxConsecutive: (cs.config as any).maxConsecutive || 3,
+      }));
+      setSavedStrategies(mapped);
+    } else if (!user) {
+      try { setSavedStrategies(JSON.parse(localStorage.getItem('quantum8_strategies') || '[]')); } catch { setSavedStrategies([]); }
+    }
+  }, [user, cloud.strategies]);
 
   function go() {
     if (draws.length < 10) return;
