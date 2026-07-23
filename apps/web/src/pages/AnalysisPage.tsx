@@ -7,6 +7,7 @@ import NumberBall from '@/components/common/NumberBall';
 import CorrelationMatrix from '@/components/analysis/CorrelationMatrix';
 import NumberLifecycle from '@/components/analysis/NumberLifecycle';
 import TrendAnalysis from '@/components/analysis/TrendAnalysis';
+import PatternDetection from '@/components/analysis/PatternDetection';
 import { t } from '@/hooks/useI18n';
 
 export default function AnalysisPage() {
@@ -189,6 +190,8 @@ export default function AnalysisPage() {
       <TrendAnalysis />
 
       <NumberLifecycle />
+
+      <PatternDetection />
 
       <CorrelationMatrix />
     </div>
