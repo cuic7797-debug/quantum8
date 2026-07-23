@@ -4,6 +4,7 @@ import { useDraws } from '@/hooks/useDraws';
 import NumberBall from '@/components/common/NumberBall';
 import Collapsible from '@/components/common/Collapsible';
 import CopyButton from '@/components/common/CopyButton';
+import NumberGroups from '@/components/selection/NumberGroups';
 import { applyFilters, generateBatch, scoreCombination } from '@quantum8/algorithm';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserPicks } from '@/hooks/useUserPicks';
@@ -167,6 +168,11 @@ export default function SelectionPage() {
             </button>
           ))}
         </div>
+      </Collapsible>
+
+      {/* 号码分组 */}
+      <Collapsible title="📁 号码分组" badge="自定义分组" defaultOpen={false}>
+        <NumberGroups onSelect={(nums) => { if (betMode === 'compound') setSelectedNums(nums); }} />
       </Collapsible>
 
       {/* Step 2: 选择玩法 */}

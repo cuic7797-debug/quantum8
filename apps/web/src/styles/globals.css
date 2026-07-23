@@ -83,3 +83,15 @@ a, button { transition: all 0.15s ease; }
 @supports (padding: env(safe-area-inset-bottom)) {
   body { padding-bottom: env(safe-area-inset-bottom); }
 }
+
+/* Light Theme */
+.light-theme {
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-border: #e2e8f0;
+  --color-text: #0f172a;
+  --color-muted: #64748b;
+  --color-primary: #2563eb;
+}
+
+.light-theme body { background-color: var(--color-bg); color: var(--color-text); }

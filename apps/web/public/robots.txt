@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://5811938f.quantum8.pages.dev/sitemap.xml

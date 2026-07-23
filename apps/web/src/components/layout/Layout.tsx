@@ -2,6 +2,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, BarChart3, Crosshair, FlaskConical, Clock, Beaker, FileText, Database, Menu, X, User, Scissors, Grid3X3, Shrink } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import ThemeToggle from '@/components/common/ThemeToggle';
+import Disclaimer from '@/components/common/Disclaimer';
 import { t } from '@/hooks/useI18n';
 
 const navItems = [
@@ -56,7 +58,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </Link>
           ))}
         </nav>
-        <div className="px-3 py-3 border-t border-[var(--color-border)]">
+        <div className="px-3 py-3 border-t border-[var(--color-border)] flex items-center gap-2">
           <Link to="/auth"
             className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-all rounded-lg ${
               location.pathname === '/auth'
@@ -80,9 +82,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Link>
         </div>
         <div className="px-5 py-3 border-t border-[var(--color-border)]">
-          <div className="text-[10px] text-[var(--color-muted)] leading-relaxed">
-            ⚠ 数据分析工具<br />不构成投注建议
-          </div>
+          <Disclaimer />
           <div className="text-[10px] text-[var(--color-muted)] mt-2 opacity-50">
             快捷键: 1-8 切换页面
           </div>
