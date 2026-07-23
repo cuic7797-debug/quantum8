@@ -227,25 +227,23 @@ export function ensembleScoring(
   const results: EnsembleResult[] = [];
 
   for (const stat of stats) {
-    // 马尔可夫得分
-    const markov = markovTransition(stat.number, draws);
-    const markovScore = markov.predictedProb * 100;
+    let markovScore = 25, bayesianScore = 25, entropyScore = 50, frequencyScore = stat.recent10Rate || 25, missScore = Math.min(100, stat.missRatio || 50);
 
-    // 贝叶斯得分
-    const bayesian = bayesianInference(stat.number, draws);
-    const bayesianScore = bayesian.posteriorProb * 100;
+    try {
+      const markov = markovTransition(stat.number, draws);
+      markovScore = markov.predictedProb * 100;
+    } catch {}
 
-    // 熵得分（稳定性高的得分高）
-    const entropy = calculateEntropy(stat.number, draws);
-    const entropyScore = entropy.stability * 100;
+    try {
+      const bayesian = bayesianInference(stat.number, draws);
+      bayesianScore = bayesian.posteriorProb * 100;
+    } catch {}
 
-    // 频率得分
-    const frequencyScore = stat.recent10Rate;
+    try {
+      const entropy = calculateEntropy(stat.number, draws);
+      entropyScore = entropy.stability * 100;
+    } catch {}
 
-    // 遗漏回补得分
-    const missScore = Math.min(100, stat.missRatio);
-
-    // 加权集成
     const ensembleScore = (
       markovScore * 0.20 +
       bayesianScore * 0.20 +

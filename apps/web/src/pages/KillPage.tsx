@@ -111,7 +111,9 @@ export default function KillPage() {
       reason = `排除下降趋势明显的${killCount}个号码（回归斜率<0）`;
     } else if (strategy === 'ensemble') {
       // 杀集成: 多算法综合评分最低的号码
-      const ensembleResults = ensembleScoring(draws, stats);
+      // Only score top 30 for performance
+      const topStats = [...stats].sort((a, b) => b.hotScore - a.hotScore).slice(0, 30);
+      const ensembleResults = ensembleScoring(draws, topStats);
       killed = ensembleResults.sort((a, b) => a.ensembleScore - b.ensembleScore)
         .slice(0, killCount).map(x => x.number);
       reason = `集成评分（马尔可夫+贝叶斯+熵+频率+遗漏）最低的${killCount}个号码`;

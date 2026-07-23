@@ -4,7 +4,7 @@ import { useDraws } from '@/hooks/useDraws';
 import NumberBall from '@/components/common/NumberBall';
 import Collapsible from '@/components/common/Collapsible';
 import CopyButton from '@/components/common/CopyButton';
-import { applyFilters, generateBatch, scoreCombination, ensembleScoring } from '@quantum8/algorithm';
+import { applyFilters, generateBatch, scoreCombination } from '@quantum8/algorithm';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserPicks } from '@/hooks/useUserPicks';
 import type { ScoreResult } from '@quantum8/types';
@@ -122,20 +122,7 @@ export default function SelectionPage() {
         if (mergedTuo.length >= need) allCombos = getCombos(mergedTuo, need).map(tc => [...danNums, ...tc].sort((a, b) => a - b)).slice(0, resultCount);
       }
 
-      // Ensemble scoring: use advanced algorithms
-        const ensembleResults = ensembleScoring(draws, stats);
-        const ensembleMap = new Map(ensembleResults.map(e => [e.number, e.ensembleScore]));
-
-        // Score each combo with ensemble boost
-        const scored = allCombos.map(nums => {
-          const base = scoreCombination(nums, stats, draws.length);
-          const ensembleBoost = nums.reduce((sum, n) => sum + (ensembleMap.get(n) || 50), 0) / nums.length;
-          return {
-            ...base,
-            totalScore: parseFloat(((base.totalScore * 0.6 + ensembleBoost * 0.4)).toFixed(1)),
-            reasons: [...base.reasons, ensembleBoost > 55 ? '集成高分' : ''].filter(Boolean),
-          };
-        });
+      const scored = allCombos.map(nums => scoreCombination(nums, stats, draws.length));
       setRes(scored);
       setGen(false);
     }, 100);
