@@ -8,6 +8,9 @@ import CorrelationMatrix from '@/components/analysis/CorrelationMatrix';
 import NumberLifecycle from '@/components/analysis/NumberLifecycle';
 import TrendAnalysis from '@/components/analysis/TrendAnalysis';
 import PatternDetection from '@/components/analysis/PatternDetection';
+import ProfessionalTrends from '@/components/analysis/ProfessionalTrends';
+import MissDashboard from '@/components/analysis/MissDashboard';
+import NumberCompare from '@/components/analysis/NumberCompare';
 import { t } from '@/hooks/useI18n';
 
 export default function AnalysisPage() {
@@ -187,7 +190,13 @@ export default function AnalysisPage() {
         </div>
       </div>
 
+      <ProfessionalTrends />
+
       <TrendAnalysis />
+
+      <MissDashboard />
+
+      <NumberCompare />
 
       <NumberLifecycle />
 

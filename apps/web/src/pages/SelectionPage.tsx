@@ -4,6 +4,7 @@ import { useDraws } from '@/hooks/useDraws';
 import NumberBall from '@/components/common/NumberBall';
 import { applyFilters, generateBatch, scoreCombination } from '@quantum8/algorithm';
 import { useAuth } from '@/hooks/useAuth';
+import BettingModes from '@/components/selection/BettingModes';
 import { useUserPicks } from '@/hooks/useUserPicks';
 import { supabase } from '@/utils/supabase';
 import type { ScoreResult, PlayType } from '@quantum8/types';
