@@ -1,0 +1,7 @@
+name = "quantum8-sync"
+main = "sync-draws.js"
+compatibility_date = "2024-01-01"
+
+# 每天北京时间 21:36 = UTC 13:36 触发
+[triggers]
+crons = ["36 13 * * *"]

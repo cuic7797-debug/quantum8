@@ -1,0 +1,14 @@
+{
+  "name": "Quantum8 - 快乐八数据分析平台",
+  "short_name": "Quantum8",
+  "description": "专业的快乐八数据分析、智能选号、策略回测平台",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#3b82f6",
+  "orientation": "any",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

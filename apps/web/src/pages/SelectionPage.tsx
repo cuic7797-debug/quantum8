@@ -30,6 +30,10 @@ function getCombos(arr: number[], k: number): number[][] { if (k === 0 || arr.le
 export default function SelectionPage() {
   const { user } = useAuth();
   const { addPick } = useUserPicks();
+
+  // Load killed numbers
+  let killedNums: number[] = [];
+  try { killedNums = JSON.parse(localStorage.getItem('quantum8_killed_numbers') || '[]'); } catch {}
   const { stats } = useNumberStats();
   const { draws } = useDraws(100);
 
@@ -78,7 +82,26 @@ export default function SelectionPage() {
       let allCombos: number[][] = [];
 
       if (betMode === 'single') {
-        const batch = generateBatch(pc, pc <= 3 ? 8000 : 3000);
+        // Generate pool, excluding killed numbers
+        const generateSafe = (count: number, batchSize: number): number[][] => {
+          const result: number[][] = [];
+          let attempts = 0;
+          while (result.length < batchSize && attempts < batchSize * 3) {
+            attempts++;
+            const pool = Array.from({ length: 80 }, (_, i) => i + 1).filter(n => !killedNums.includes(n));
+            if (pool.length < count) break;
+            const combo: number[] = [];
+            const p = [...pool];
+            for (let i = 0; i < count; i++) {
+              const idx = Math.floor(Math.random() * p.length);
+              combo.push(p[idx]);
+              p.splice(idx, 1);
+            }
+            result.push(combo.sort((a, b) => a - b));
+          }
+          return result;
+        };
+        const batch = generateSafe(pc, pc <= 3 ? 8000 : 3000);
         const filtered = applyFilters(batch, cfg);
         allCombos = filtered.slice(0, 80).map(c => scoreCombination(c, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore).slice(0, resultCount).map(r => r.numbers);
       } else if (betMode === 'compound') {

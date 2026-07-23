@@ -11,6 +11,8 @@ const HistoryPage = lazy(() => import('./pages/HistoryPage'));
 const StrategyPage = lazy(() => import('./pages/StrategyPage'));
 const ReportPage = lazy(() => import('./pages/ReportPage'));
 const DataPage = lazy(() => import('./pages/DataPage'));
+const KillPage = lazy(() => import('./pages/KillPage'));
+const MatrixPage = lazy(() => import('./pages/MatrixPage'));
 const AuthPage = lazy(() => import('./pages/AuthPage'));
 
 function Loading() {
@@ -37,6 +39,8 @@ export default function App() {
           <Route path="/report" element={<ReportPage />} />
           <Route path="/data" element={<DataPage />} />
           <Route path="/history" element={<HistoryPage />} />
+          <Route path="/kill" element={<KillPage />} />
+          <Route path="/matrix" element={<MatrixPage />} />
           <Route path="/auth" element={<AuthPage />} />
         </Routes>
       </Suspense>
