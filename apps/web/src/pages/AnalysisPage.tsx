@@ -4,6 +4,7 @@ import { useNumberStats } from '@/hooks/useNumberStats';
 import NumberGrid from '@/components/analysis/NumberGrid';
 import HotColdRanking from '@/components/analysis/HotColdRanking';
 import NumberBall from '@/components/common/NumberBall';
+import CorrelationMatrix from '@/components/analysis/CorrelationMatrix';
 import { t } from '@/hooks/useI18n';
 
 export default function AnalysisPage() {
@@ -182,6 +183,8 @@ export default function AnalysisPage() {
           ))}
         </div>
       </div>
+
+      <CorrelationMatrix />
     </div>
   );
 }
