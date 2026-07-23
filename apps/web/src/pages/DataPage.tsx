@@ -142,22 +142,22 @@ export default function DataPage() {
       <h2 className="text-xl font-bold">数据管理</h2>
 
       {/* Status */}
-      <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-3">
+      <div className="glass-card p-5 space-y-3">
         <h3 className="font-semibold text-sm">📊 数据状态</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-          <div className="bg-[var(--color-bg)] rounded-lg p-3">
+          <div className="glass-inset p-3">
             <div className="text-xs text-[var(--color-muted)]">数据库期数</div>
             <div className="text-xl font-bold">{draws.length}</div>
           </div>
-          <div className="bg-[var(--color-bg)] rounded-lg p-3">
+          <div className="glass-inset p-3">
             <div className="text-xs text-[var(--color-muted)]">号码统计</div>
             <div className="text-xl font-bold">{stats.length}</div>
           </div>
-          <div className="bg-[var(--color-bg)] rounded-lg p-3">
+          <div className="glass-inset p-3">
             <div className="text-xs text-[var(--color-muted)]">本地缓存</div>
             <div className="text-xl font-bold">{cachedDraws?.length || 0}</div>
           </div>
-          <div className="bg-[var(--color-bg)] rounded-lg p-3">
+          <div className="glass-inset p-3">
             <div className="text-xs text-[var(--color-muted)]">最新数据</div>
             <div className="text-sm font-mono">{draws[0]?.draw_date || '-'}</div>
           </div>
@@ -176,7 +176,7 @@ export default function DataPage() {
       )}
 
       {/* Sync Button */}
-      <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-3">
+      <div className="glass-card p-5 space-y-3">
         <h3 className="font-semibold text-sm">🔄 从福彩官网同步</h3>
         <p className="text-xs text-[var(--color-muted)]">
           自动从中国福彩官网 API 获取最新开奖数据，先尝试 Edge Function，失败后直接从 API 抓取。
@@ -194,7 +194,7 @@ export default function DataPage() {
       </div>
 
       {/* CSV Import */}
-      <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-3">
+      <div className="glass-card p-5 space-y-3">
         <h3 className="font-semibold text-sm">📋 手动导入（CSV格式）</h3>
         <p className="text-xs text-[var(--color-muted)]">
           每行一期，格式: 期号,日期,20个号码（逗号分隔）<br />
@@ -202,7 +202,7 @@ export default function DataPage() {
         </p>
         <textarea value={importText} onChange={e => setImportText(e.target.value)}
           placeholder="2026162,2026-07-20,1,5,12,23,34,45,56,67,78,80,11,22,33,44,55,66,77,79&#10;2026161,2026-07-19,3,8,15,22,31,44,53,61,72,79,2,19,36,48,57,63,74,80"
-          className="w-full h-32 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono resize-none" />
+          className="w-full h-32 glass-input px-3 py-2 text-sm font-mono resize-none" />
         <button onClick={importCSV} disabled={!importText.trim()}
           className="px-6 py-2.5 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-600/80 disabled:opacity-50 transition-all shadow">
           📥 导入数据

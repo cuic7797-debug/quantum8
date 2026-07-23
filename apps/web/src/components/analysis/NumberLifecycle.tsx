@@ -42,7 +42,7 @@ export default function NumberLifecycle() {
   }
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
+    <div className="glass-card p-5 space-y-4">
       <div>
         <h3 className="font-semibold">🔄 号码生命周期分析</h3>
         <p className="text-xs text-[var(--color-muted)] mt-1">分析每个号码的冷热周期和当前阶段</p>
@@ -63,7 +63,7 @@ export default function NumberLifecycle() {
       {selected && (() => {
         const lc = getLifecycle(selected);
         return (
-          <div className="bg-[var(--color-bg)] rounded-xl p-4 space-y-3">
+          <div className="glass-inset p-4 space-y-3">
             <div className="flex items-center gap-3">
               <NumberBall number={selected} size="md" />
               <div>
@@ -73,19 +73,19 @@ export default function NumberLifecycle() {
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <div className="bg-[var(--color-surface)] rounded-lg p-2 text-center">
+              <div className="glass-card p-2 text-center">
                 <div className="text-[10px] text-[var(--color-muted)]">当前遗漏</div>
                 <div className="font-mono font-bold">{lc.currentMiss}期</div>
               </div>
-              <div className="bg-[var(--color-surface)] rounded-lg p-2 text-center">
+              <div className="glass-card p-2 text-center">
                 <div className="text-[10px] text-[var(--color-muted)]">近10期出现</div>
                 <div className="font-mono font-bold">{lc.recent10Appear}次</div>
               </div>
-              <div className="bg-[var(--color-surface)] rounded-lg p-2 text-center">
+              <div className="glass-card p-2 text-center">
                 <div className="text-[10px] text-[var(--color-muted)]">平均热周期</div>
                 <div className="font-mono font-bold">{lc.avgHotLen}期</div>
               </div>
-              <div className="bg-[var(--color-surface)] rounded-lg p-2 text-center">
+              <div className="glass-card p-2 text-center">
                 <div className="text-[10px] text-[var(--color-muted)]">平均冷周期</div>
                 <div className="font-mono font-bold">{lc.avgColdLen}期</div>
               </div>

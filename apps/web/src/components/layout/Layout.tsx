@@ -40,44 +40,47 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex flex-col w-56 shrink-0 border-r border-[var(--color-border)] bg-[var(--color-surface)] sticky top-0 h-screen">
-        <div className="px-5 py-5 border-b border-[var(--color-border)] flex items-center justify-between">
+      <aside className="hidden lg:flex flex-col w-56 shrink-0 glass-sidebar sticky top-0 h-screen">
+        <div className="px-5 py-5 border-b border-[var(--glass-border)] flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-[var(--color-primary)]">Quantum8</h1>
+            <h1 className="text-xl font-bold gradient-text-primary">Quantum8</h1>
             <p className="text-[10px] text-[var(--color-muted)] mt-0.5">{t('app.subtitle')}</p>
           </div>
           <ThemeToggle />
         </div>
         <nav className="flex-1 py-3 overflow-y-auto">
-          {navItems.map(({ path, label, icon: Icon, key }) => (
-            <Link key={path} to={path}
-              className={`flex items-center gap-3 px-5 py-2.5 text-sm transition-all mx-2 rounded-lg group ${
-                location.pathname === path
-                  ? 'bg-[var(--color-primary)]/15 text-[var(--color-primary)] font-semibold'
-                  : 'text-[var(--color-muted)] hover:text-white hover:bg-white/5'
-              }`}>
-              <Icon size={18} />
-              <span className="flex-1">{label}</span>
-              <span className="text-[10px] opacity-0 group-hover:opacity-50 transition-opacity">{key}</span>
-            </Link>
-          ))}
+          {navItems.map(({ path, label, icon: Icon, key }) => {
+            const active = location.pathname === path;
+            return (
+              <Link key={path} to={path}
+                className={`flex items-center gap-3 px-5 py-2.5 text-sm transition-all mx-2 rounded-r-lg group nav-item ${
+                  active
+                    ? 'nav-item-active text-[var(--color-primary)] font-semibold'
+                    : 'text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-white/5'
+                }`}>
+                <Icon size={18} className={active ? 'drop-shadow-[0_0_6px_rgba(59,130,246,0.4)]' : ''} />
+                <span className="flex-1">{label}</span>
+                <span className="text-[10px] opacity-0 group-hover:opacity-40 transition-opacity font-mono">{key}</span>
+              </Link>
+            );
+          })}
         </nav>
-        <div className="px-3 py-3 border-t border-[var(--color-border)] flex items-center gap-2">
+        <div className="px-3 py-3 border-t border-[var(--glass-border)] flex items-center gap-2">
           <Link to="/auth"
-            className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-all rounded-lg ${
+            className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-all rounded-r-lg nav-item ${
               location.pathname === '/auth'
-                ? 'bg-[var(--color-primary)]/15 text-[var(--color-primary)] font-semibold'
-                : 'text-[var(--color-muted)] hover:text-white hover:bg-white/5'
+                ? 'nav-item-active text-[var(--color-primary)] font-semibold'
+                : 'text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-white/5'
             }`}>
-            <div className="w-7 h-7 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center shrink-0">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/20">
               {loading ? (
-                <div className="w-3 h-3 border border-[var(--color-muted)] border-t-transparent rounded-full animate-spin" />
+                <div className="w-3 h-3 border border-white/30 border-t-white rounded-full animate-spin" />
               ) : user ? (
-                <span className="text-xs font-bold text-[var(--color-primary)]">
+                <span className="text-xs font-bold text-white">
                   {user.email?.charAt(0).toUpperCase()}
                 </span>
               ) : (
-                <User size={14} />
+                <User size={14} className="text-white" />
               )}
             </div>
             <span className="flex-1 text-xs truncate">
@@ -85,66 +88,69 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </span>
           </Link>
         </div>
-        <div className="px-5 py-3 border-t border-[var(--color-border)]">
-          <div className="text-[10px] text-[var(--color-muted)] opacity-50">
-            快捷键: 1-8 切换页面
+        <div className="px-5 py-3 border-t border-[var(--glass-border)]">
+          <div className="text-[10px] text-[var(--color-muted)] opacity-40">
+            快捷键: 1-9, 0, -, 8
           </div>
         </div>
       </aside>
 
       {/* Mobile Header */}
       <div className="flex-1 flex flex-col min-h-screen">
-        <header className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-[var(--color-border)] bg-[var(--color-surface)] sticky top-0 z-30">
+        <header className="lg:hidden flex items-center justify-between px-4 py-3 glass-header sticky top-0 z-30">
           <div className="flex items-center gap-3">
-            <button onClick={() => setMobileOpen(!mobileOpen)} className="text-[var(--color-muted)] hover:text-white">
+            <button onClick={() => setMobileOpen(!mobileOpen)} className="text-[var(--color-muted)] hover:text-[var(--color-text)] p-1 rounded-lg hover:bg-white/5">
               {mobileOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
-            <h1 className="text-lg font-bold text-[var(--color-primary)]">Quantum8</h1>
+            <h1 className="text-lg font-bold gradient-text-primary">Quantum8</h1>
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Link to="/auth" className="text-[var(--color-muted)] hover:text-white">
-            <div className="w-7 h-7 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center">
-              {user ? (
-                <span className="text-xs font-bold text-[var(--color-primary)]">
-                  {user.email?.charAt(0).toUpperCase()}
-                </span>
-              ) : (
-                <User size={14} />
-              )}
-            </div>
-          </Link>
+            <Link to="/auth" className="text-[var(--color-muted)] hover:text-[var(--color-text)]">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-blue-500/20">
+                {user ? (
+                  <span className="text-xs font-bold text-white">
+                    {user.email?.charAt(0).toUpperCase()}
+                  </span>
+                ) : (
+                  <User size={14} className="text-white" />
+                )}
+              </div>
+            </Link>
           </div>
         </header>
 
         {mobileOpen && (
-          <div className="lg:hidden fixed inset-0 z-20 bg-black/50" onClick={() => setMobileOpen(false)}>
-            <nav className="absolute left-0 top-0 bottom-0 w-56 bg-[var(--color-surface)] border-r border-[var(--color-border)] py-4 shadow-2xl overflow-y-auto"
+          <div className="lg:hidden fixed inset-0 z-20 bg-black/40 backdrop-blur-sm" onClick={() => setMobileOpen(false)}>
+            <nav className="absolute left-0 top-0 bottom-0 w-60 glass-sidebar py-4 shadow-2xl shadow-black/40 overflow-y-auto"
               onClick={e => e.stopPropagation()}>
-              <div className="px-5 pb-4 border-b border-[var(--color-border)]">
-                <h2 className="text-lg font-bold text-[var(--color-primary)]">Quantum8</h2>
+              <div className="px-5 pb-4 border-b border-[var(--glass-border)]">
+                <h2 className="text-lg font-bold gradient-text-primary">Quantum8</h2>
               </div>
-              {navItems.map(({ path, label, icon: Icon }) => (
-                <Link key={path} to={path} onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-3 px-5 py-3 text-sm transition-all ${
-                    location.pathname === path
-                      ? 'bg-[var(--color-primary)]/15 text-[var(--color-primary)] font-semibold'
-                      : 'text-[var(--color-muted)] hover:text-white hover:bg-white/5'
-                  }`}>
-                  <Icon size={18} />
-                  <span>{label}</span>
-                </Link>
-              ))}
+              {navItems.map(({ path, label, icon: Icon }) => {
+                const active = location.pathname === path;
+                return (
+                  <Link key={path} to={path} onClick={() => setMobileOpen(false)}
+                    className={`flex items-center gap-3 px-5 py-3 text-sm transition-all nav-item ${
+                      active
+                        ? 'nav-item-active text-[var(--color-primary)] font-semibold'
+                        : 'text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-white/5'
+                    }`}>
+                    <Icon size={18} />
+                    <span>{label}</span>
+                  </Link>
+                );
+              })}
               <Link to="/auth" onClick={() => setMobileOpen(false)}
-                className={`flex items-center gap-3 px-5 py-3 text-sm transition-all border-t border-[var(--color-border)] mt-4 ${
+                className={`flex items-center gap-3 px-5 py-3 text-sm transition-all border-t border-[var(--glass-border)] mt-4 nav-item ${
                   location.pathname === '/auth'
-                    ? 'bg-[var(--color-primary)]/15 text-[var(--color-primary)] font-semibold'
-                    : 'text-[var(--color-muted)] hover:text-white hover:bg-white/5'
+                    ? 'nav-item-active text-[var(--color-primary)] font-semibold'
+                    : 'text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-white/5'
                 }`}>
                 <User size={18} />
                 <span>{user ? user.email : '登录 / 注册'}</span>
               </Link>
-              <div className="px-5 py-4 border-t border-[var(--color-border)] mt-4">
+              <div className="px-5 py-4 border-t border-[var(--glass-border)] mt-4">
                 <div className="text-[10px] text-[var(--color-muted)]">⚠ 数据分析工具，不构成投注建议</div>
               </div>
             </nav>

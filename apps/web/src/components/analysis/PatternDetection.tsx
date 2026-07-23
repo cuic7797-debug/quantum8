@@ -58,7 +58,7 @@ export default function PatternDetection() {
   }
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
+    <div className="glass-card p-5 space-y-4">
       <div>
         <h3 className="font-semibold">🔍 号码模式识别</h3>
         <p className="text-xs text-[var(--color-muted)] mt-1">发现隐藏的号码规律和模式</p>
@@ -66,7 +66,7 @@ export default function PatternDetection() {
 
       {/* Repeating numbers */}
       {repeats.length > 0 && (
-        <div className="bg-[var(--color-bg)] rounded-lg p-3">
+        <div className="glass-inset p-3">
           <div className="text-xs font-semibold text-[var(--color-muted)] mb-2">🔁 连续出现（重号延续）</div>
           <div className="space-y-1">
             {repeats.slice(0, 5).map(r => (
@@ -84,11 +84,11 @@ export default function PatternDetection() {
 
       {/* Mirror pairs */}
       {mirrorPairs.length > 0 && (
-        <div className="bg-[var(--color-bg)] rounded-lg p-3">
+        <div className="glass-inset p-3">
           <div className="text-xs font-semibold text-[var(--color-muted)] mb-2">🪞 镜像对（和为81）</div>
           <div className="flex flex-wrap gap-2">
             {mirrorPairs.slice(0, 8).map(p => (
-              <div key={p.a} className="flex items-center gap-1 bg-[var(--color-surface)] rounded-lg px-2 py-1">
+              <div key={p.a} className="flex items-center gap-1 glass-card px-2 py-1">
                 <NumberBall number={p.a} size="sm" />
                 <span className="text-[10px] text-[var(--color-muted)]">↔</span>
                 <NumberBall number={p.b} size="sm" />
@@ -100,11 +100,11 @@ export default function PatternDetection() {
       )}
 
       {/* End digit clustering */}
-      <div className="bg-[var(--color-bg)] rounded-lg p-3">
+      <div className="glass-inset p-3">
         <div className="text-xs font-semibold text-[var(--color-muted)] mb-2">🎯 尾数聚类</div>
         <div className="grid grid-cols-5 gap-2">
           {topEndDigits.map(([digit, count]) => (
-            <div key={digit} className="text-center bg-[var(--color-surface)] rounded-lg p-2">
+            <div key={digit} className="text-center glass-card p-2">
               <div className="text-lg font-bold font-mono">尾{digit}</div>
               <div className="text-[10px] text-[var(--color-muted)]">{count}期出现</div>
             </div>
@@ -114,7 +114,7 @@ export default function PatternDetection() {
 
       {/* Odd/Even streaks */}
       {longStreaks.length > 0 && (
-        <div className="bg-[var(--color-bg)] rounded-lg p-3">
+        <div className="glass-inset p-3">
           <div className="text-xs font-semibold text-[var(--color-muted)] mb-2">⚖️ 奇偶连续偏态</div>
           <div className="flex flex-wrap gap-2">
             {longStreaks.map((s, i) => (

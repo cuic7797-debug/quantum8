@@ -11,7 +11,7 @@ export default function LatestDrawCard({ draw }: Props) {
   const [showDetail, setShowDetail] = useState(false);
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+    <div className="glass-card p-5">
       <div className="flex items-center justify-between mb-4">
         <div>
           <span className="text-xs text-[var(--color-muted)]">{t('latest')}</span>
@@ -45,19 +45,19 @@ export default function LatestDrawCard({ draw }: Props) {
       {showDetail && <div className="h-4" />}
 
       <div className="grid grid-cols-4 gap-3 text-center">
-        <div className="bg-[var(--color-bg)] rounded-lg p-2">
+        <div className="glass-inset p-2">
           <div className="text-xs text-[var(--color-muted)]">{t('sum')}</div>
           <div className="font-bold font-mono">{draw.sum_value}</div>
         </div>
-        <div className="bg-[var(--color-bg)] rounded-lg p-2">
+        <div className="glass-inset p-2">
           <div className="text-xs text-[var(--color-muted)]">{t('odd_even')}</div>
           <div className="font-bold font-mono">{draw.odd_count}:{draw.even_count}</div>
         </div>
-        <div className="bg-[var(--color-bg)] rounded-lg p-2">
+        <div className="glass-inset p-2">
           <div className="text-xs text-[var(--color-muted)]">{t('big_small')}</div>
           <div className="font-bold font-mono">{draw.big_count}:{draw.small_count}</div>
         </div>
-        <div className="bg-[var(--color-bg)] rounded-lg p-2">
+        <div className="glass-inset p-2">
           <div className="text-xs text-[var(--color-muted)]">{t('streaks')}</div>
           <div className="font-bold font-mono">{draw.consecutive_count}</div>
         </div>
@@ -65,19 +65,19 @@ export default function LatestDrawCard({ draw }: Props) {
 
       {showDetail && (
         <div className="mt-4 grid grid-cols-4 gap-3 text-center">
-          <div className="bg-[var(--color-bg)] rounded-lg p-2">
+          <div className="glass-inset p-2">
             <div className="text-xs text-[var(--color-muted)]">{t('zone1')}</div>
             <div className="font-bold font-mono text-blue-400">{draw.zone1_count}</div>
           </div>
-          <div className="bg-[var(--color-bg)] rounded-lg p-2">
+          <div className="glass-inset p-2">
             <div className="text-xs text-[var(--color-muted)]">{t('zone2')}</div>
             <div className="font-bold font-mono text-emerald-400">{draw.zone2_count}</div>
           </div>
-          <div className="bg-[var(--color-bg)] rounded-lg p-2">
+          <div className="glass-inset p-2">
             <div className="text-xs text-[var(--color-muted)]">{t('zone3')}</div>
             <div className="font-bold font-mono text-amber-400">{draw.zone3_count}</div>
           </div>
-          <div className="bg-[var(--color-bg)] rounded-lg p-2">
+          <div className="glass-inset p-2">
             <div className="text-xs text-[var(--color-muted)]">{t('zone4')}</div>
             <div className="font-bold font-mono text-rose-400">{draw.zone4_count}</div>
           </div>

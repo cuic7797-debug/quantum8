@@ -16,7 +16,7 @@ export default function MissTrend({ stats }: Props) {
   }
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+    <div className="glass-card p-5">
       <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">遗漏值趋势（点击号码切换）</h3>
       <div className="flex flex-wrap gap-1 mb-3">
         {topMiss.map(s => (
@@ -34,7 +34,7 @@ export default function MissTrend({ stats }: Props) {
           return (
             <div key={num} className="flex items-center gap-2 text-sm">
               <NumberBall number={num} size="sm" />
-              <div className="flex-1 h-5 bg-[var(--color-bg)] rounded overflow-hidden relative">
+              <div className="flex-1 h-5 glass-inset overflow-hidden relative">
                 <div className={`h-full rounded ${s.currentMiss >= 15 ? 'bg-red-500' : s.currentMiss >= 8 ? 'bg-amber-500' : 'bg-blue-500'}`}
                   style={{ width: `${Math.max(2, w)}%` }} />
                 <span className="absolute right-1 top-0 h-full flex items-center text-[10px] font-mono text-white/80">

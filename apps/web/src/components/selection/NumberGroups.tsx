@@ -73,7 +73,7 @@ export default function NumberGroups({ onSelect }: { onSelect?: (nums: number[])
       </div>
 
       {activeGroup && (
-        <div className="bg-[var(--color-bg)] rounded-lg p-3 space-y-2">
+        <div className="glass-inset p-3 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold">{activeGroup.name}</span>
             <div className="flex gap-2">

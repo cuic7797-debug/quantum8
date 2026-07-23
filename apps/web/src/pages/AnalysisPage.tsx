@@ -47,7 +47,7 @@ export default function AnalysisPage() {
           {topFreq.map(s => (
             <div key={s.number} className="flex items-center gap-2 text-sm">
               <NumberBall number={s.number} size="sm" />
-              <div className="flex-1 h-5 bg-[var(--color-bg)] rounded overflow-hidden">
+              <div className="flex-1 h-5 glass-inset overflow-hidden">
                 <div className="h-full bg-blue-500 rounded" style={{ width: (s.totalAppearances / maxFreq * 100) + '%' }} />
               </div>
               <span className="text-xs font-mono w-12 text-right">{s.totalAppearances}次</span>
@@ -100,15 +100,15 @@ export default function AnalysisPage() {
       {/* 连号统计 */}
       <Collapsible title="🔗 连号统计" step={11} defaultOpen={false}>
         <div className="grid grid-cols-3 gap-3">
-          <div className="text-center bg-[var(--color-bg)] rounded-lg p-3">
+          <div className="text-center glass-inset p-3">
             <div className="text-2xl font-bold">{h2}</div>
             <div className="text-xs text-[var(--color-muted)]">含2连号 {((h2 / draws.length) * 100).toFixed(1)}%</div>
           </div>
-          <div className="text-center bg-[var(--color-bg)] rounded-lg p-3">
+          <div className="text-center glass-inset p-3">
             <div className="text-2xl font-bold">{h3}</div>
             <div className="text-xs text-[var(--color-muted)]">含3连号+ {((h3 / draws.length) * 100).toFixed(1)}%</div>
           </div>
-          <div className="text-center bg-[var(--color-bg)] rounded-lg p-3">
+          <div className="text-center glass-inset p-3">
             <div className="text-2xl font-bold">{n}</div>
             <div className="text-xs text-[var(--color-muted)]">无连号 {((n / draws.length) * 100).toFixed(1)}%</div>
           </div>
@@ -119,7 +119,7 @@ export default function AnalysisPage() {
       <Collapsible title="⏰ 遗漏排名 TOP 20" step={12} defaultOpen={false}>
         <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
           {[...stats].sort((a, b) => b.currentMiss - a.currentMiss).slice(0, 20).map((s, i) => (
-            <div key={s.number} className="flex items-center gap-2 text-sm bg-[var(--color-bg)] rounded-lg p-2">
+            <div key={s.number} className="flex items-center gap-2 text-sm glass-inset p-2">
               <span className="text-xs text-[var(--color-muted)] w-4">{i + 1}</span>
               <NumberBall number={s.number} size="sm" />
               <span className="font-mono text-xs">{s.currentMiss}期</span>

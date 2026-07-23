@@ -25,18 +25,18 @@ export default function AuthPage() {
   if (user) {
     return (
       <div className="max-w-md mx-auto space-y-6">
-        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-6 text-center space-y-4">
+        <div className="glass-card p-6 text-center space-y-4">
           <div className="w-16 h-16 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center mx-auto">
             <span className="text-2xl">👤</span>
           </div>
           <h2 className="text-xl font-bold">个人中心</h2>
           <p className="text-sm text-[var(--color-muted)]">{user.email}</p>
           <div className="grid grid-cols-2 gap-3 text-center">
-            <div className="bg-[var(--color-bg)] rounded-lg p-3">
+            <div className="glass-inset p-3">
               <div className="text-lg font-bold">☁️</div>
               <div className="text-xs text-[var(--color-muted)]">云端同步</div>
             </div>
-            <div className="bg-[var(--color-bg)] rounded-lg p-3">
+            <div className="glass-inset p-3">
               <div className="text-lg font-bold text-emerald-400">✓</div>
               <div className="text-xs text-[var(--color-muted)]">已登录</div>
             </div>
@@ -73,7 +73,7 @@ export default function AuthPage() {
 
   return (
     <div className="max-w-md mx-auto space-y-6">
-      <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-6 space-y-4">
+      <div className="glass-card p-6 space-y-4">
         <div className="text-center">
           <div className="w-16 h-16 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center mx-auto mb-3">
             <span className="text-2xl">🔐</span>

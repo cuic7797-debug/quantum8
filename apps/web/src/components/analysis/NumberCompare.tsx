@@ -35,7 +35,7 @@ export default function NumberCompare() {
   ];
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
+    <div className="glass-card p-5 space-y-4">
       <div>
         <h3 className="font-semibold">🔄 号码对比</h3>
         <p className="text-xs text-[var(--color-muted)] mt-1">对比两个号码的各项统计指标</p>
@@ -81,7 +81,7 @@ export default function NumberCompare() {
         {metrics.map(m => {
           const max = Math.max(m.a, m.b, 1);
           return (
-            <div key={m.label} className="bg-[var(--color-bg)] rounded-lg p-2">
+            <div key={m.label} className="glass-inset p-2">
               <div className="text-[10px] text-[var(--color-muted)] mb-1">{m.label}</div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono w-12 text-right text-[var(--color-primary)]">{m.a}{m.unit}</span>
@@ -98,7 +98,7 @@ export default function NumberCompare() {
 
       {/* Recent appearances */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-[var(--color-bg)] rounded-lg p-3">
+        <div className="glass-inset p-3">
           <div className="text-xs text-[var(--color-muted)] mb-1">号码{numA} 近20期出现</div>
           <div className="flex flex-wrap gap-1">
             {appearA.length > 0 ? appearA.map(d => (
@@ -106,7 +106,7 @@ export default function NumberCompare() {
             )) : <span className="text-[10px] text-[var(--color-muted)]">未出现</span>}
           </div>
         </div>
-        <div className="bg-[var(--color-bg)] rounded-lg p-3">
+        <div className="glass-inset p-3">
           <div className="text-xs text-[var(--color-muted)] mb-1">号码{numB} 近20期出现</div>
           <div className="flex flex-wrap gap-1">
             {appearB.length > 0 ? appearB.map(d => (

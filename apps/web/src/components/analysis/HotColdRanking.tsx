@@ -12,14 +12,14 @@ export default function HotColdRanking({ stats }: Props) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+      <div className="glass-card p-5">
         <h3 className="text-sm font-semibold mb-3">{t('hot_top10')}</h3>
         <div className="space-y-1.5">
           {hotTop10.map((s, i) => (
             <div key={s.number} className="flex items-center gap-2 text-sm">
               <span className="text-xs text-[var(--color-muted)] w-4">{i + 1}</span>
               <span className="font-mono font-bold w-6">{formatNumber(s.number)}</span>
-              <div className="flex-1 h-4 bg-[var(--color-bg)] rounded overflow-hidden">
+              <div className="flex-1 h-4 glass-inset overflow-hidden">
                 <div className="h-full bg-red-500/70 rounded" style={{ width: `${(s.hotScore / maxHot) * 100}%` }} />
               </div>
               <span className="text-xs text-[var(--color-muted)] w-12 text-right">{t('recent_10')} {s.recent10Rate}%</span>
@@ -28,14 +28,14 @@ export default function HotColdRanking({ stats }: Props) {
           ))}
         </div>
       </div>
-      <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+      <div className="glass-card p-5">
         <h3 className="text-sm font-semibold mb-3">{t('cold_top10')}</h3>
         <div className="space-y-1.5">
           {coldTop10.map((s, i) => (
             <div key={s.number} className="flex items-center gap-2 text-sm">
               <span className="text-xs text-[var(--color-muted)] w-4">{i + 1}</span>
               <span className="font-mono font-bold w-6">{formatNumber(s.number)}</span>
-              <div className="flex-1 h-4 bg-[var(--color-bg)] rounded overflow-hidden">
+              <div className="flex-1 h-4 glass-inset overflow-hidden">
                 <div className="h-full bg-blue-500/70 rounded" style={{ width: `${(s.currentMiss / maxMiss) * 100}%` }} />
               </div>
               <span className="text-xs text-[var(--color-muted)] w-12 text-right">{t('missed')} {s.currentMiss}{t('periods')}</span>

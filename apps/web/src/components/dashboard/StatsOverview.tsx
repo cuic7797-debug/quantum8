@@ -31,25 +31,25 @@ export default function StatsOverview() {
   const trendDir = sum5 > sum5prev + 20 ? '上升' : sum5 < sum5prev - 20 ? '下降' : '平稳';
 
   const metrics = [
-    { label: '热号', value: hotCount + '个', icon: '🔥', color: 'text-red-400' },
-    { label: '冷号', value: coldCount + '个', icon: '❄️', color: 'text-blue-400' },
-    { label: '均和', value: '' + avgSum, icon: '📊', color: 'text-amber-400' },
-    { label: '奇偶比', value: avgOdd + ':10', icon: '⚖️', color: 'text-purple-400' },
-    { label: '四区均衡', value: zoneScore + '分', icon: '🎯', color: 'text-emerald-400' },
-    { label: '号码覆盖', value: coverage + '%', icon: '🌐', color: 'text-cyan-400' },
-    { label: '和值趋势', value: trendDir, icon: '📈', color: trendDir === '上升' ? 'text-emerald-400' : trendDir === '下降' ? 'text-red-400' : 'text-gray-400' },
-    { label: '重号均值', value: avgRepeat, icon: '🔄', color: 'text-orange-400' },
+    { label: '热号', value: hotCount + '个', icon: '🔥', color: 'text-red-400', glow: 'shadow-red-500/10' },
+    { label: '冷号', value: coldCount + '个', icon: '❄️', color: 'text-blue-400', glow: 'shadow-blue-500/10' },
+    { label: '均和', value: '' + avgSum, icon: '📊', color: 'text-amber-400', glow: 'shadow-amber-500/10' },
+    { label: '奇偶比', value: avgOdd + ':10', icon: '⚖️', color: 'text-purple-400', glow: 'shadow-purple-500/10' },
+    { label: '四区均衡', value: zoneScore + '分', icon: '🎯', color: 'text-emerald-400', glow: 'shadow-emerald-500/10' },
+    { label: '号码覆盖', value: coverage + '%', icon: '🌐', color: 'text-cyan-400', glow: 'shadow-cyan-500/10' },
+    { label: '和值趋势', value: trendDir, icon: '📈', color: trendDir === '上升' ? 'text-emerald-400' : trendDir === '下降' ? 'text-red-400' : 'text-gray-400', glow: 'shadow-green-500/10' },
+    { label: '重号均值', value: avgRepeat, icon: '🔄', color: 'text-orange-400', glow: 'shadow-orange-500/10' },
   ];
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+    <div className="glass-card p-5">
       <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">📊 关键指标仪表盘</h3>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {metrics.map(m => (
-          <div key={m.label} className="bg-[var(--color-bg)] rounded-lg p-3 text-center">
+          <div key={m.label} className={`glass-inset p-3 text-center shadow-lg ${m.glow} hover:scale-[1.02] transition-transform duration-200`}>
             <div className="text-lg">{m.icon}</div>
-            <div className={'font-bold font-mono text-sm mt-1 ' + m.color}>{m.value}</div>
-            <div className="text-[10px] text-[var(--color-muted)]">{m.label}</div>
+            <div className={`font-bold font-mono text-sm mt-1 ${m.color}`}>{m.value}</div>
+            <div className="text-[10px] text-[var(--color-muted)] mt-0.5">{m.label}</div>
           </div>
         ))}
       </div>

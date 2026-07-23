@@ -41,7 +41,7 @@ export default function ProfessionalTrends() {
   });
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
+    <div className="glass-card p-5 space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">📈 专业走势图表</h3>
         <select value={showCount} onChange={e => setShowCount(+e.target.value)}
@@ -66,7 +66,7 @@ export default function ProfessionalTrends() {
       {/* Big/Small Trend */}
       {tab === 'bigsmall' && (
         <div className="space-y-3">
-          <div className="bg-[var(--color-bg)] rounded-lg p-3 text-xs text-[var(--color-muted)]">
+          <div className="glass-inset p-3 text-xs text-[var(--color-muted)]">
             近{showCount}期大号(&gt;40)均值: <span className="text-amber-400 font-bold">{bigAvg}</span>/20
             {parseFloat(bigAvg) > 11 ? ' · 大号偏重' : parseFloat(bigAvg) < 9 ? ' · 小号偏重' : ' · 均衡'}
           </div>
@@ -94,7 +94,7 @@ export default function ProfessionalTrends() {
       {/* Odd/Even Trend */}
       {tab === 'oddeven' && (
         <div className="space-y-3">
-          <div className="bg-[var(--color-bg)] rounded-lg p-3 text-xs text-[var(--color-muted)]">
+          <div className="glass-inset p-3 text-xs text-[var(--color-muted)]">
             近{showCount}期奇数均值: <span className="text-purple-400 font-bold">{oddAvg}</span>/20
           </div>
           {recent.map(d => (
@@ -121,7 +121,7 @@ export default function ProfessionalTrends() {
       {/* Sum Trend */}
       {tab === 'sum' && (
         <div className="space-y-3">
-          <div className="bg-[var(--color-bg)] rounded-lg p-3 text-xs text-[var(--color-muted)]">
+          <div className="glass-inset p-3 text-xs text-[var(--color-muted)]">
             近{showCount}期和值均值: <span className="text-amber-400 font-bold">{sumAvg}</span>
           </div>
           <div className="flex items-end gap-0.5 h-32">
@@ -141,7 +141,7 @@ export default function ProfessionalTrends() {
               );
             })}
           </div>
-          <div className="bg-[var(--color-bg)] rounded-lg p-2 text-[10px] text-[var(--color-muted)]">
+          <div className="glass-inset p-2 text-[10px] text-[var(--color-muted)]">
             红色=偏高 蓝色=偏低 黄色=正常
           </div>
         </div>
@@ -150,7 +150,7 @@ export default function ProfessionalTrends() {
       {/* Span Trend */}
       {tab === 'span' && (
         <div className="space-y-3">
-          <div className="bg-[var(--color-bg)] rounded-lg p-3 text-xs text-[var(--color-muted)]">
+          <div className="glass-inset p-3 text-xs text-[var(--color-muted)]">
             近{showCount}期跨度均值: <span className="text-emerald-400 font-bold">{spanAvg}</span>
           </div>
           {recent.map(d => (
@@ -168,7 +168,7 @@ export default function ProfessionalTrends() {
       {/* Remainder Trend */}
       {tab === 'remainder' && (
         <div className="space-y-3">
-          <div className="bg-[var(--color-bg)] rounded-lg p-3 text-xs text-[var(--color-muted)]">
+          <div className="glass-inset p-3 text-xs text-[var(--color-muted)]">
             号码除5余数分布趋势
           </div>
           {remainderTrend.map(r => (
@@ -192,7 +192,7 @@ export default function ProfessionalTrends() {
       {/* Zone Distribution */}
       {tab === 'zone' && (
         <div className="space-y-3">
-          <div className="bg-[var(--color-bg)] rounded-lg p-3 text-xs text-[var(--color-muted)]">
+          <div className="glass-inset p-3 text-xs text-[var(--color-muted)]">
             四区分布（1-20 / 21-40 / 41-60 / 61-80）
           </div>
           {recent.map(d => (
@@ -217,11 +217,11 @@ export default function ProfessionalTrends() {
       )}
 
       {/* Number Frequency Ranking */}
-      <div className="bg-[var(--color-bg)] rounded-lg p-4">
+      <div className="glass-inset p-4">
         <div className="text-xs font-semibold text-[var(--color-muted)] mb-3">号码出现次数排行（近{showCount}期）</div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {topFreq.map(([num, count], i) => (
-            <div key={num} className="flex items-center gap-2 bg-[var(--color-surface)] rounded-lg px-2 py-1.5">
+            <div key={num} className="flex items-center gap-2 glass-card px-2 py-1.5">
               <span className="text-[10px] text-[var(--color-muted)] w-3">{i + 1}</span>
               <NumberBall number={num} size="sm" />
               <div className="flex-1">

@@ -63,7 +63,7 @@ export default function NumberHeatmap() {
   };
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
+    <div className="glass-card p-5 space-y-4">
       <div>
         <h3 className="font-semibold">🌡️ 号码热力图</h3>
         <p className="text-xs text-[var(--color-muted)] mt-1">80个号码的{metricLabels[metric]}可视化</p>
@@ -91,7 +91,7 @@ export default function NumberHeatmap() {
               style={{ backgroundColor: getColor(intensity) }}>
               <span className="text-[10px] font-bold text-white">{m.num}</span>
               <span className="text-[7px] text-white/70">{metric === 'appear' ? m.appearCount : metric === 'hot' ? m.hotScore.toFixed(0) : metric === 'miss' ? m.currentMiss : m.recentRate.toFixed(0)}</span>
-              <div className="hidden group-hover:block absolute z-10 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-2 shadow-xl text-[10px] left-1/2 -translate-x-1/2 bottom-full mb-1 w-24">
+              <div className="hidden group-hover:block absolute z-10 glass-card p-2 shadow-xl text-[10px] left-1/2 -translate-x-1/2 bottom-full mb-1 w-24">
                 <div className="font-bold">号码 {m.num}</div>
                 <div>出现 {m.appearCount}次</div>
                 <div>热度 {m.hotScore.toFixed(0)}</div>

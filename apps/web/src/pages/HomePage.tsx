@@ -104,12 +104,12 @@ export default function HomePage() {
 
   return (
     <div className="space-y-6">
-      <div className="text-xs text-[var(--color-muted)] bg-[var(--color-surface)] rounded-lg px-4 py-2 border border-[var(--color-border)]">
+      <div className="text-xs text-[var(--color-muted)] glass-card px-4 py-2 border border-[var(--color-border)]">
         {t('disclaimer')}
       </div>
 
       {/* Data Status Bar */}
-      <div className="flex items-center justify-between bg-[var(--color-surface)] rounded-lg px-4 py-2 border border-[var(--color-border)]">
+      <div className="flex items-center justify-between glass-card px-4 py-2 border border-[var(--color-border)]">
         <div className="text-xs text-[var(--color-muted)]">
           数据截至: {latestDraw.draw_date} | 共 {draws.length} 期
           {cacheTime && <span className="ml-2">| 本地缓存: {new Date(cacheTime).toLocaleTimeString()}</span>}
@@ -127,19 +127,19 @@ export default function HomePage() {
       )}
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4 text-center hover:border-[var(--color-primary)]/30 transition-colors">
+        <div className="glass-card p-4 text-center hover:border-[var(--color-primary)]/30 transition-colors">
           <div className="text-lg mb-1">📊</div>
           <div className="text-xs text-[var(--color-muted)] mb-1">{t('total_draws')}</div>
           <div className="text-2xl font-bold">{draws.length}</div>
           <div className="text-xs text-[var(--color-muted)]">{t('periods')}</div>
         </div>
-        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4 text-center hover:border-amber-500/30 transition-colors">
+        <div className="glass-card p-4 text-center hover:border-amber-500/30 transition-colors">
           <div className="text-lg mb-1">📈</div>
           <div className="text-xs text-[var(--color-muted)] mb-1">{t('avg_sum_10')}</div>
           <div className="text-2xl font-bold font-mono">{avgSum}</div>
           <div className="text-xs text-[var(--color-muted)]">{t('sum')}</div>
         </div>
-        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4 text-center hover:border-red-500/30 transition-colors">
+        <div className="glass-card p-4 text-center hover:border-red-500/30 transition-colors">
           <div className="text-lg mb-1">🔥</div>
           <div className="text-xs text-[var(--color-muted)] mb-1">{t('hot_numbers_10')}</div>
           <div className="flex justify-center gap-1">
@@ -148,7 +148,7 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4 text-center hover:border-blue-500/30 transition-colors">
+        <div className="glass-card p-4 text-center hover:border-blue-500/30 transition-colors">
           <div className="text-lg mb-1">⚖️</div>
           <div className="text-xs text-[var(--color-muted)] mb-1">{t('odd_even_ratio')}</div>
           <div className="text-2xl font-bold font-mono">{latestDraw.odd_count}:{latestDraw.even_count}</div>

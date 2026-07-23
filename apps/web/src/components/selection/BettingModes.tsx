@@ -106,7 +106,7 @@ export default function BettingModes({ playType, onGenerate }: Props) {
   const cost = comboCount * 2;
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
+    <div className="glass-card p-5 space-y-4">
       <div>
         <h3 className="font-semibold">投注方式</h3>
         <p className="text-xs text-[var(--color-muted)] mt-1">选择单式、复式或胆拖投注</p>
@@ -156,7 +156,7 @@ export default function BettingModes({ playType, onGenerate }: Props) {
         ))}
       </div>
 
-      <div className="bg-[var(--color-bg)] rounded-lg p-3 flex items-center justify-between">
+      <div className="glass-inset p-3 flex items-center justify-between">
         <div>
           <span className="text-sm text-[var(--color-muted)]">组合数: </span>
           <span className="font-bold font-mono text-lg">{comboCount}</span>

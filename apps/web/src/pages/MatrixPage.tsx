@@ -181,7 +181,7 @@ export default function MatrixPage() {
             </div>
           </div>
         </div>
-        <div className="mt-3 bg-[var(--color-bg)] rounded-lg p-2 text-xs text-[var(--color-muted)]">
+        <div className="mt-3 glass-inset p-2 text-xs text-[var(--color-muted)]">
           号码池 {pool.length} 个号 → C({pool.length},{pickCount}) = {totalCombos} 种组合 → 矩阵优化为 {maxBets} 注
         </div>
       </Collapsible>
@@ -198,22 +198,22 @@ export default function MatrixPage() {
           <div className="space-y-3">
             {/* Coverage stats */}
             <div className="grid grid-cols-3 gap-2">
-              <div className="bg-[var(--color-bg)] rounded-lg p-2.5 text-center">
+              <div className="glass-inset p-2.5 text-center">
                 <div className="text-[10px] text-[var(--color-muted)]">总号码对</div>
                 <div className="font-bold font-mono text-sm">{result.totalPairs}</div>
               </div>
-              <div className="bg-[var(--color-bg)] rounded-lg p-2.5 text-center">
+              <div className="glass-inset p-2.5 text-center">
                 <div className="text-[10px] text-[var(--color-muted)]">已覆盖</div>
                 <div className="font-bold font-mono text-sm text-emerald-400">{result.coveredPairs}</div>
               </div>
-              <div className="bg-[var(--color-bg)] rounded-lg p-2.5 text-center">
+              <div className="glass-inset p-2.5 text-center">
                 <div className="text-[10px] text-[var(--color-muted)]">覆盖率</div>
                 <div className="font-bold font-mono text-sm text-amber-400">{result.coverage}%</div>
               </div>
             </div>
 
             {/* Coverage bar */}
-            <div className="bg-[var(--color-bg)] rounded-lg p-2">
+            <div className="glass-inset p-2">
               <div className="h-3 bg-[var(--color-border)] rounded-full overflow-hidden">
                 <div className="h-full bg-gradient-to-r from-emerald-500 to-amber-500 rounded-full transition-all" style={{ width: result.coverage + '%' }} />
               </div>
@@ -225,7 +225,7 @@ export default function MatrixPage() {
             {/* Bets list */}
             <div className="space-y-1.5 max-h-96 overflow-y-auto">
               {result.bets.map((bet, i) => (
-                <div key={i} className="flex items-center gap-2 bg-[var(--color-bg)] rounded-lg px-3 py-1.5">
+                <div key={i} className="flex items-center gap-2 glass-inset px-3 py-1.5">
                   <span className="text-[10px] text-[var(--color-muted)] w-5 font-mono">{i + 1}</span>
                   <div className="flex gap-0.5 flex-wrap flex-1">
                     {bet.map(n => <NumberBall key={n} number={n} size="sm" />)}
@@ -234,7 +234,7 @@ export default function MatrixPage() {
               ))}
             </div>
 
-            <CopyButton text={result.bets.map(b => b.join(' ')).join('\n')} label="📋 复制全部矩阵号码" className="w-full justify-center py-2 bg-[var(--color-bg)] rounded-lg" />
+            <CopyButton text={result.bets.map(b => b.join(' ')).join('\n')} label="📋 复制全部矩阵号码" className="w-full justify-center py-2 glass-inset" />
           </div>
         </Collapsible>
       )}

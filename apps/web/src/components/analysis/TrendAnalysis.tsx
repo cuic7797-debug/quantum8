@@ -50,7 +50,7 @@ export default function TrendAnalysis() {
   ];
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
+    <div className="glass-card p-5 space-y-4">
       <div>
         <h3 className="font-semibold">📈 高级趋势分析</h3>
         <p className="text-xs text-[var(--color-muted)] mt-1">移动均线 · 多维度趋势 · 波动分析</p>
@@ -65,7 +65,7 @@ export default function TrendAnalysis() {
           { label: '连号均值', value: avgConsec, sub: '每期' },
           { label: '趋势方向', value: trendDir, sub: '强度 ' + trendStrength.toFixed(0) + '%' },
         ].map(f => (
-          <div key={f.label} className="bg-[var(--color-bg)] rounded-lg p-2.5 text-center">
+          <div key={f.label} className="glass-inset p-2.5 text-center">
             <div className="text-[10px] text-[var(--color-muted)]">{f.label}</div>
             <div className="font-mono font-bold text-sm mt-0.5">{f.value}</div>
             <div className="text-[9px] text-[var(--color-muted)] opacity-60">{f.sub}</div>
@@ -74,7 +74,7 @@ export default function TrendAnalysis() {
       </div>
 
       {/* Sum trend with MA lines */}
-      <div className="bg-[var(--color-bg)] rounded-lg p-4">
+      <div className="glass-inset p-4">
         <div className="text-xs text-[var(--color-muted)] mb-2">和值走势 + 移动均线</div>
         <div className="flex items-end gap-0.5 h-28">
           {sums.slice(0, 15).reverse().map((s, i) => {
@@ -102,7 +102,7 @@ export default function TrendAnalysis() {
 
       {/* Odd/Even + Big/Small */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="bg-[var(--color-bg)] rounded-lg p-4">
+        <div className="glass-inset p-4">
           <div className="text-xs text-[var(--color-muted)] mb-2">奇偶比趋势</div>
           <div className="space-y-0.5">
             {odds.slice(0, 12).map((o, i) => (
@@ -122,7 +122,7 @@ export default function TrendAnalysis() {
           </div>
         </div>
 
-        <div className="bg-[var(--color-bg)] rounded-lg p-4">
+        <div className="glass-inset p-4">
           <div className="text-xs text-[var(--color-muted)] mb-2">连号/跨度趋势</div>
           <div className="space-y-0.5">
             {concs.slice(0, 12).map((c, i) => (
@@ -140,7 +140,7 @@ export default function TrendAnalysis() {
       </div>
 
       {/* Zone distribution mini heatmap */}
-      <div className="bg-[var(--color-bg)] rounded-lg p-4">
+      <div className="glass-inset p-4">
         <div className="text-xs text-[var(--color-muted)] mb-2">四区分布热力图</div>
         <div className="grid grid-cols-4 gap-1">
           {['一区', '二区', '三区', '四区'].map((z, zi) => (

@@ -145,18 +145,18 @@ export default function StrategyPage() {
 
       {/* Create/Edit Form */}
       {showCreate && (
-        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
+        <div className="glass-card p-5 space-y-4">
           <h3 className="font-semibold">{editing ? t('edit_strategy') : t('create_strategy')}</h3>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs text-[var(--color-muted)] block mb-1">{t('strategy_name')}</label>
               <input value={formName} onChange={e => setFormName(e.target.value)}
-                className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm" placeholder="策略名称" />
+                className="w-full glass-input px-3 py-2 text-sm" placeholder="策略名称" />
             </div>
             <div>
               <label className="text-xs text-[var(--color-muted)] block mb-1">{t('play_type')}</label>
               <select value={formPlayType} onChange={e => setFormPlayType(e.target.value as PlayType)}
-                className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm">
+                className="w-full glass-input px-3 py-2 text-sm">
                 {PT.map(p => <option key={p} value={p}>{p}</option>)}
               </select>
             </div>
@@ -164,23 +164,23 @@ export default function StrategyPage() {
           <div>
             <label className="text-xs text-[var(--color-muted)] block mb-1">{t('description')}</label>
             <input value={formDesc} onChange={e => setFormDesc(e.target.value)}
-              className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm" placeholder="策略说明（可选）" />
+              className="w-full glass-input px-3 py-2 text-sm" placeholder="策略说明（可选）" />
           </div>
           <div className="grid grid-cols-3 gap-3">
             <div>
               <label className="text-xs text-[var(--color-muted)] block mb-1">{t('hot_count')}</label>
               <input type="number" min={0} max={20} value={formHot} onChange={e => setFormHot(+e.target.value)}
-                className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
+                className="w-full glass-input px-3 py-2 text-sm font-mono" />
             </div>
             <div>
               <label className="text-xs text-[var(--color-muted)] block mb-1">{t('cold_count')}</label>
               <input type="number" min={0} max={20} value={formCold} onChange={e => setFormCold(+e.target.value)}
-                className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
+                className="w-full glass-input px-3 py-2 text-sm font-mono" />
             </div>
             <div>
               <label className="text-xs text-[var(--color-muted)] block mb-1">{t('balance_count')}</label>
               <input type="number" min={0} max={20} value={formBalance} onChange={e => setFormBalance(+e.target.value)}
-                className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
+                className="w-full glass-input px-3 py-2 text-sm font-mono" />
             </div>
           </div>
           <div className="grid grid-cols-3 gap-3">
@@ -207,7 +207,7 @@ export default function StrategyPage() {
             <div>
               <label className="text-xs text-[var(--color-muted)] block mb-1">{t('max_consecutive')}</label>
               <input type="number" min={1} max={10} value={formMaxConsec} onChange={e => setFormMaxConsec(+e.target.value)}
-                className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
+                className="w-full glass-input px-3 py-2 text-sm font-mono" />
             </div>
           </div>
           <div className="flex gap-2">
@@ -234,7 +234,7 @@ export default function StrategyPage() {
       {strategies.length > 0 && (
         <div className="space-y-3">
           {strategies.map(s => (
-            <div key={s.id} className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-3">
+            <div key={s.id} className="glass-card p-5 space-y-3">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-bold">{s.name}</h3>
@@ -268,7 +268,7 @@ export default function StrategyPage() {
                 <Collapsible title={t('last_results') + ' (' + s.lastResult.length + '组)'} defaultOpen={false} badge={s.lastResult[0]?.numbers.join(' ')}>
                 <div className="space-y-2">
                   {s.lastResult.map((r, i) => (
-                    <div key={i} className="flex items-center justify-between py-2 px-3 bg-[var(--color-bg)] rounded-lg">
+                    <div key={i} className="flex items-center justify-between py-2 px-3 glass-inset">
                       <div className="flex items-center gap-2">
                         <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${i === 0 ? 'bg-amber-500 text-black' : i < 3 ? 'bg-[var(--color-muted)] text-black' : 'bg-[var(--color-border)] text-[var(--color-muted)]'}`}>{i + 1}</span>
                         <div className="flex gap-0.5">{r.numbers.map(n => <NumberBall key={n} number={n} size="sm" />)}</div>
@@ -289,7 +289,7 @@ export default function StrategyPage() {
       )}
 
       {compared.length >= 2 && (
-        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
+        <div className="glass-card p-5 space-y-4">
           <h3 className="font-semibold">{t('strategy_compare')}（{compared.length}）</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">

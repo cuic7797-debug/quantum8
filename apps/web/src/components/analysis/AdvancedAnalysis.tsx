@@ -20,7 +20,7 @@ export default function AdvancedAnalysis() {
   ];
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
+    <div className="glass-card p-5 space-y-4">
       <h3 className="font-semibold">📊 专业数据分析</h3>
 
       <div className="flex gap-1 overflow-x-auto pb-1">
@@ -35,7 +35,7 @@ export default function AdvancedAnalysis() {
       {/* AC值 */}
       {tab === 'ac' && (
         <div className="space-y-3">
-          <div className="bg-[var(--color-bg)] rounded-lg p-3 text-xs text-[var(--color-muted)]">
+          <div className="glass-inset p-3 text-xs text-[var(--color-muted)]">
             AC值 = 不同差值个数 - (号码数-1)，越大越分散
           </div>
           <div className="space-y-1.5">
@@ -137,15 +137,15 @@ export default function AdvancedAnalysis() {
         return (
           <div className="space-y-3">
             <div className="grid grid-cols-3 gap-2">
-              <div className="bg-[var(--color-bg)] rounded-lg p-2 text-center">
+              <div className="glass-inset p-2 text-center">
                 <div className="text-[10px] text-[var(--color-muted)]">平均跨度</div>
                 <div className="font-bold font-mono">{sd.avg}</div>
               </div>
-              <div className="bg-[var(--color-bg)] rounded-lg p-2 text-center">
+              <div className="glass-inset p-2 text-center">
                 <div className="text-[10px] text-[var(--color-muted)]">范围</div>
                 <div className="font-bold font-mono">{sd.min}-{sd.max}</div>
               </div>
-              <div className="bg-[var(--color-bg)] rounded-lg p-2 text-center">
+              <div className="glass-inset p-2 text-center">
                 <div className="text-[10px] text-[var(--color-muted)]">趋势</div>
                 <div className={'font-bold ' + (sd.trend === '增大' ? 'text-emerald-400' : sd.trend === '减小' ? 'text-red-400' : 'text-[var(--color-muted)]')}>{sd.trend}</div>
               </div>
@@ -166,16 +166,16 @@ export default function AdvancedAnalysis() {
         return (
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-2">
-              <div className="bg-[var(--color-bg)] rounded-lg p-2.5 text-center">
+              <div className="glass-inset p-2.5 text-center">
                 <div className="text-[10px] text-[var(--color-muted)]">平均和值</div>
                 <div className="font-bold font-mono text-lg">{sr.avg}</div>
               </div>
-              <div className="bg-[var(--color-bg)] rounded-lg p-2.5 text-center">
+              <div className="glass-inset p-2.5 text-center">
                 <div className="text-[10px] text-[var(--color-muted)]">标准差</div>
                 <div className="font-bold font-mono text-lg">{sr.std}</div>
               </div>
             </div>
-            <div className="bg-[var(--color-bg)] rounded-lg p-3">
+            <div className="glass-inset p-3">
               <div className="text-xs font-semibold mb-2">概率区间</div>
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">

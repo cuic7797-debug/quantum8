@@ -16,10 +16,10 @@ export default function NumberBall({ number, size = 'md', highlight }: Props) {
   return (
     <span
       className={`
-        inline-flex items-center justify-center rounded-full border font-mono font-bold
+        number-ball inline-flex items-center justify-center rounded-full border font-mono font-bold
         ${sizeClasses[size]}
         ${getZoneColor(number)}
-        ${highlight ? 'ring-2 ring-white/30' : ''}
+        ${highlight ? 'ring-2 ring-[var(--color-primary)]/40 shadow-lg shadow-blue-500/20' : ''}
       `}
     >
       {formatNumber(number)}

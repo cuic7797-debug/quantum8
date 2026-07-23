@@ -81,7 +81,7 @@ export default function ReportPage() {
       </div>
 
       {/* Report Header */}
-      <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+      <div className="glass-card p-5">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="font-semibold text-lg">Quantum8 数据分析报告</h3>
@@ -96,18 +96,18 @@ export default function ReportPage() {
           {latest.numbers.map(n => <NumberBall key={n} number={n} size="md" />)}
         </div>
         <div className="grid grid-cols-4 gap-2 text-center text-xs">
-          <div className="bg-[var(--color-bg)] rounded-lg p-2"><div className="text-[var(--color-muted)]">和值</div><div className="font-bold font-mono">{latest.sum_value}</div></div>
-          <div className="bg-[var(--color-bg)] rounded-lg p-2"><div className="text-[var(--color-muted)]">奇偶</div><div className="font-bold font-mono">{latest.odd_count}:{latest.even_count}</div></div>
-          <div className="bg-[var(--color-bg)] rounded-lg p-2"><div className="text-[var(--color-muted)]">大小</div><div className="font-bold font-mono">{latest.big_count}:{latest.small_count}</div></div>
-          <div className="bg-[var(--color-bg)] rounded-lg p-2"><div className="text-[var(--color-muted)]">跨度</div><div className="font-bold font-mono">{latest.span}</div></div>
+          <div className="glass-inset p-2"><div className="text-[var(--color-muted)]">和值</div><div className="font-bold font-mono">{latest.sum_value}</div></div>
+          <div className="glass-inset p-2"><div className="text-[var(--color-muted)]">奇偶</div><div className="font-bold font-mono">{latest.odd_count}:{latest.even_count}</div></div>
+          <div className="glass-inset p-2"><div className="text-[var(--color-muted)]">大小</div><div className="font-bold font-mono">{latest.big_count}:{latest.small_count}</div></div>
+          <div className="glass-inset p-2"><div className="text-[var(--color-muted)]">跨度</div><div className="font-bold font-mono">{latest.span}</div></div>
         </div>
       </div>
 
       {/* Key Findings */}
-      <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
+      <div className="glass-card p-5 space-y-4">
         <h3 className="font-semibold">📊 关键发现</h3>
         <div className="space-y-3">
-          <div className="bg-[var(--color-bg)] rounded-lg p-3">
+          <div className="glass-inset p-3">
             <div className="text-sm font-medium mb-1">热号趋势</div>
             <p className="text-xs text-[var(--color-muted)] leading-relaxed">
               近10期热号 TOP 3：
@@ -116,7 +116,7 @@ export default function ReportPage() {
               热度分均在 {hotTop10[0]?.hotScore} 以上，处于活跃状态。
             </p>
           </div>
-          <div className="bg-[var(--color-bg)] rounded-lg p-3">
+          <div className="glass-inset p-3">
             <div className="text-sm font-medium mb-1">冷号遗漏</div>
             <p className="text-xs text-[var(--color-muted)] leading-relaxed">
               当前遗漏最长的号码：
@@ -125,7 +125,7 @@ export default function ReportPage() {
               {overdue[0]?.missRatio > 80 ? '部分号码遗漏值偏高，存在回补可能。' : '遗漏值处于正常范围。'}
             </p>
           </div>
-          <div className="bg-[var(--color-bg)] rounded-lg p-3">
+          <div className="glass-inset p-3">
             <div className="text-sm font-medium mb-1">号码走势</div>
             <p className="text-xs text-[var(--color-muted)] leading-relaxed">
               上升趋势：
@@ -136,7 +136,7 @@ export default function ReportPage() {
               （近10期频率 &lt; 近20期）。
             </p>
           </div>
-          <div className="bg-[var(--color-bg)] rounded-lg p-3">
+          <div className="glass-inset p-3">
             <div className="text-sm font-medium mb-1">结构特征</div>
             <p className="text-xs text-[var(--color-muted)] leading-relaxed">
               近10期平均奇偶比 <span className="font-mono">{avgOdd}:10</span>，
@@ -151,7 +151,7 @@ export default function ReportPage() {
 
       {/* Hot/Cold Numbers */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+        <div className="glass-card p-5">
           <h3 className="font-semibold mb-3">🔥 热号 TOP 10</h3>
           <div className="space-y-2">
             {hotTop10.map((s, i) => (
@@ -168,7 +168,7 @@ export default function ReportPage() {
             ))}
           </div>
         </div>
-        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+        <div className="glass-card p-5">
           <h3 className="font-semibold mb-3">❄️ 冷号 TOP 10</h3>
           <div className="space-y-2">
             {coldTop10.map((s, i) => (
@@ -188,13 +188,13 @@ export default function ReportPage() {
       </div>
 
       {/* Top Pairs */}
-      <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+      <div className="glass-card p-5">
         <h3 className="font-semibold mb-3">🔗 常见号码组合（近10期共现）</h3>
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
           {topPairs.map(([pair, count], i) => {
             const [a, b] = pair.split('-').map(Number);
             return (
-              <div key={pair} className="bg-[var(--color-bg)] rounded-lg p-2 text-center">
+              <div key={pair} className="glass-inset p-2 text-center">
                 <div className="flex items-center justify-center gap-1 mb-1">
                   <NumberBall number={a} size="sm" />
                   <span className="text-[var(--color-muted)]">+</span>
@@ -209,23 +209,23 @@ export default function ReportPage() {
 
 
       {/* Distribution Analysis */}
-      <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+      <div className="glass-card p-5">
         <h3 className="font-semibold mb-3">📊 号码分布分析</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="bg-[var(--color-bg)] rounded-lg p-3">
+          <div className="glass-inset p-3">
             <div className="text-xs text-[var(--color-muted)] mb-1">一区(1-20)</div>
             <div className="text-lg font-bold font-mono">{zonePercents[0]}%</div>
             <div className="text-[10px] text-[var(--color-muted)]">{'>'}25% 偏重</div>
           </div>
-          <div className="bg-[var(--color-bg)] rounded-lg p-3">
+          <div className="glass-inset p-3">
             <div className="text-xs text-[var(--color-muted)] mb-1">二区(21-40)</div>
             <div className="text-lg font-bold font-mono">{zonePercents[1]}%</div>
           </div>
-          <div className="bg-[var(--color-bg)] rounded-lg p-3">
+          <div className="glass-inset p-3">
             <div className="text-xs text-[var(--color-muted)] mb-1">三区(41-60)</div>
             <div className="text-lg font-bold font-mono">{zonePercents[2]}%</div>
           </div>
-          <div className="bg-[var(--color-bg)] rounded-lg p-3">
+          <div className="glass-inset p-3">
             <div className="text-xs text-[var(--color-muted)] mb-1">四区(61-80)</div>
             <div className="text-lg font-bold font-mono">{zonePercents[3]}%</div>
           </div>
@@ -233,20 +233,20 @@ export default function ReportPage() {
       </div>
 
       {/* Odd/Even Analysis */}
-      <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+      <div className="glass-card p-5">
         <h3 className="font-semibold mb-3">⚖️ 奇偶分析</h3>
         <div className="grid grid-cols-3 gap-3">
-          <div className="bg-[var(--color-bg)] rounded-lg p-3 text-center">
+          <div className="glass-inset p-3 text-center">
             <div className="text-xs text-[var(--color-muted)]">近10期平均奇数</div>
             <div className="text-lg font-bold font-mono text-purple-400">{avgOdd}</div>
           </div>
-          <div className="bg-[var(--color-bg)] rounded-lg p-3 text-center">
+          <div className="glass-inset p-3 text-center">
             <div className="text-xs text-[var(--color-muted)]">奇偶比趋势</div>
             <div className="text-sm font-bold">
               {parseFloat(avgOdd) > 10.5 ? '奇数偏多' : parseFloat(avgOdd) < 9.5 ? '偶数偏多' : '均衡'}
             </div>
           </div>
-          <div className="bg-[var(--color-bg)] rounded-lg p-3 text-center">
+          <div className="glass-inset p-3 text-center">
             <div className="text-xs text-[var(--color-muted)]">最新开奖奇偶</div>
             <div className="text-lg font-bold font-mono">{latest.odd_count}:{latest.even_count}</div>
           </div>
@@ -254,11 +254,11 @@ export default function ReportPage() {
       </div>
 
       {/* Overdue Numbers */}
-      <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+      <div className="glass-card p-5">
         <h3 className="font-semibold mb-3">⏰ 遗漏回补分析</h3>
         <div className="space-y-2">
           {overdue.map((s, i) => (
-            <div key={s.number} className="flex items-center gap-3 py-2 px-3 bg-[var(--color-bg)] rounded-lg">
+            <div key={s.number} className="flex items-center gap-3 py-2 px-3 glass-inset">
               <NumberBall number={s.number} size="sm" />
               <div className="flex-1">
                 <div className="flex items-center gap-2">

@@ -83,7 +83,7 @@ export default function ShrinkPage() {
             </select>
           </div>
         </div>
-        <div className="bg-[var(--color-bg)] rounded-lg p-2 text-xs text-[var(--color-muted)]">
+        <div className="glass-inset p-2 text-xs text-[var(--color-muted)]">
           {pool.length}个号 → C({pool.length},{pickCount}) = {totalCombos}注 → 缩水至{maxBets}注
         </div>
       </Collapsible>
@@ -97,25 +97,25 @@ export default function ShrinkPage() {
         <Collapsible title={'缩水结果（' + result.shrunkCount + '注）'} step={3} badge={'压缩比 ' + (result.compressionRatio * 100).toFixed(4) + '%'} defaultOpen={true}>
           <div className="space-y-3">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <div className="bg-[var(--color-bg)] rounded-lg p-2.5 text-center">
+              <div className="glass-inset p-2.5 text-center">
                 <div className="text-[10px] text-[var(--color-muted)]">原始注数</div>
                 <div className="font-bold font-mono text-sm">{result.originalCount.toLocaleString()}</div>
               </div>
-              <div className="bg-[var(--color-bg)] rounded-lg p-2.5 text-center">
+              <div className="glass-inset p-2.5 text-center">
                 <div className="text-[10px] text-[var(--color-muted)]">缩水后</div>
                 <div className="font-bold font-mono text-sm text-emerald-400">{result.shrunkCount}</div>
               </div>
-              <div className="bg-[var(--color-bg)] rounded-lg p-2.5 text-center">
+              <div className="glass-inset p-2.5 text-center">
                 <div className="text-[10px] text-[var(--color-muted)]">号码覆盖率</div>
                 <div className="font-bold font-mono text-sm">{(result.numberCoverage * 100).toFixed(1)}%</div>
               </div>
-              <div className="bg-[var(--color-bg)] rounded-lg p-2.5 text-center">
+              <div className="glass-inset p-2.5 text-center">
                 <div className="text-[10px] text-[var(--color-muted)]">对覆盖率</div>
                 <div className="font-bold font-mono text-sm text-amber-400">{(result.pairCoverage * 100).toFixed(1)}%</div>
               </div>
             </div>
 
-            <div className="bg-[var(--color-bg)] rounded-lg p-2">
+            <div className="glass-inset p-2">
               <div className="h-3 bg-[var(--color-border)] rounded-full overflow-hidden">
                 <div className="h-full bg-gradient-to-r from-emerald-500 to-amber-500 rounded-full" style={{ width: (result.pairCoverage * 100) + '%' }} />
               </div>
@@ -126,7 +126,7 @@ export default function ShrinkPage() {
 
             <div className="space-y-1.5 max-h-80 overflow-y-auto">
               {result.bets.map((bet, i) => (
-                <div key={i} className="flex items-center gap-2 bg-[var(--color-bg)] rounded-lg px-3 py-1.5">
+                <div key={i} className="flex items-center gap-2 glass-inset px-3 py-1.5">
                   <span className="text-[10px] text-[var(--color-muted)] w-5 font-mono">{i + 1}</span>
                   <div className="flex gap-0.5 flex-wrap flex-1">
                     {bet.map(n => <NumberBall key={n} number={n} size="sm" />)}
@@ -135,7 +135,7 @@ export default function ShrinkPage() {
               ))}
             </div>
 
-            <CopyButton text={result.bets.map(b => b.join(' ')).join('\n')} label="📋 复制全部缩水号码" className="w-full justify-center py-2 bg-[var(--color-bg)] rounded-lg" />
+            <CopyButton text={result.bets.map(b => b.join(' ')).join('\n')} label="📋 复制全部缩水号码" className="w-full justify-center py-2 glass-inset" />
           </div>
         </Collapsible>
       )}

@@ -11,7 +11,7 @@ export default function NumberGrid({ stats }: Props) {
 
   return (
     <>
-      <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+      <div className="glass-card p-5">
         <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">{t('heat_map')}</h3>
         <div className="grid grid-cols-10 gap-1.5">
           {stats.map((s) => {
@@ -46,7 +46,7 @@ export default function NumberGrid({ stats }: Props) {
       {/* Detail Modal */}
       {selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setSelected(null)}>
-          <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-6 w-80 shadow-2xl" onClick={e => e.stopPropagation()}>
+          <div className="glass-card p-6 w-80 shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <NumberBall number={selected.number} size="lg" />
@@ -59,16 +59,16 @@ export default function NumberGrid({ stats }: Props) {
             </div>
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-[var(--color-bg)] rounded-lg p-3 text-center">
+                <div className="glass-inset p-3 text-center">
                   <div className="text-xs text-[var(--color-muted)]">{t('appearances')}</div>
                   <div className="text-xl font-bold font-mono">{selected.totalAppearances}</div>
                 </div>
-                <div className="bg-[var(--color-bg)] rounded-lg p-3 text-center">
+                <div className="glass-inset p-3 text-center">
                   <div className="text-xs text-[var(--color-muted)]">{t('hot_score')}</div>
                   <div className={`text-xl font-bold font-mono ${selected.hotScore >= 60 ? 'text-red-400' : selected.hotScore >= 40 ? 'text-amber-400' : 'text-blue-400'}`}>{selected.hotScore}</div>
                 </div>
               </div>
-              <div className="bg-[var(--color-bg)] rounded-lg p-3 space-y-2">
+              <div className="glass-inset p-3 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-[var(--color-muted)]">{t('recent_10_rate')}</span>
                   <span className="font-mono">{selected.recent10Rate}%</span>
@@ -82,7 +82,7 @@ export default function NumberGrid({ stats }: Props) {
                   <span className="font-mono">{selected.recent50Rate}%</span>
                 </div>
               </div>
-              <div className="bg-[var(--color-bg)] rounded-lg p-3 space-y-2">
+              <div className="glass-inset p-3 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-[var(--color-muted)]">{t('current_miss')}</span>
                   <span className="font-mono">{selected.currentMiss}{t('periods')}</span>

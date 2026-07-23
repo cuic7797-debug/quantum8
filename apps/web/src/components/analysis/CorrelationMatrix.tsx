@@ -53,7 +53,7 @@ export default function CorrelationMatrix() {
     .slice(0, 10);
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
+    <div className="glass-card p-5 space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="font-semibold">🔗 号码共现矩阵</h3>
@@ -87,7 +87,7 @@ export default function CorrelationMatrix() {
             <div className="text-center py-4 text-[var(--color-muted)] text-sm">暂无符合条件的共现数据</div>
           )}
           {topPairs.map((p, i) => (
-            <div key={`${p.a}-${p.b}`} className="flex items-center justify-between py-2 px-3 bg-[var(--color-bg)] rounded-lg hover:bg-[var(--color-border)] transition-colors">
+            <div key={`${p.a}-${p.b}`} className="flex items-center justify-between py-2 px-3 glass-inset hover:bg-[var(--color-border)] transition-colors">
               <div className="flex items-center gap-3">
                 <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${i < 3 ? 'bg-amber-500 text-black' : 'bg-[var(--color-border)] text-[var(--color-muted)]'}`}>
                   {i + 1}
@@ -119,12 +119,12 @@ export default function CorrelationMatrix() {
                 .slice(0, 3);
               const maxCount = affinities[0]?.count || 0;
               return (
-                <div key={num} className="bg-[var(--color-bg)] rounded p-1.5 text-center group relative">
+                <div key={num} className="glass-inset p-1.5 text-center group relative">
                   <NumberBall number={num} size="sm" />
                   {affinities.length > 0 && (
                     <>
                       <div className="text-[8px] text-[var(--color-muted)] mt-0.5">{maxCount}次</div>
-                      <div className="hidden group-hover:block absolute z-10 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-2 shadow-xl text-xs left-1/2 -translate-x-1/2 w-28">
+                      <div className="hidden group-hover:block absolute z-10 glass-card p-2 shadow-xl text-xs left-1/2 -translate-x-1/2 w-28">
                         <div className="font-semibold mb-1">号码 {num} 的关联号</div>
                         {affinities.map(a => (
                           <div key={a.partner} className="flex items-center gap-1 py-0.5">

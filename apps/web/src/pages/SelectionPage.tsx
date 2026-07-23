@@ -206,9 +206,9 @@ export default function SelectionPage() {
             </div>
           ) : (
             <div className="grid grid-cols-3 gap-2">
-              <div><label className="text-[10px] text-[var(--color-muted)]">热号</label><input type="number" min={0} max={pc} value={cHot} onChange={e => setCHot(Math.min(+e.target.value, pc))} className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded px-2 py-1.5 text-sm font-mono" /></div>
-              <div><label className="text-[10px] text-[var(--color-muted)]">冷号</label><input type="number" min={0} max={pc} value={cCold} onChange={e => setCCold(Math.min(+e.target.value, pc))} className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded px-2 py-1.5 text-sm font-mono" /></div>
-              <div><label className="text-[10px] text-[var(--color-muted)]">平衡号</label><input type="number" min={0} max={pc} value={cBalance} onChange={e => setCBalance(Math.min(+e.target.value, pc))} className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded px-2 py-1.5 text-sm font-mono" /></div>
+              <div><label className="text-[10px] text-[var(--color-muted)]">热号</label><input type="number" min={0} max={pc} value={cHot} onChange={e => setCHot(Math.min(+e.target.value, pc))} className="w-full glass-input px-2 py-1.5 text-sm font-mono" /></div>
+              <div><label className="text-[10px] text-[var(--color-muted)]">冷号</label><input type="number" min={0} max={pc} value={cCold} onChange={e => setCCold(Math.min(+e.target.value, pc))} className="w-full glass-input px-2 py-1.5 text-sm font-mono" /></div>
+              <div><label className="text-[10px] text-[var(--color-muted)]">平衡号</label><input type="number" min={0} max={pc} value={cBalance} onChange={e => setCBalance(Math.min(+e.target.value, pc))} className="w-full glass-input px-2 py-1.5 text-sm font-mono" /></div>
             </div>
           )}
         </Collapsible>
@@ -238,7 +238,7 @@ export default function SelectionPage() {
       </Collapsible>
 
       {/* Generate */}
-      <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-4">
+      <div className="glass-card p-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs text-[var(--color-muted)]">{betMode === 'single' ? 'AI推荐' : betMode === 'compound' ? '复式组合' : '胆拖组合'} · {PLAY_TYPES[playIdx]} · {comboCount()}种组合</span>
           <span className="text-xs font-bold text-amber-400">{comboCount() * 2}元</span>
@@ -254,7 +254,7 @@ export default function SelectionPage() {
         <Collapsible title={'推荐结果（' + res.length + '组）'} step={0} badge={PLAY_TYPES[playIdx]} defaultOpen={true}>
           <div className="space-y-2">
             {res.map((r, i) => (
-              <div key={i} className="bg-[var(--color-bg)] rounded-xl p-3">
+              <div key={i} className="glass-inset p-3">
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-2">
                     <span className={'w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ' + (i === 0 ? 'bg-amber-500 text-black' : i < 3 ? 'bg-[var(--color-muted)] text-black' : 'bg-[var(--color-border)] text-[var(--color-muted)]')}>{i + 1}</span>
@@ -282,7 +282,7 @@ export default function SelectionPage() {
             ))}
           </div>
           <div className="mt-3 flex gap-2">
-            <CopyButton text={res.map(r => r.numbers.join(' ')).join('\n')} label="📋 一键复制全部号码" className="flex-1 justify-center py-2 bg-[var(--color-bg)] rounded-lg" />
+            <CopyButton text={res.map(r => r.numbers.join(' ')).join('\n')} label="📋 一键复制全部号码" className="flex-1 justify-center py-2 glass-inset" />
           </div>
         </Collapsible>
       )}

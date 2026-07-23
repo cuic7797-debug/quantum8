@@ -79,11 +79,11 @@ export default function HistoryPage() {
       </div>
 
       {tab === 'check' && (
-        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
+        <div className="glass-card p-5 space-y-4">
           <div>
             <label className="text-sm text-[var(--color-muted)] mb-1 block">{t('select_draw')}</label>
             <select value={sd} onChange={e => setSd(e.target.value)}
-              className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm">
+              className="w-full glass-input px-3 py-2 text-sm">
               <option value="">{t('please_select')}</option>
               {draws.map(d => <option key={d.draw_number} value={d.draw_number}>{d.draw_number} ({d.draw_date})</option>)}
             </select>
@@ -91,13 +91,13 @@ export default function HistoryPage() {
           <div>
             <label className="text-sm text-[var(--color-muted)] mb-1 block">{t('enter_numbers')}</label>
             <input type="text" value={cn} onChange={e => setCn(e.target.value)} placeholder="1 5 12 23 34 45 56 67 78 80"
-              className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
+              className="w-full glass-input px-3 py-2 text-sm font-mono" />
           </div>
           <button onClick={go} className="w-full py-2.5 rounded-xl bg-[var(--color-primary)] text-white font-semibold hover:bg-[var(--color-primary)]/80 transition-all shadow">
             {t('check')}
           </button>
           {cr && (
-            <div className="bg-[var(--color-bg)] rounded-xl p-4 space-y-3">
+            <div className="glass-inset p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="text-sm">{cr.d}</div>
                 <div className={`text-lg font-bold ${cr.h >= 5 ? 'text-emerald-400' : cr.h >= 3 ? 'text-amber-400' : 'text-[var(--color-muted)]'}`}>
@@ -108,7 +108,7 @@ export default function HistoryPage() {
             </div>
           )}
           {sd && (
-            <div className="bg-[var(--color-bg)] rounded-xl p-4">
+            <div className="glass-inset p-4">
               <div className="text-xs text-[var(--color-muted)] mb-2">{t('draw_numbers')}</div>
               <div className="flex flex-wrap gap-1">{draws.find(d => d.draw_number === sd)?.numbers.map(n => <NumberBall key={n} number={n} size="md" />)}</div>
             </div>
@@ -117,7 +117,7 @@ export default function HistoryPage() {
       )}
 
       {tab === 'records' && (
-        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+        <div className="glass-card p-5">
           {displayPicks.length === 0 ? (
             <div className="text-center py-8 text-[var(--color-muted)] text-sm">
               {t('no_records')}<br /><span className="text-xs">{t('pick_save_hint')}</span>

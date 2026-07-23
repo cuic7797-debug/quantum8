@@ -41,7 +41,7 @@ export default function FavoritesPage() {
           { label: '杀号列表', value: killedNums.length, icon: '🔪', color: 'text-red-400' },
           { label: '号码分组', value: (() => { try { return JSON.parse(localStorage.getItem('quantum8_number_groups') || '[]').length; } catch { return 0; } })(), icon: '📁', color: 'text-emerald-400' },
         ].map(item => (
-          <div key={item.label} className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-3 text-center">
+          <div key={item.label} className="glass-card p-3 text-center">
             <div className="text-lg">{item.icon}</div>
             <div className={'font-bold text-lg ' + item.color}>{item.value}</div>
             <div className="text-[10px] text-[var(--color-muted)]">{item.label}</div>
@@ -61,7 +61,7 @@ export default function FavoritesPage() {
         ) : (
           <div className="space-y-2 max-h-96 overflow-y-auto">
             {picks.map((p, i) => (
-              <div key={i} className="flex items-center justify-between py-2 px-3 bg-[var(--color-bg)] rounded-lg">
+              <div key={i} className="flex items-center justify-between py-2 px-3 glass-inset">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <span className="text-[10px] text-[var(--color-muted)]">{new Date(p.time).toLocaleDateString()}</span>
@@ -86,7 +86,7 @@ export default function FavoritesPage() {
         ) : (
           <div className="space-y-2">
             {(user ? cloudStrategies : savedStrats).map((s: any) => (
-              <div key={s.id || s.name} className="flex items-center justify-between py-2 px-3 bg-[var(--color-bg)] rounded-lg">
+              <div key={s.id || s.name} className="flex items-center justify-between py-2 px-3 glass-inset">
                 <div>
                   <div className="text-sm font-semibold">{s.name}</div>
                   <div className="text-[10px] text-[var(--color-muted)]">{(s.config || s).playType || '选十'} · 热{(s.config || s).hotCount || 4}/冷{(s.config || s).coldCount || 4}/平{(s.config || s).balanceCount || 2}</div>

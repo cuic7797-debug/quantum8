@@ -170,7 +170,7 @@ export default function KillPage() {
         </button>
 
         {autoKill && showResult && (
-          <div className="mt-4 bg-[var(--color-bg)] rounded-xl p-4 space-y-3">
+          <div className="mt-4 glass-inset p-4 space-y-3">
             <div className="flex items-center justify-between">
               <div className="text-sm font-semibold">{autoKill.strategy} · 排除{autoKill.killed.length}个</div>
               <div className="text-xs text-emerald-400">置信度 {autoKill.confidence}%</div>
@@ -235,7 +235,7 @@ export default function KillPage() {
               </div>
             </div>
             <div className="flex gap-2">
-              <CopyButton text={aliveNums.join(' ')} label="📋 复制可用号码" className="flex-1 justify-center py-2 bg-[var(--color-bg)] rounded-lg" />
+              <CopyButton text={aliveNums.join(' ')} label="📋 复制可用号码" className="flex-1 justify-center py-2 glass-inset" />
             </div>
             <div className="text-[10px] text-[var(--color-muted)] text-center">
               杀号列表已保存，智能选号将自动避开这些号码

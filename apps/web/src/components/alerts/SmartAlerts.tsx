@@ -99,7 +99,7 @@ export default function SmartAlerts() {
   if (visible.length === 0) return null;
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-3">
+    <div className="glass-card p-5 space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">🚨 智能预警</h3>
         <span className="text-xs text-[var(--color-muted)]">{visible.length}条预警</span>

@@ -28,7 +28,7 @@ export default function MissDashboard() {
   const maxMissNum = [...stats].sort((a, b) => b.currentMiss - a.currentMiss)[0];
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
+    <div className="glass-card p-5 space-y-4">
       <div>
         <h3 className="font-semibold">📉 遗漏统计仪表盘</h3>
         <p className="text-xs text-[var(--color-muted)] mt-1">分析号码遗漏规律，发现回补机会</p>
@@ -36,22 +36,22 @@ export default function MissDashboard() {
 
       {/* Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-        <div className="bg-[var(--color-bg)] rounded-lg p-2.5 text-center">
+        <div className="glass-inset p-2.5 text-center">
           <div className="text-[10px] text-[var(--color-muted)]">最大遗漏号</div>
           <div className="font-bold font-mono text-sm">{maxMissNum?.number || '-'}</div>
           <div className="text-[9px] text-red-400">{maxMissNum?.currentMiss || 0}期</div>
         </div>
-        <div className="bg-[var(--color-bg)] rounded-lg p-2.5 text-center">
+        <div className="glass-inset p-2.5 text-center">
           <div className="text-[10px] text-[var(--color-muted)]">平均遗漏</div>
           <div className="font-bold font-mono text-sm">{avgMiss}</div>
           <div className="text-[9px] text-[var(--color-muted)]">80个号码</div>
         </div>
-        <div className="bg-[var(--color-bg)] rounded-lg p-2.5 text-center">
+        <div className="glass-inset p-2.5 text-center">
           <div className="text-[10px] text-[var(--color-muted)]">待回补号</div>
           <div className="font-bold font-mono text-sm text-amber-400">{overdueCount}</div>
           <div className="text-[9px] text-[var(--color-muted)]">missRatio≥80</div>
         </div>
-        <div className="bg-[var(--color-bg)] rounded-lg p-2.5 text-center">
+        <div className="glass-inset p-2.5 text-center">
           <div className="text-[10px] text-[var(--color-muted)]">活跃号</div>
           <div className="font-bold font-mono text-sm text-emerald-400">{hotCount}</div>
           <div className="text-[9px] text-[var(--color-muted)]">hotScore≥60</div>

@@ -22,7 +22,7 @@ export default function NumberTrendMini({ count = 10 }: Props) {
   const oddTrend = recent.map(d => d.odd_count);
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+    <div className="glass-card p-5">
       <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">近 {count} 期走势概览</h3>
 
       {/* Sum mini chart */}

@@ -95,7 +95,7 @@ export default function MonteCarloSim() {
   }
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
+    <div className="glass-card p-5 space-y-4">
       <div>
         <h3 className="font-semibold">🎲 蒙特卡洛模拟</h3>
         <p className="text-xs text-[var(--color-muted)] mt-1">通过大量随机模拟评估策略的长期期望收益</p>
@@ -149,14 +149,14 @@ export default function MonteCarloSim() {
               { label: '最大盈利', value: `+${result.maxProfit.toFixed(0)}元`, color: 'text-emerald-400' },
               { label: '最大亏损', value: `${result.maxLoss.toFixed(0)}元`, color: 'text-red-400' },
             ].map(item => (
-              <div key={item.label} className="bg-[var(--color-bg)] rounded-lg p-3 text-center">
+              <div key={item.label} className="glass-inset p-3 text-center">
                 <div className="text-[10px] text-[var(--color-muted)]">{item.label}</div>
                 <div className={`font-bold font-mono text-sm mt-1 ${item.color}`}>{item.value}</div>
               </div>
             ))}
           </div>
 
-          <div className="bg-[var(--color-bg)] rounded-lg p-3">
+          <div className="glass-inset p-3">
             <div className="text-xs text-[var(--color-muted)] mb-2">收益分布</div>
             <div className="flex items-end gap-0.5 h-20">
               {result.distribution.map((count, i) => {
@@ -174,7 +174,7 @@ export default function MonteCarloSim() {
             </div>
           </div>
 
-          <div className="bg-[var(--color-bg)] rounded-lg p-3">
+          <div className="glass-inset p-3">
             <div className="text-xs text-[var(--color-muted)] mb-1">置信区间</div>
             <div className="text-xs">
               10%分位: <span className="font-mono text-red-400">{result.p10 > 0 ? '+' : ''}{result.p10.toFixed(0)}元</span>
