@@ -11,6 +11,7 @@ import PatternDetection from '@/components/analysis/PatternDetection';
 import ProfessionalTrends from '@/components/analysis/ProfessionalTrends';
 import MissDashboard from '@/components/analysis/MissDashboard';
 import NumberCompare from '@/components/analysis/NumberCompare';
+import NumberHeatmap from '@/components/analysis/NumberHeatmap';
 import { t } from '@/hooks/useI18n';
 
 export default function AnalysisPage() {
@@ -195,6 +196,8 @@ export default function AnalysisPage() {
       <TrendAnalysis />
 
       <MissDashboard />
+
+      <NumberHeatmap />
 
       <NumberCompare />
 

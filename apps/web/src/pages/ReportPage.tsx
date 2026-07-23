@@ -207,6 +207,86 @@ export default function ReportPage() {
         </div>
       </div>
 
+
+      {/* Distribution Analysis */}
+      <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+        <h3 className="font-semibold mb-3">📊 号码分布分析</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="bg-[var(--color-bg)] rounded-lg p-3">
+            <div className="text-xs text-[var(--color-muted)] mb-1">一区(1-20)</div>
+            <div className="text-lg font-bold font-mono">{zonePercents[0]}%</div>
+            <div className="text-[10px] text-[var(--color-muted)]">{'>'}25% 偏重</div>
+          </div>
+          <div className="bg-[var(--color-bg)] rounded-lg p-3">
+            <div className="text-xs text-[var(--color-muted)] mb-1">二区(21-40)</div>
+            <div className="text-lg font-bold font-mono">{zonePercents[1]}%</div>
+          </div>
+          <div className="bg-[var(--color-bg)] rounded-lg p-3">
+            <div className="text-xs text-[var(--color-muted)] mb-1">三区(41-60)</div>
+            <div className="text-lg font-bold font-mono">{zonePercents[2]}%</div>
+          </div>
+          <div className="bg-[var(--color-bg)] rounded-lg p-3">
+            <div className="text-xs text-[var(--color-muted)] mb-1">四区(61-80)</div>
+            <div className="text-lg font-bold font-mono">{zonePercents[3]}%</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Odd/Even Analysis */}
+      <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+        <h3 className="font-semibold mb-3">⚖️ 奇偶分析</h3>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="bg-[var(--color-bg)] rounded-lg p-3 text-center">
+            <div className="text-xs text-[var(--color-muted)]">近10期平均奇数</div>
+            <div className="text-lg font-bold font-mono text-purple-400">{avgOdd}</div>
+          </div>
+          <div className="bg-[var(--color-bg)] rounded-lg p-3 text-center">
+            <div className="text-xs text-[var(--color-muted)]">奇偶比趋势</div>
+            <div className="text-sm font-bold">
+              {parseFloat(avgOdd) > 10.5 ? '奇数偏多' : parseFloat(avgOdd) < 9.5 ? '偶数偏多' : '均衡'}
+            </div>
+          </div>
+          <div className="bg-[var(--color-bg)] rounded-lg p-3 text-center">
+            <div className="text-xs text-[var(--color-muted)]">最新开奖奇偶</div>
+            <div className="text-lg font-bold font-mono">{latest.odd_count}:{latest.even_count}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Overdue Numbers */}
+      <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+        <h3 className="font-semibold mb-3">⏰ 遗漏回补分析</h3>
+        <div className="space-y-2">
+          {overdue.map((s, i) => (
+            <div key={s.number} className="flex items-center gap-3 py-2 px-3 bg-[var(--color-bg)] rounded-lg">
+              <NumberBall number={s.number} size="sm" />
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold">号码 {s.number}</span>
+                  <span className="text-xs text-[var(--color-muted)]">遗漏{s.currentMiss}期</span>
+                </div>
+                <div className="h-1.5 bg-[var(--color-border)] rounded-full mt-1 overflow-hidden">
+                  <div className="h-full bg-amber-500 rounded-full" style={{ width: Math.min(100, s.missRatio) + '%' }} />
+                </div>
+              </div>
+              <span className="text-xs font-mono text-amber-400">{s.missRatio}%</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Summary */}
+      <div className="bg-[var(--color-primary)]/10 rounded-xl border border-[var(--color-primary)]/20 p-5">
+        <h3 className="font-semibold mb-2">📋 综合评估</h3>
+        <div className="space-y-1 text-xs text-[var(--color-muted)]">
+          <p>• 近期号码热度{hotTop10.slice(0, 3).length >= 3 ? '较高' : '适中'}，关注{hotTop10.slice(0, 3).map(s => s.number).join('、')}号趋势</p>
+          <p>• 冷号{coldTop10.slice(0, 3).map(s => s.number).join('、')}遗漏较深，存在回补可能</p>
+          <p>• 四区分布{Math.abs(parseFloat(zonePercents[0]) - 25) < 5 ? '较为均衡' : '存在一定偏态'}</p>
+          <p>• 奇偶比{parseFloat(avgOdd) > 11 ? '偏奇' : parseFloat(avgOdd) < 9 ? '偏偶' : '均衡'}</p>
+          <p>• 连号出现频率{hasConsec > 5 ? '偏高' : '适中'}，结构{hasConsec > 5 ? '较复杂' : '较规整'}</p>
+        </div>
+      </div>
+
       {/* Disclaimer */}
       <div className="text-center text-[10px] text-[var(--color-muted)] py-4">
         Quantum8 v1.0 · 以上分析仅供参考，不构成投注建议 · 彩票有风险，投注需理性
