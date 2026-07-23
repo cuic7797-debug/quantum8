@@ -3,6 +3,8 @@ import { useNumberStats } from '@/hooks/useNumberStats';
 import { useDraws } from '@/hooks/useDraws';
 import NumberBall from '@/components/common/NumberBall';
 import { applyFilters, generateBatch, scoreCombination } from '@quantum8/algorithm';
+import { useAuth } from '@/hooks/useAuth';
+import { useUserStrategies } from '@/hooks/useUserStrategies';
 import type { ScoreResult, PlayType } from '@quantum8/types';
 import { t } from '@/hooks/useI18n';
 
@@ -17,6 +19,8 @@ const STORAGE_KEY = 'quantum8_strategies';
 const PT = [t('play5'), t('play6'), t('play7'), t('play8'), t('play9'), t('play10')];
 
 export default function StrategyPage() {
+  const { user } = useAuth();
+  const cloud = useUserStrategies();
   const { stats } = useNumberStats();
   const { draws } = useDraws(100);
   const [strategies, setStrategies] = useState<Strategy[]>([]);
@@ -38,12 +42,28 @@ export default function StrategyPage() {
   const [formMaxConsec, setFormMaxConsec] = useState(3);
 
   useEffect(() => {
-    try { setStrategies(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')); } catch { setStrategies([]); }
-  }, []);
+    if (user && cloud.strategies.length > 0) {
+      const mapped = cloud.strategies.map(cs => ({
+        id: cs.id, name: cs.name, description: cs.description || '',
+        playType: (cs.config as any).playType || t('play10') as PlayType,
+        hotCount: (cs.config as any).hotCount || 4,
+        coldCount: (cs.config as any).coldCount || 4,
+        balanceCount: (cs.config as any).balanceCount || 2,
+        zoneBalance: (cs.config as any).zoneBalance ?? true,
+        sumRange: (cs.config as any).sumRange || [400, 1200],
+        oddEvenRange: (cs.config as any).oddEvenRange || [5, 15],
+        maxConsecutive: (cs.config as any).maxConsecutive || 3,
+        createdAt: cs.created_at,
+      }));
+      setStrategies(mapped);
+    } else if (!user) {
+      try { setStrategies(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')); } catch { setStrategies([]); }
+    }
+  }, [user, cloud.strategies]);
 
   function saveStrategies(list: Strategy[]) {
     setStrategies(list);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    if (!user) localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
   }
 
   function resetForm() {
@@ -52,15 +72,26 @@ export default function StrategyPage() {
     setFormSumMin(400); setFormSumMax(1200); setFormOddMin(5); setFormOddMax(15); setFormMaxConsec(3);
   }
 
-  function handleSave() {
+  async function handleSave() {
     if (!formName.trim()) return;
-    const s: Strategy = {
-      id: editing?.id || Date.now().toString(), name: formName.trim(), description: formDesc.trim(),
+    const config = {
       playType: formPlayType, hotCount: formHot, coldCount: formCold, balanceCount: formBalance,
-      zoneBalance: formZoneBalance, sumRange: [formSumMin, formSumMax], oddEvenRange: [formOddMin, formOddMax],
-      maxConsecutive: formMaxConsec, createdAt: editing?.createdAt || new Date().toISOString(),
+      zoneBalance: formZoneBalance, sumRange: [formSumMin, formSumMax] as [number, number], oddEvenRange: [formOddMin, formOddMax] as [number, number],
+      maxConsecutive: formMaxConsec,
     };
-    saveStrategies(editing ? strategies.map(x => x.id === editing.id ? s : x) : [...strategies, s]);
+    if (user) {
+      if (editing) {
+        await cloud.updateStrategy(editing.id, { name: formName.trim(), description: formDesc.trim(), config });
+      } else {
+        await cloud.addStrategy(formName.trim(), formDesc.trim(), config);
+      }
+    } else {
+      const s: Strategy = {
+        id: editing?.id || Date.now().toString(), name: formName.trim(), description: formDesc.trim(),
+        ...config, createdAt: editing?.createdAt || new Date().toISOString(),
+      };
+      saveStrategies(editing ? strategies.map(x => x.id === editing.id ? s : x) : [...strategies, s]);
+    }
     setShowCreate(false); setEditing(null); resetForm();
   }
 
@@ -72,8 +103,9 @@ export default function StrategyPage() {
     setFormOddMin(s.oddEvenRange[0]); setFormOddMax(s.oddEvenRange[1]); setFormMaxConsec(s.maxConsecutive);
   }
 
-  function handleDelete(id: string) {
-    saveStrategies(strategies.filter(x => x.id !== id));
+  async function handleDelete(id: string) {
+    if (user) { await cloud.deleteStrategy(id); }
+    else { saveStrategies(strategies.filter(x => x.id !== id)); }
     setCompareIds(compareIds.filter(x => x !== id));
   }
 
@@ -103,122 +135,116 @@ export default function StrategyPage() {
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold">{t('strategy_lab')}</h2>
         <button onClick={() => { resetForm(); setEditing(null); setShowCreate(true); }}
-          className="px-4 py-2 rounded-xl bg-[var(--color-primary)] text-white text-sm font-semibold hover:bg-[var(--color-primary)]/80 transition-all shadow">
-          + {t('new_strategy')}
+          className="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white text-sm font-semibold hover:bg-[var(--color-primary)]/80 transition-all">
+          + {t('create_strategy')}
         </button>
       </div>
-      <div className="text-xs text-[var(--color-muted)] bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-2">{t('strategy_lab_ref')}</div>
+      {user && <div className="text-xs text-emerald-400 bg-emerald-500/10 rounded-lg px-4 py-2">☁️ 策略已同步到云端</div>}
 
+      {/* Create/Edit Form */}
       {showCreate && (
         <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-4">
-          <h3 className="font-semibold">{editing ? t('edit_strategy') : t('new_strategy')}</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <h3 className="font-semibold">{editing ? t('edit_strategy') : t('create_strategy')}</h3>
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-sm text-[var(--color-muted)] mb-1 block">{t('strategy_name')} *</label>
-              <input type="text" value={formName} onChange={e => setFormName(e.target.value)} placeholder={t('strategy_name_placeholder')}
-                className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm" />
+              <label className="text-xs text-[var(--color-muted)] block mb-1">{t('strategy_name')}</label>
+              <input value={formName} onChange={e => setFormName(e.target.value)}
+                className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm" placeholder="策略名称" />
             </div>
             <div>
-              <label className="text-sm text-[var(--color-muted)] mb-1 block">{t('strategy_desc')}</label>
-              <input type="text" value={formDesc} onChange={e => setFormDesc(e.target.value)} placeholder={t('strategy_desc_placeholder')}
-                className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm" />
+              <label className="text-xs text-[var(--color-muted)] block mb-1">{t('play_type')}</label>
+              <select value={formPlayType} onChange={e => setFormPlayType(e.target.value as PlayType)}
+                className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm">
+                {PT.map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
             </div>
           </div>
           <div>
-            <label className="text-sm text-[var(--color-muted)] mb-2 block">{t('play')}</label>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-              {PT.map(p => (
-                <button key={p} onClick={() => setFormPlayType(p as PlayType)}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${formPlayType === p ? 'bg-[var(--color-primary)] text-white shadow' : 'bg-[var(--color-bg)] text-[var(--color-muted)] hover:bg-[var(--color-border)]'}`}>
-                  {p}
-                </button>
-              ))}
-            </div>
+            <label className="text-xs text-[var(--color-muted)] block mb-1">{t('description')}</label>
+            <input value={formDesc} onChange={e => setFormDesc(e.target.value)}
+              className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm" placeholder="策略说明（可选）" />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="text-sm text-[var(--color-muted)] mb-1 block">{t('hot_count')}</label>
-              <input type="number" min={0} max={10} value={formHot} onChange={e => setFormHot(+e.target.value)}
+              <label className="text-xs text-[var(--color-muted)] block mb-1">{t('hot_count')}</label>
+              <input type="number" min={0} max={20} value={formHot} onChange={e => setFormHot(+e.target.value)}
                 className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
             </div>
             <div>
-              <label className="text-sm text-[var(--color-muted)] mb-1 block">{t('cold_count')}</label>
-              <input type="number" min={0} max={10} value={formCold} onChange={e => setFormCold(+e.target.value)}
+              <label className="text-xs text-[var(--color-muted)] block mb-1">{t('cold_count')}</label>
+              <input type="number" min={0} max={20} value={formCold} onChange={e => setFormCold(+e.target.value)}
                 className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
             </div>
             <div>
-              <label className="text-sm text-[var(--color-muted)] mb-1 block">{t('balance_count')}</label>
-              <input type="number" min={0} max={10} value={formBalance} onChange={e => setFormBalance(+e.target.value)}
+              <label className="text-xs text-[var(--color-muted)] block mb-1">{t('balance_count')}</label>
+              <input type="number" min={0} max={20} value={formBalance} onChange={e => setFormBalance(+e.target.value)}
                 className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="text-sm text-[var(--color-muted)] mb-1 block">{t('sum_range')}</label>
-              <div className="flex items-center gap-2">
-                <input type="number" value={formSumMin} onChange={e => setFormSumMin(+e.target.value)} className="w-20 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
-                <span className="text-[var(--color-muted)]">~</span>
-                <input type="number" value={formSumMax} onChange={e => setFormSumMax(+e.target.value)} className="w-20 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
+              <label className="text-xs text-[var(--color-muted)] block mb-1">{t('sum_range')}</label>
+              <div className="flex gap-1">
+                <input type="number" value={formSumMin} onChange={e => setFormSumMin(+e.target.value)}
+                  className="w-1/2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-2 py-2 text-sm font-mono" />
+                <span className="text-[var(--color-muted)] py-2">-</span>
+                <input type="number" value={formSumMax} onChange={e => setFormSumMax(+e.target.value)}
+                  className="w-1/2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-2 py-2 text-sm font-mono" />
               </div>
             </div>
             <div>
-              <label className="text-sm text-[var(--color-muted)] mb-1 block">{t('odd_range')}</label>
-              <div className="flex items-center gap-2">
-                <input type="number" min={0} max={20} value={formOddMin} onChange={e => setFormOddMin(+e.target.value)} className="w-20 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
-                <span className="text-[var(--color-muted)]">~</span>
-                <input type="number" min={0} max={20} value={formOddMax} onChange={e => setFormOddMax(+e.target.value)} className="w-20 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
+              <label className="text-xs text-[var(--color-muted)] block mb-1">{t('odd_range')}</label>
+              <div className="flex gap-1">
+                <input type="number" value={formOddMin} onChange={e => setFormOddMin(+e.target.value)}
+                  className="w-1/2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-2 py-2 text-sm font-mono" />
+                <span className="text-[var(--color-muted)] py-2">-</span>
+                <input type="number" value={formOddMax} onChange={e => setFormOddMax(+e.target.value)}
+                  className="w-1/2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-2 py-2 text-sm font-mono" />
               </div>
             </div>
+            <div>
+              <label className="text-xs text-[var(--color-muted)] block mb-1">{t('max_consecutive')}</label>
+              <input type="number" min={1} max={10} value={formMaxConsec} onChange={e => setFormMaxConsec(+e.target.value)}
+                className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
+            </div>
           </div>
-          <div className="flex items-center gap-6">
-            <label className="flex items-center gap-2 text-sm cursor-pointer">
-              <input type="checkbox" checked={formZoneBalance} onChange={e => setFormZoneBalance(e.target.checked)} className="rounded" />
+          <div className="flex gap-2">
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={formZoneBalance} onChange={e => setFormZoneBalance(e.target.checked)}
+                className="rounded" />
               {t('zone_balance')}
             </label>
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-[var(--color-muted)]">{t('max_consecutive')}</label>
-              <input type="number" min={1} max={10} value={formMaxConsec} onChange={e => setFormMaxConsec(+e.target.value)}
-                className="w-16 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm font-mono" />
-            </div>
           </div>
-          <div className="flex gap-3">
-            <button onClick={handleSave} className="px-6 py-2.5 rounded-xl bg-[var(--color-primary)] text-white font-semibold hover:bg-[var(--color-primary)]/80 transition-all shadow">
-              {editing ? t('save_edit') : t('create_strategy')}
+          <div className="flex gap-2">
+            <button onClick={handleSave} disabled={!formName.trim()}
+              className="px-6 py-2 rounded-lg bg-[var(--color-primary)] text-white font-semibold hover:bg-[var(--color-primary)]/80 disabled:opacity-50 transition-all">
+              {editing ? t('save') : t('create')}
             </button>
-            <button onClick={() => { setShowCreate(false); setEditing(null); resetForm(); }} className="px-6 py-2.5 rounded-xl bg-[var(--color-bg)] text-[var(--color-muted)] hover:bg-[var(--color-border)] transition-all">
+            <button onClick={() => { setShowCreate(false); setEditing(null); }}
+              className="px-6 py-2 rounded-lg bg-[var(--color-bg)] text-[var(--color-muted)] hover:bg-[var(--color-border)] transition-all">
               {t('cancel')}
             </button>
           </div>
         </div>
       )}
 
-      {strategies.length === 0 && !showCreate ? (
-        <div className="text-center py-16 text-[var(--color-muted)]">
-          <div className="text-4xl mb-4">🧪</div>
-          <div className="text-lg mb-2">{t('no_strategies')}</div>
-          <div className="text-sm">{t('no_strategies_hint')}</div>
-        </div>
-      ) : (
-        <div className="space-y-4">
+      {/* Strategy List */}
+      {strategies.length > 0 && (
+        <div className="space-y-3">
           {strategies.map(s => (
-            <div key={s.id} className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <input type="checkbox" checked={compareIds.includes(s.id)} onChange={() => toggleCompare(s.id)} className="rounded" />
-                  <div>
-                    <h3 className="font-semibold">{s.name}</h3>
-                    {s.description && <p className="text-xs text-[var(--color-muted)]">{s.description}</p>}
-                  </div>
+            <div key={s.id} className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-bold">{s.name}</h3>
+                  {s.description && <p className="text-xs text-[var(--color-muted)] mt-1">{s.description}</p>}
                 </div>
-                <div className="flex items-center gap-2 text-xs text-[var(--color-muted)]">
-                  <span className="bg-[var(--color-primary)]/20 text-[var(--color-primary)] px-2 py-0.5 rounded">{s.playType}</span>
-                  <span>{new Date(s.createdAt).toLocaleDateString()}</span>
-                </div>
+                <label className="flex items-center gap-1 text-xs text-[var(--color-muted)]">
+                  <input type="checkbox" checked={compareIds.includes(s.id)} onChange={() => toggleCompare(s.id)} />
+                  {t('compare')}
+                </label>
               </div>
-              <div className="flex flex-wrap gap-2 mb-3 text-xs">
-                <span className="bg-blue-500/10 text-blue-400 px-2 py-1 rounded">{t('hot_count')} {s.hotCount}</span>
-                <span className="bg-sky-500/10 text-sky-400 px-2 py-1 rounded">{t('cold_count')} {s.coldCount}</span>
-                <span className="bg-amber-500/10 text-amber-400 px-2 py-1 rounded">{t('balance_count')} {s.balanceCount}</span>
+              <div className="flex flex-wrap gap-2">
+                <span className="bg-[var(--color-primary)]/10 text-[var(--color-primary)] px-2 py-1 rounded text-xs">{s.playType}</span>
                 <span className="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded">{t('sum_range')} {s.sumRange[0]}-{s.sumRange[1]}</span>
                 <span className="bg-rose-500/10 text-rose-400 px-2 py-1 rounded">{t('odd_range')} {s.oddEvenRange[0]}-{s.oddEvenRange[1]}</span>
                 <span className="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">{t('max_consecutive')} {s.maxConsecutive}</span>
@@ -246,7 +272,7 @@ export default function StrategyPage() {
                         <div className="flex gap-0.5">{r.numbers.map(n => <NumberBall key={n} number={n} size="sm" />)}</div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className={`text-xs font-medium ${r.riskLevel === '低' ? 'text-emerald-400' : r.riskLevel === '中' ? 'text-amber-400' : 'text-red-400'}`}>{r.riskLevel}{t('risk_low') === '低风险' ? '风险' : ''}</span>
+                        <span className={`text-xs font-medium ${r.riskLevel === '低' ? 'text-emerald-400' : r.riskLevel === '中' ? 'text-amber-400' : 'text-red-400'}`}>{r.riskLevel}风险</span>
                         <span className="font-bold font-mono text-sm">{r.totalScore}</span>
                       </div>
                     </div>
@@ -287,6 +313,14 @@ export default function StrategyPage() {
               </tbody>
             </table>
           </div>
+        </div>
+      )}
+
+      {strategies.length === 0 && !showCreate && (
+        <div className="text-center py-12 text-[var(--color-muted)]">
+          <div className="text-4xl mb-4">🧪</div>
+          <p className="text-sm">还没有策略</p>
+          <p className="text-xs mt-1">创建你的第一个策略，开始量化分析</p>
         </div>
       )}
     </div>

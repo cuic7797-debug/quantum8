@@ -185,5 +185,10 @@
   "frequency": "频",
   "miss_periods": "漏",
   "rising": "上升趋势",
-  "falling": "下降趋势"
+  "falling": "下降趋势",
+  "description": "描述",
+  "save": "保存",
+  "create": "创建",
+  "compare": "对比",
+  "compare_strategy": "策略对比"
 }

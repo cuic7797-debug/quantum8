@@ -153,7 +153,7 @@ export default function SelectionPage() {
         <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">{t('play_type')}</h3>
         <div className="grid grid-cols-5 gap-2">
           {PT.map((p, i) => (
-            <button key={p} onClick={() => { setPt(p); setRes([]); }}
+            <button key={p} onClick={() => { setPt(p as PlayType); setRes([]); }}
               className={`py-2 rounded-lg text-sm font-semibold transition-all ${pt === p ? 'bg-[var(--color-primary)] text-white shadow-lg' : 'bg-[var(--color-bg)] text-[var(--color-muted)] hover:bg-[var(--color-border)]'}`}>
               {t('play')}{i + 1}
             </button>

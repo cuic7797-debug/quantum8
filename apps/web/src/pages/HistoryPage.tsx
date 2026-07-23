@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useDraws } from '@/hooks/useDraws';
+import { useAuth } from '@/hooks/useAuth';
+import { useUserPicks } from '@/hooks/useUserPicks';
 import NumberBall from '@/components/common/NumberBall';
 import { t } from '@/hooks/useI18n';
 
 interface SavedPick { numbers: number[]; playType: string; score: number; risk: string; time: string; strategy?: string; }
 
 export default function HistoryPage() {
+  const { user } = useAuth();
+  const { picks: cloudPicks, deletePick: deleteCloudPick } = useUserPicks();
   const { draws } = useDraws(100);
   const [tab, setTab] = useState<'check' | 'records'>('check');
   const [cn, setCn] = useState('');
@@ -16,6 +20,18 @@ export default function HistoryPage() {
   useEffect(() => {
     try { setPicks(JSON.parse(localStorage.getItem('quantum8_picks') || '[]')); } catch { setPicks([]); }
   }, []);
+
+  const displayPicks = user
+    ? cloudPicks.map(cp => ({
+        numbers: cp.numbers,
+        playType: cp.play_type || '选十',
+        score: 0,
+        risk: '中',
+        time: cp.created_at,
+        strategy: cp.strategy_label || '',
+        id: cp.id,
+      }))
+    : picks;
 
   function go() {
     const input = cn.trim().split(/[\s,]+/).map(Number).filter(n => n >= 1 && n <= 80);
@@ -28,21 +44,28 @@ export default function HistoryPage() {
 
   function clearPicks() { localStorage.removeItem('quantum8_picks'); setPicks([]); }
   function exportPicks() {
-    if (!picks.length) return;
-    const lines = picks.map(p => `[${p.time}] ${p.playType} | ${p.numbers.join(' ')} | Score:${p.score} ${p.risk}${p.strategy ? ` | ${p.strategy}` : ''}`);
+    if (!displayPicks.length) return;
+    const lines = displayPicks.map(p => `[${p.time}] ${p.playType} | ${p.numbers.join(' ')} | Score:${p.score} ${p.risk}${p.strategy ? ` | ${p.strategy}` : ''}`);
     const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
     a.download = `quantum8_picks_${new Date().toISOString().slice(0, 10)}.txt`; a.click();
   }
-  function deletePick(index: number) {
-    const updated = picks.filter((_, i) => i !== index);
-    setPicks(updated);
-    localStorage.setItem('quantum8_picks', JSON.stringify(updated));
+
+  async function deletePick(index: number) {
+    if (user) {
+      const cp = cloudPicks[index];
+      if (cp) await deleteCloudPick(cp.id);
+    } else {
+      const updated = picks.filter((_, i) => i !== index);
+      setPicks(updated);
+      localStorage.setItem('quantum8_picks', JSON.stringify(updated));
+    }
   }
 
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-bold">{t('history_record')}</h2>
+      {user && <div className="text-xs text-emerald-400 bg-emerald-500/10 rounded-lg px-4 py-2">☁️ 选号记录已同步到云端</div>}
       <div className="flex gap-2">
         <button onClick={() => setTab('check')}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === 'check' ? 'bg-[var(--color-primary)] text-white shadow' : 'bg-[var(--color-surface)] text-[var(--color-muted)] hover:bg-[var(--color-border)]'}`}>
@@ -50,7 +73,7 @@ export default function HistoryPage() {
         </button>
         <button onClick={() => setTab('records')}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === 'records' ? 'bg-[var(--color-primary)] text-white shadow' : 'bg-[var(--color-surface)] text-[var(--color-muted)] hover:bg-[var(--color-border)]'}`}>
-          {t('my_picks')} ({picks.length})
+          {t('my_picks')} ({displayPicks.length})
         </button>
       </div>
 
@@ -94,7 +117,7 @@ export default function HistoryPage() {
 
       {tab === 'records' && (
         <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
-          {picks.length === 0 ? (
+          {displayPicks.length === 0 ? (
             <div className="text-center py-8 text-[var(--color-muted)] text-sm">
               {t('no_records')}<br /><span className="text-xs">{t('pick_save_hint')}</span>
             </div>
@@ -104,28 +127,21 @@ export default function HistoryPage() {
                 <h3 className="text-sm font-semibold text-[var(--color-muted)]">{t('saved_picks')}</h3>
                 <div className="flex gap-2">
                   <button onClick={exportPicks} className="text-xs text-[var(--color-primary)] hover:underline">{t('export_txt')}</button>
-                  <button onClick={clearPicks} className="text-xs text-red-400 hover:underline">{t('clear_all')}</button>
+                  {!user && <button onClick={clearPicks} className="text-xs text-red-400 hover:underline">{t('clear_all')}</button>}
                 </div>
               </div>
               <div className="space-y-3">
-                {picks.map((p, i) => (
+                {displayPicks.map((p: any, i: number) => (
                   <div key={i} className="flex items-center justify-between py-3 border-b border-[var(--color-border)] last:border-0">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <span className="text-xs text-[var(--color-muted)]">{new Date(p.time).toLocaleDateString()}</span>
                         <span className="text-xs bg-[var(--color-primary)]/20 text-[var(--color-primary)] px-2 py-0.5 rounded">{p.playType}</span>
-                        <span className={`text-xs px-2 py-0.5 rounded ${p.risk === '低' ? 'bg-emerald-500/20 text-emerald-400' : p.risk === '中' ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}`}>{p.risk}{p.risk === '低' ? '风险' : p.risk === '中' ? '风险' : '风险'}</span>
                         {p.strategy && <span className="text-xs text-[var(--color-muted)]">| {p.strategy}</span>}
                       </div>
-                      <div className="flex gap-1 flex-wrap">{p.numbers.map(n => <NumberBall key={n} number={n} size="sm" />)}</div>
+                      <div className="flex gap-1 flex-wrap">{p.numbers.map((n: number) => <NumberBall key={n} number={n} size="sm" />)}</div>
                     </div>
-                    <div className="flex items-center gap-3 shrink-0 ml-2">
-                      <div className="text-right">
-                        <div className="font-bold font-mono">{p.score}</div>
-                        <div className="text-[10px] text-[var(--color-muted)]">{t('score')}</div>
-                      </div>
-                      <button onClick={() => deletePick(i)} className="text-xs text-red-400 hover:underline">{t('delete')}</button>
-                    </div>
+                    <button onClick={() => deletePick(i)} className="text-xs text-red-400 hover:underline ml-2 shrink-0">{t('delete')}</button>
                   </div>
                 ))}
               </div>
