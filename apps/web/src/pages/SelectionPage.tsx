@@ -54,6 +54,7 @@ export default function SelectionPage() {
   const [gen, setGen] = useState(false);
   const [showSaveMsg, setShowSaveMsg] = useState<number | null>(null);
   const [savedCount, setSavedCount] = useState(0);
+  const [resultCount, setResultCount] = useState(5);
 
   const [cHot, setCHot] = useState(6);
   const [cCold, setCCold] = useState(3);
@@ -88,7 +89,7 @@ export default function SelectionPage() {
       const batchSize = pc <= 3 ? 8000 : 3000;
       const c = generateBatch(pc, batchSize);
       const f = applyFilters(c, cfg);
-      const scored = f.slice(0, 80).map(x => scoreCombination(x, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore).slice(0, 10);
+      const scored = f.slice(0, 80).map(x => scoreCombination(x, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore).slice(0, resultCount);
       setRes(scored);
       setGen(false);
     }, 100);
@@ -204,6 +205,19 @@ export default function SelectionPage() {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Result Count */}
+      <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+        <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">生成组数</h3>
+        <div className="flex gap-2">
+          {[3, 5, 8, 10, 15].map(n => (
+            <button key={n} onClick={() => setResultCount(n)}
+              className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${resultCount === n ? 'bg-[var(--color-primary)] text-white shadow-lg' : 'bg-[var(--color-bg)] text-[var(--color-muted)] hover:bg-[var(--color-border)]'}`}>
+              {n}组
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Generate Button */}
