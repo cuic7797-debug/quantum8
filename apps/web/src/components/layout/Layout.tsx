@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, BarChart3, Crosshair, FlaskConical, Clock, Beaker, FileText, Database, Menu, X, User, Scissors, Grid3X3, Shrink } from 'lucide-react';
+import { Home, BarChart3, Crosshair, FlaskConical, Clock, Beaker, FileText, Database, Menu, X, User, Scissors, Grid3X3, Shrink, Star } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import ThemeToggle from '@/components/common/ThemeToggle';
@@ -17,6 +17,7 @@ const navItems = [
   { path: '/kill', label: '杀号工具', icon: Scissors, key: '9' },
   { path: '/matrix', label: '旋转矩阵', icon: Grid3X3, key: '0' },
   { path: '/shrink', label: '智能缩水', icon: Shrink, key: '-' },
+  { path: '/favorites', label: '我的收藏', icon: Star, key: '8' },
   { path: '/history', label: t('nav.history'), icon: Clock, key: '8' },
 ];
 
@@ -40,9 +41,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen flex">
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex flex-col w-56 shrink-0 border-r border-[var(--color-border)] bg-[var(--color-surface)] sticky top-0 h-screen">
-        <div className="px-5 py-5 border-b border-[var(--color-border)]">
-          <h1 className="text-xl font-bold text-[var(--color-primary)]">Quantum8</h1>
-          <p className="text-[10px] text-[var(--color-muted)] mt-0.5">{t('app.subtitle')}</p>
+        <div className="px-5 py-5 border-b border-[var(--color-border)] flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-[var(--color-primary)]">Quantum8</h1>
+            <p className="text-[10px] text-[var(--color-muted)] mt-0.5">{t('app.subtitle')}</p>
+          </div>
+          <ThemeToggle />
         </div>
         <nav className="flex-1 py-3 overflow-y-auto">
           {navItems.map(({ path, label, icon: Icon, key }) => (
@@ -82,8 +86,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Link>
         </div>
         <div className="px-5 py-3 border-t border-[var(--color-border)]">
-          <Disclaimer />
-          <div className="text-[10px] text-[var(--color-muted)] mt-2 opacity-50">
+          <div className="text-[10px] text-[var(--color-muted)] opacity-50">
             快捷键: 1-8 切换页面
           </div>
         </div>
@@ -98,7 +101,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </button>
             <h1 className="text-lg font-bold text-[var(--color-primary)]">Quantum8</h1>
           </div>
-          <Link to="/auth" className="text-[var(--color-muted)] hover:text-white">
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Link to="/auth" className="text-[var(--color-muted)] hover:text-white">
             <div className="w-7 h-7 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center">
               {user ? (
                 <span className="text-xs font-bold text-[var(--color-primary)]">
@@ -109,6 +114,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               )}
             </div>
           </Link>
+          </div>
         </header>
 
         {mobileOpen && (
@@ -146,6 +152,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         )}
 
         <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6">
+          <Disclaimer />
           {children}
         </main>
       </div>
