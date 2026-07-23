@@ -4,13 +4,18 @@ import { useDraws } from '@/hooks/useDraws';
 import NumberBall from '@/components/common/NumberBall';
 import CopyButton from '@/components/common/CopyButton';
 import Collapsible from '@/components/common/Collapsible';
+import { ensembleScoring, calculateEntropy, trendRegression } from '@quantum8/algorithm';
 
-type Strategy = 'cold' | 'stable' | 'diverse';
+
+type Strategy = 'cold' | 'stable' | 'diverse' | 'entropy' | 'trend' | 'ensemble';
 
 const STRATEGIES: { key: Strategy; name: string; icon: string; desc: string; killCount: number }[] = [
-  { key: 'cold', name: '杀冷号', icon: '❄️', desc: '排除当前遗漏最大的号码', killCount: 20 },
-  { key: 'stable', name: '杀热号', icon: '🔥', desc: '排除近期过热的号码（过热回冷）', killCount: 15 },
+  { key: 'cold', name: '杀冷号', icon: '❄️', desc: '排除遗漏最大的号码', killCount: 20 },
+  { key: 'stable', name: '杀热号', icon: '🔥', desc: '排除过热可能回冷的号码', killCount: 15 },
   { key: 'diverse', name: '杀偏态', icon: '🎯', desc: '排除分布不均衡的号码', killCount: 10 },
+  { key: 'entropy', name: '杀高熵', icon: '🎲', desc: '排除不确定性最高的号码', killCount: 15 },
+  { key: 'trend', name: '杀趋势', icon: '📉', desc: '排除下降趋势的号码', killCount: 12 },
+  { key: 'ensemble', name: '杀集成', icon: '🧠', desc: '多算法综合评分最低的号码', killCount: 15 },
 ];
 
 interface KillResult {
@@ -67,7 +72,6 @@ export default function KillPage() {
       killed = sorted.slice(0, killCount).map(x => x.number);
       reason = `排除近10期过热的${killCount}个号码，最高频率${sorted[0]?.recent10Rate || 0}%`;
     } else if (strategy === 'diverse') {
-      // 杀偏态: 排除四区中过于集中的号码
       const zoneStats = [[], [], [], []] as typeof stats[];
       stats.forEach(s => {
         if (s.number <= 20) zoneStats[0].push(s);
@@ -75,7 +79,6 @@ export default function KillPage() {
         else if (s.number <= 60) zoneStats[2].push(s);
         else zoneStats[3].push(s);
       });
-      // 从每个区杀掉出现频率最高的
       const perZone = Math.ceil(killCount / 4);
       zoneStats.forEach(zone => {
         const sorted = zone.sort((a, b) => b.recent10Rate - a.recent10Rate);
@@ -83,6 +86,35 @@ export default function KillPage() {
       });
       killed = killed.slice(0, killCount).sort((a, b) => a - b);
       reason = `四区各排除${perZone}个偏态号码，保持分布均衡`;
+    } else if (strategy === 'entropy') {
+      // 杀高熵: 排除信息熵最高的号码（不确定性最大）
+      const entropyResults = stats.map(s => ({
+        ...s,
+        entropy: calculateEntropy(s.number, draws).entropy,
+      }));
+      killed = entropyResults.sort((a, b) => b.entropy - a.entropy).slice(0, killCount).map(x => x.number);
+      reason = `排除信息熵最高的${killCount}个号码（不确定性最大，最难预测）`;
+    } else if (strategy === 'trend') {
+      // 杀趋势: 排除下降趋势明显的号码
+      const trendResults = stats.map(s => ({
+        ...s,
+        trend: trendRegression(s.number, draws),
+      }));
+      killed = trendResults.filter(s => s.trend.slope < -0.02)
+        .sort((a, b) => a.trend.slope - b.trend.slope)
+        .slice(0, killCount).map(x => x.number);
+      if (killed.length < killCount) {
+        const remaining = stats.filter(s => !killed.includes(s.number))
+          .sort((a, b) => a.recent10Rate - b.recent10Rate);
+        killed.push(...remaining.slice(0, killCount - killed.length).map(x => x.number));
+      }
+      reason = `排除下降趋势明显的${killCount}个号码（回归斜率<0）`;
+    } else if (strategy === 'ensemble') {
+      // 杀集成: 多算法综合评分最低的号码
+      const ensembleResults = ensembleScoring(draws, stats);
+      killed = ensembleResults.sort((a, b) => a.ensembleScore - b.ensembleScore)
+        .slice(0, killCount).map(x => x.number);
+      reason = `集成评分（马尔可夫+贝叶斯+熵+频率+遗漏）最低的${killCount}个号码`;
     }
 
     const confidence = Math.min(95, 60 + (killCount <= 15 ? 15 : killCount <= 25 ? 10 : 5));

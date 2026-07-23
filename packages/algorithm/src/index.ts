@@ -1,4 +1,4 @@
-export { calculateProbability } from './probability';
+export { calculateProbability, calculateFromRaw } from './probability';
 export { getMissIndex, sortByMissIndex, getMissTopN, isOverdue } from './miss';
 export { buildCoAppearMatrix, getTopPairs, getPairsForNumber } from './network';
 export {
@@ -11,3 +11,11 @@ export {
   applyFilters,
 } from './filter';
 export { scoreCombination } from './scorer';
+export {
+  markovTransition,
+  bayesianInference,
+  calculateEntropy,
+  findAssociationRules,
+  ensembleScoring,
+  trendRegression,
+} from './advanced';
