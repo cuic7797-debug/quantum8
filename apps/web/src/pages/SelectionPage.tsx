@@ -3,6 +3,9 @@ import { useNumberStats } from '@/hooks/useNumberStats';
 import { useDraws } from '@/hooks/useDraws';
 import NumberBall from '@/components/common/NumberBall';
 import { applyFilters, generateBatch, scoreCombination } from '@quantum8/algorithm';
+import { useAuth } from '@/hooks/useAuth';
+import { useUserPicks } from '@/hooks/useUserPicks';
+import { supabase } from '@/utils/supabase';
 import type { ScoreResult, PlayType } from '@quantum8/types';
 import { t } from '@/hooks/useI18n';
 
@@ -13,8 +16,21 @@ const STRATS = [
   { name: t('strat_aggressive'), hot: 8, cold: 1, balance: 1, desc: t('desc_aggressive'), icon: '🔥' },
 ];
 
-// Calculate adaptive filter ranges based on pick count
 function getAdaptiveRanges(pickCount: number) {
+  if (pickCount <= 1) {
+    return {
+      sumRange: [1, 80] as [number, number],
+      oddEvenRange: [0, 1] as [number, number],
+      maxConsecutive: 1,
+    };
+  }
+  if (pickCount <= 2) {
+    return {
+      sumRange: [3, 155] as [number, number],
+      oddEvenRange: [0, 2] as [number, number],
+      maxConsecutive: 1,
+    };
+  }
   const minSum = Math.max(1, Math.round(pickCount * 10));
   const maxSum = Math.min(800, Math.round(pickCount * 55));
   const minOdd = Math.max(0, Math.round(pickCount * 0.2));
@@ -27,6 +43,8 @@ function getAdaptiveRanges(pickCount: number) {
 }
 
 export default function SelectionPage() {
+  const { user } = useAuth();
+  const { addPick } = useUserPicks();
   const { stats } = useNumberStats();
   const { draws } = useDraws(100);
   const [pt, setPt] = useState(t('play10') as PlayType);
@@ -37,7 +55,6 @@ export default function SelectionPage() {
   const [showSaveMsg, setShowSaveMsg] = useState<number | null>(null);
   const [savedCount, setSavedCount] = useState(0);
 
-  // Custom params
   const [cHot, setCHot] = useState(6);
   const [cCold, setCCold] = useState(3);
   const [cBalance, setCBalance] = useState(1);
@@ -68,7 +85,7 @@ export default function SelectionPage() {
           maxConsecutive: ranges.maxConsecutive,
         };
       }
-      const batchSize = pc <= 3 ? 5000 : 3000;
+      const batchSize = pc <= 3 ? 8000 : 3000;
       const c = generateBatch(pc, batchSize);
       const f = applyFilters(c, cfg);
       const scored = f.slice(0, 80).map(x => scoreCombination(x, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore).slice(0, 10);
@@ -77,31 +94,41 @@ export default function SelectionPage() {
     }, 100);
   }
 
-  function savePick(r: ScoreResult, index: number) {
-    const key = 'quantum8_picks';
-    const existing = JSON.parse(localStorage.getItem(key) || '[]');
-    existing.unshift({
-      numbers: r.numbers, playType: pt, score: r.totalScore,
-      risk: r.riskLevel, time: new Date().toISOString(),
-      strategy: custom ? '自定义策略' : STRATS[si].name,
-    });
-    localStorage.setItem(key, JSON.stringify(existing.slice(0, 50)));
-    setShowSaveMsg(index);
-    setSavedCount(c => c + 1);
-    setTimeout(() => setShowSaveMsg(null), 1500);
-  }
-
-  function saveAll() {
-    const key = 'quantum8_picks';
-    const existing = JSON.parse(localStorage.getItem(key) || '[]');
-    res.forEach(r => {
+  async function savePick(r: ScoreResult, index: number) {
+    if (user) {
+      await addPick(r.numbers, custom ? '自定义策略' : STRATS[si].name, pt, `评分: ${r.totalScore}`);
+    } else {
+      const key = 'quantum8_picks';
+      const existing = JSON.parse(localStorage.getItem(key) || '[]');
       existing.unshift({
         numbers: r.numbers, playType: pt, score: r.totalScore,
         risk: r.riskLevel, time: new Date().toISOString(),
         strategy: custom ? '自定义策略' : STRATS[si].name,
       });
-    });
-    localStorage.setItem(key, JSON.stringify(existing.slice(0, 50)));
+      localStorage.setItem(key, JSON.stringify(existing.slice(0, 50)));
+    }
+    setShowSaveMsg(index);
+    setSavedCount(c => c + 1);
+    setTimeout(() => setShowSaveMsg(null), 1500);
+  }
+
+  async function saveAll() {
+    if (user) {
+      for (const r of res) {
+        await addPick(r.numbers, custom ? '自定义策略' : STRATS[si].name, pt, `评分: ${r.totalScore}`);
+      }
+    } else {
+      const key = 'quantum8_picks';
+      const existing = JSON.parse(localStorage.getItem(key) || '[]');
+      res.forEach(r => {
+        existing.unshift({
+          numbers: r.numbers, playType: pt, score: r.totalScore,
+          risk: r.riskLevel, time: new Date().toISOString(),
+          strategy: custom ? '自定义策略' : STRATS[si].name,
+        });
+      });
+      localStorage.setItem(key, JSON.stringify(existing.slice(0, 50)));
+    }
     setShowSaveMsg(-1);
     setSavedCount(res.length);
     setTimeout(() => setShowSaveMsg(null), 1500);
@@ -123,49 +150,41 @@ export default function SelectionPage() {
 
       {/* Play Type */}
       <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
-        <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">{t('step1_play')}</h3>
-        <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
-          {PT.map(p => (
-            <button key={p} onClick={() => setPt(p as PlayType)}
-              className={`px-2 py-2 rounded-lg text-sm font-medium transition-all ${pt === p ? 'bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/25' : 'bg-[var(--color-bg)] text-[var(--color-muted)] hover:bg-[var(--color-border)]'}`}>
-              {p}
+        <h3 className="text-sm font-semibold text-[var(--color-muted)] mb-3">{t('play_type')}</h3>
+        <div className="grid grid-cols-5 gap-2">
+          {PT.map((p, i) => (
+            <button key={p} onClick={() => { setPt(p); setRes([]); }}
+              className={`py-2 rounded-lg text-sm font-semibold transition-all ${pt === p ? 'bg-[var(--color-primary)] text-white shadow-lg' : 'bg-[var(--color-bg)] text-[var(--color-muted)] hover:bg-[var(--color-border)]'}`}>
+              {t('play')}{i + 1}
             </button>
           ))}
         </div>
-        <div className="mt-2 text-[10px] text-[var(--color-muted)]">
-          自适应过滤: 和值 {ranges.sumRange[0]}-{ranges.sumRange[1]} | 奇数 {ranges.oddEvenRange[0]}-{ranges.oddEvenRange[1]} | 最大连号 {ranges.maxConsecutive}
-          {pc < 4 ? ' | 四区均衡已关闭' : ''}
-        </div>
       </div>
 
-      {/* Strategy Mode Toggle */}
+      {/* Strategy */}
       <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold text-[var(--color-muted)]">{t('step2_strategy')}</h3>
-          <button onClick={() => setCustom(!custom)}
-            className={`text-xs px-3 py-1 rounded-full transition-all ${custom ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--color-bg)] text-[var(--color-muted)] hover:bg-[var(--color-border)]'}`}>
-            {custom ? '自定义模式' : '切换自定义'}
+          <h3 className="text-sm font-semibold text-[var(--color-muted)]">{t('strategy')}</h3>
+          <button onClick={() => setCustom(!custom)} className="text-xs text-[var(--color-primary)] hover:underline">
+            {custom ? '使用推荐策略' : '自定义参数'}
           </button>
         </div>
-
         {!custom ? (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             {STRATS.map((s, i) => (
               <button key={s.name} onClick={() => setSi(i)}
-                className={`text-left p-4 rounded-xl border-2 transition-all ${si === i ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 shadow-lg' : 'border-[var(--color-border)] hover:border-[var(--color-primary)]/50'}`}>
-                <div className="text-2xl mb-2">{s.icon}</div>
-                <div className="font-semibold mb-1">{s.name}</div>
-                <div className="text-xs text-[var(--color-muted)]">{s.desc}</div>
-                <div className="flex gap-1 mt-2">
-                  <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded">热{s.hot}</span>
-                  <span className="text-[10px] bg-sky-500/10 text-sky-400 px-1.5 py-0.5 rounded">冷{s.cold}</span>
-                  <span className="text-[10px] bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded">平{s.balance}</span>
+                className={`p-4 rounded-xl text-left transition-all ${si === i ? 'bg-[var(--color-primary)]/15 border-2 border-[var(--color-primary)]' : 'bg-[var(--color-bg)] border border-[var(--color-border)] hover:border-[var(--color-primary)]/50'}`}>
+                <div className="text-lg mb-1">{s.icon}</div>
+                <div className="text-sm font-bold">{s.name}</div>
+                <div className="text-[10px] text-[var(--color-muted)] mt-1">{s.desc}</div>
+                <div className="text-[10px] font-mono text-[var(--color-primary)] mt-2">
+                  热{s.hot} 冷{s.cold} 平{s.balance}
                 </div>
               </button>
             ))}
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div className="grid grid-cols-3 gap-3">
               <div>
                 <label className="text-xs text-[var(--color-muted)] block mb-1">热号数量（最多{pc}）</label>
