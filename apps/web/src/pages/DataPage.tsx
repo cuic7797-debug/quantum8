@@ -1,3 +1,4 @@
+import ExportButton from '@/components/common/ExportButton';
 import { useState } from 'react';
 import { useDraws } from '@/hooks/useDraws';
 import { useNumberStats } from '@/hooks/useNumberStats';
@@ -38,6 +39,17 @@ export default function DataPage() {
 
   const cachedTime = getCacheTime();
   const cachedDraws = getCachedDraws();
+
+  // Export functions
+  const exportDraws = () => {
+    const exportData = draws.map(d => ({
+      draw_number: d.draw_number, draw_date: d.draw_date,
+      numbers: d.numbers.join(' '), sum_value: d.sum_value,
+      odd_count: d.odd_count, even_count: d.even_count,
+      big_count: d.big_count, small_count: d.small_count,
+    }));
+    return exportData;
+  };
 
   async function syncFromAPI() {
     setLoading(true);

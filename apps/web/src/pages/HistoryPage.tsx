@@ -1,3 +1,4 @@
+import CopyButton from '@/components/common/CopyButton';
 import { useState, useEffect } from 'react';
 import { useDraws } from '@/hooks/useDraws';
 import { useAuth } from '@/hooks/useAuth';
@@ -141,7 +142,8 @@ export default function HistoryPage() {
                       </div>
                       <div className="flex gap-1 flex-wrap">{p.numbers.map((n: number) => <NumberBall key={n} number={n} size="sm" />)}</div>
                     </div>
-                    <button onClick={() => deletePick(i)} className="text-xs text-red-400 hover:underline ml-2 shrink-0">{t('delete')}</button>
+                    <CopyButton text={p.numbers.join(' ')} label="复制" />
+                    <button onClick={() => deletePick(i)} className="text-xs text-red-400 hover:underline shrink-0">{t('delete')}</button>
                   </div>
                 ))}
               </div>

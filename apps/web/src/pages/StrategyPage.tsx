@@ -1,3 +1,5 @@
+import CopyButton from '@/components/common/CopyButton';
+import Collapsible from '@/components/common/Collapsible';
 import { useState, useEffect } from 'react';
 import { useNumberStats } from '@/hooks/useNumberStats';
 import { useDraws } from '@/hooks/useDraws';
@@ -263,8 +265,8 @@ export default function StrategyPage() {
                 </button>
               </div>
               {s.lastResult && s.lastResult.length > 0 && (
-                <div className="mt-4 space-y-2">
-                  <div className="text-xs text-[var(--color-muted)] font-semibold">{t('last_results')}</div>
+                <Collapsible title={t('last_results') + ' (' + s.lastResult.length + '组)'} defaultOpen={false} badge={s.lastResult[0]?.numbers.join(' ')}>
+                <div className="space-y-2">
                   {s.lastResult.map((r, i) => (
                     <div key={i} className="flex items-center justify-between py-2 px-3 bg-[var(--color-bg)] rounded-lg">
                       <div className="flex items-center gap-2">
@@ -273,11 +275,13 @@ export default function StrategyPage() {
                       </div>
                       <div className="flex items-center gap-3">
                         <span className={`text-xs font-medium ${r.riskLevel === '低' ? 'text-emerald-400' : r.riskLevel === '中' ? 'text-amber-400' : 'text-red-400'}`}>{r.riskLevel}风险</span>
+                        <CopyButton text={r.numbers.join(' ')} label="复制" />
                         <span className="font-bold font-mono text-sm">{r.totalScore}</span>
                       </div>
                     </div>
                   ))}
                 </div>
+              </Collapsible>
               )}
             </div>
           ))}
