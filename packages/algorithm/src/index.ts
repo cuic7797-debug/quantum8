@@ -16,3 +16,6 @@ export {
   tailAnalysis, relationAnalysis, relationTrend,
   spanDistribution, sumProbabilityRange,
 } from './analysis';
+export { geneticAlgorithm } from './genetic';
+export { clusterNumbers, getClusterDetails } from './cluster';
+export { autocorrelation, decompose, bollingerBands, movingAverage } from './timeseries';

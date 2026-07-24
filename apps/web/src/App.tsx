@@ -15,6 +15,9 @@ const KillPage = lazy(() => import('./pages/KillPage'));
 const MatrixPage = lazy(() => import('./pages/MatrixPage'));
 const ShrinkPage = lazy(() => import('./pages/ShrinkPage'));
 const FavoritesPage = lazy(() => import('./pages/FavoritesPage'));
+const NumberProfilePage = lazy(() => import('./pages/NumberProfilePage'));
+const NumberGraphPage = lazy(() => import('./pages/NumberGraphPage'));
+const TimeSeriesPage = lazy(() => import('./pages/TimeSeriesPage'));
 const AuthPage = lazy(() => import('./pages/AuthPage'));
 
 function Loading() {
@@ -45,6 +48,9 @@ export default function App() {
           <Route path="/matrix" element={<MatrixPage />} />
           <Route path="/shrink" element={<ShrinkPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/number-profile" element={<NumberProfilePage />} />
+          <Route path="/number-graph" element={<NumberGraphPage />} />
+          <Route path="/time-series" element={<TimeSeriesPage />} />
           <Route path="/auth" element={<AuthPage />} />
         </Routes>
       </Suspense>
