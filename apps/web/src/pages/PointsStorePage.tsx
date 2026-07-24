@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useCheckin } from '@/hooks/useCheckin';
 import Collapsible from '@/components/common/Collapsible';
 import { useNavigate } from 'react-router-dom';
-import { CreditCard, Check, QrCode, MessageCircle, ExternalLink, Zap, Star, Crown, Gem } from 'lucide-react';
+import { Check, MessageCircle, CreditCard, Star } from 'lucide-react';
 
 interface PointPackage {
   id: string;
@@ -24,6 +24,8 @@ const PACKAGES: PointPackage[] = [
   { id: 'ultimate', name: '至尊包', points: 3000, price: 79, originalPrice: 150, icon: '👑', color: '#ef4444', badge: '超值' },
 ];
 
+type PaymentMethod = 'wechat' | 'alipay';
+
 export default function PointsStorePage() {
   const { user } = useAuth();
   const { points } = useCheckin();
@@ -31,18 +33,19 @@ export default function PointsStorePage() {
   const [selectedPkg, setSelectedPkg] = useState<string | null>(null);
   const [showPayment, setShowPayment] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [orderNumber, setOrderNumber] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
 
   function selectPackage(pkg: PointPackage) {
     setSelectedPkg(pkg.id);
+    setPaymentMethod(null);
     setShowPayment(true);
-    setOrderNumber('Q8' + Date.now().toString(36).toUpperCase());
   }
 
   function confirmPayment() {
     setShowPayment(false);
+    setPaymentMethod(null);
     setShowConfirm(true);
-    setTimeout(() => setShowConfirm(false), 5000);
+    setTimeout(() => setShowConfirm(false), 4000);
   }
 
   if (!user) {
@@ -102,81 +105,81 @@ export default function PointsStorePage() {
 
       {/* Payment Modal */}
       {showPayment && selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowPayment(false)}>
-          <div className="glass-card w-96 max-w-[90vw] shadow-2xl" onClick={e => e.stopPropagation()} style={{ padding: '24px' }}>
-            <div className="flex items-center justify-between mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={() => setShowPayment(false)}>
+          <div className="glass-card w-96 max-w-[90vw] shadow-2xl p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-5">
               <h3 className="text-lg font-bold">确认购买</h3>
-              <button onClick={() => setShowPayment(false)} className="text-[var(--color-muted)] hover:text-white text-xl">✕</button>
+              <button onClick={() => setShowPayment(false)} className="text-[var(--color-muted)] hover:text-white text-xl leading-none">✕</button>
             </div>
 
-            <div className="glass-inset p-4 rounded-xl mb-4">
-              <div className="flex items-center gap-3 mb-2">
+            {/* Package Info */}
+            <div className="glass-inset p-4 rounded-xl mb-5">
+              <div className="flex items-center gap-3">
                 <span className="text-2xl">{selected.icon}</span>
                 <div>
                   <div className="text-base font-bold">{selected.name}</div>
                   <div className="text-sm text-[var(--color-muted)]">{selected.points} 积分</div>
                 </div>
-              </div>
-              <div className="flex justify-between items-center pt-2 border-t border-[var(--glass-border)]">
-                <span className="text-sm text-[var(--color-muted)]">订单号</span>
-                <span className="text-sm font-mono">{orderNumber}</span>
-              </div>
-              <div className="flex justify-between items-center mt-1">
-                <span className="text-sm text-[var(--color-muted)]">支付金额</span>
-                <span className="text-xl font-bold text-[var(--color-primary)]">¥{selected.price}</span>
+                <div className="ml-auto text-xl font-bold" style={{ color: selected.color }}>¥{selected.price}</div>
               </div>
             </div>
 
-            {/* Payment Methods */}
-            <div className="space-y-3 mb-4">
-              <div className="text-sm font-semibold text-[var(--color-muted)]">选择支付方式</div>
-              
-              <button className="w-full flex items-center gap-3 p-3 glass-inset rounded-xl hover:bg-white/[0.03] transition-all">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center">
-                  <MessageCircle size={20} className="text-emerald-400" />
-                </div>
-                <div className="flex-1 text-left">
-                  <div className="text-base font-semibold">微信支付</div>
-                  <div className="text-sm text-[var(--color-muted)]">扫描微信收款码</div>
-                </div>
-                <QrCode size={18} className="text-[var(--color-muted)]" />
-              </button>
+            {/* Payment Method Selection */}
+            {!paymentMethod && (
+              <div className="space-y-3 mb-4">
+                <div className="text-sm font-semibold text-[var(--color-muted)]">选择支付方式</div>
 
-              <button className="w-full flex items-center gap-3 p-3 glass-inset rounded-xl hover:bg-white/[0.03] transition-all">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/15 flex items-center justify-center">
-                  <CreditCard size={20} className="text-blue-400" />
-                </div>
-                <div className="flex-1 text-left">
-                  <div className="text-base font-semibold">支付宝</div>
-                  <div className="text-sm text-[var(--color-muted)]">扫描支付宝收款码</div>
-                </div>
-                <QrCode size={18} className="text-[var(--color-muted)]" />
-              </button>
-            </div>
+                <button onClick={() => setPaymentMethod('wechat')}
+                  className="w-full flex items-center gap-3 p-4 glass-inset rounded-xl hover:bg-white/[0.05] transition-all">
+                  <div className="w-11 h-11 rounded-xl bg-emerald-500/15 flex items-center justify-center flex-shrink-0">
+                    <MessageCircle size={22} className="text-emerald-400" />
+                  </div>
+                  <div className="text-left flex-1">
+                    <div className="text-base font-semibold">微信支付</div>
+                    <div className="text-sm text-[var(--color-muted)]">扫描微信收款码</div>
+                  </div>
+                  <div className="text-lg">→</div>
+                </button>
 
-            {/* QR Code Placeholder */}
-            <div className="glass-inset p-6 rounded-xl text-center mb-4">
-              <div className="w-40 h-40 mx-auto bg-white rounded-xl flex items-center justify-center mb-3">
-                <div className="text-center">
-                  <QrCode size={80} className="text-gray-800 mx-auto" />
-                  <div className="text-xs text-gray-500 mt-2">收款码</div>
-                </div>
+                <button onClick={() => setPaymentMethod('alipay')}
+                  className="w-full flex items-center gap-3 p-4 glass-inset rounded-xl hover:bg-white/[0.05] transition-all">
+                  <div className="w-11 h-11 rounded-xl bg-blue-500/15 flex items-center justify-center flex-shrink-0">
+                    <CreditCard size={22} className="text-blue-400" />
+                  </div>
+                  <div className="text-left flex-1">
+                    <div className="text-base font-semibold">支付宝</div>
+                    <div className="text-sm text-[var(--color-muted)]">扫描支付宝收款码</div>
+                  </div>
+                  <div className="text-lg">→</div>
+                </button>
               </div>
-              <div className="text-sm text-[var(--color-muted)]">
-                请使用{selectedPkg === 'starter' || selectedPkg === 'basic' ? '微信' : '支付宝'}扫码支付
-              </div>
-              <div className="text-xs text-[var(--color-muted)] mt-1">
-                付款后点击"我已付款"，管理员将在24小时内充值
-              </div>
-            </div>
+            )}
 
-            <button onClick={confirmPayment}
-              className="w-full btn-primary text-base py-3">
+            {/* QR Code - Only show after method selected, no borders */}
+            {paymentMethod && (
+              <div className="flex flex-col items-center mb-4">
+                <img
+                  src={paymentMethod === 'wechat' ? '/wechat-pay.png' : '/alipay-pay.jpg'}
+                  alt={paymentMethod === 'wechat' ? '微信收款码' : '支付宝收款码'}
+                  className="w-56 h-56 object-contain rounded-lg"
+                />
+                <div className="text-sm text-[var(--color-muted)] mt-3">
+                  请使用{paymentMethod === 'wechat' ? '微信' : '支付宝'}扫码支付 ¥{selected.price}
+                </div>
+                <button onClick={() => setPaymentMethod(null)}
+                  className="text-xs text-[var(--color-primary)] mt-1 hover:underline">
+                  更换支付方式
+                </button>
+              </div>
+            )}
+
+            {/* Confirm Button */}
+            <button onClick={confirmPayment} className="w-full btn-primary text-base py-3">
               我已付款
             </button>
 
             <div className="text-xs text-center text-[var(--color-muted)] mt-3">
-              付款后请截图发给管理员确认，或等待自动充值
+              付款后请截图发给管理员确认，24小时内到账
             </div>
           </div>
         </div>
@@ -184,7 +187,7 @@ export default function PointsStorePage() {
 
       {/* Confirm Toast */}
       {showConfirm && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 glass-card px-6 py-4 shadow-2xl shadow-black/30 animate-fade-in">
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 glass-card px-6 py-4 shadow-2xl animate-fade-in">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-emerald-500/15 flex items-center justify-center">
               <Check size={20} className="text-emerald-400" />
