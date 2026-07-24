@@ -1,10 +1,10 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Home, BarChart3, Crosshair, TrendingUp, FileText, Database, Scissors, Grid3X3, Shrink, Beaker, FlaskConical, Activity, Network, Clock, Star, User, Menu, X, ChevronDown, Brain, Target, Trophy, Calendar, CreditCard } from "lucide-react";
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { Home, BarChart3, Crosshair, TrendingUp, FileText, Database, Scissors, Grid3X3, Shrink, Beaker, FlaskConical, Activity, Network, Clock, Star, User, Menu, X, ChevronDown, Brain, Target, Trophy, Calendar } from "lucide-react";
+import { useCheckin } from '@/hooks/useCheckin';
 import ThemeToggle from '@/components/common/ThemeToggle';
 import Disclaimer from '@/components/common/Disclaimer';
-import { t } from '@/hooks/useI18n';
 
 interface NavItem {
   path: string;
@@ -78,6 +78,9 @@ const navGroups: NavGroup[] = [
     icon: Star,
     items: [
       { path: '/favorites', label: '我的收藏', icon: Star, key: '8' },
+      { path: '/checkin', label: '每日签到', icon: Calendar, key: 'i' },
+      { path: '/points-store', label: '积分商城', icon: CreditCard, key: 'x' },
+      { path: '/profile', label: '个人中心', icon: User, key: 'u' },
     ],
   },
 ];
@@ -109,7 +112,7 @@ function NavGroupSection({ group, location, collapsed, onToggle }: {
             const active = location.pathname === item.path;
             return (
               <Link key={item.path} to={item.path}
-                className={`flex items-center gap-2.5 px-4 py-2 text-base transition-all rounded-r-lg group nav-item ${
+                className={`flex items-center gap-2.5 px-4 py-2 text-sm transition-all rounded-r-lg group nav-item ${
                   active
                     ? 'nav-item-active text-[var(--color-primary)] font-semibold'
                     : 'text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-white/[0.03]'
@@ -165,8 +168,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
   const { user, loading } = useAuth();
+  const { points, todayChecked } = useCheckin();
 
-  // Keyboard shortcuts
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
@@ -201,7 +204,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
             <div>
               <h1 className="text-base font-bold gradient-text-primary">Quantum8</h1>
-              <div className="text-xs text-[var(--color-muted)]">快乐八数据分析平台</div>
+              <div className="text-[10px] text-[var(--color-muted)]">快乐八数据分析平台</div>
             </div>
           </Link>
         </div>
@@ -225,40 +228,52 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
 
-        {/* User */}
-        <div className="px-4 py-3 border-t border-[var(--glass-border)]">
-          <Link to="/auth"
-            className={`flex items-center gap-2.5 px-4 py-2.5 text-sm transition-all rounded-r-lg nav-item ${
-              location.pathname === '/auth'
-                ? 'nav-item-active text-[var(--color-primary)] font-semibold'
-                : 'text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-white/[0.03]'
-            }`}>
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/20">
-              {loading ? (
-                <div className="w-3 h-3 border border-white/30 border-t-white rounded-full animate-spin" />
-              ) : user ? (
-                <span className="text-sm font-bold text-white">{user.email?.charAt(0).toUpperCase()}</span>
-              ) : (
-                <User size={14} className="text-white" />
-              )}
-            </div>
-            <span className="flex-1 text-xs truncate">
-              {loading ? '加载中...' : user ? user.email : '登录 / 注册'}
-            </span>
-          </Link>
-        </div>
-
         {/* Version */}
         <div className="px-5 py-2 border-t border-[var(--glass-border)]">
-          <div className="text-xs text-[var(--color-muted)] opacity-40 flex justify-between">
-            <span>Quantum8 v5.1</span>
-            <span>1-6, r, b, w, y</span>
+          <div className="text-[10px] text-[var(--color-muted)] opacity-40 flex justify-between">
+            <span>Quantum8 v5.2</span>
+            <span>1-6, b, w, i, x, u</span>
           </div>
         </div>
       </aside>
 
-      {/* Mobile Header */}
+      {/* Right Side: Header + Content */}
       <div className="flex-1 flex flex-col min-h-screen">
+        {/* Desktop Header - Login/Avatar at Top Right */}
+        <header className="hidden lg:flex items-center justify-end gap-4 px-6 py-3 glass-header sticky top-0 z-30 border-b border-[var(--glass-border)]">
+          {user ? (
+            <div className="flex items-center gap-3">
+              {/* Points Badge */}
+              <Link to="/checkin" className="flex items-center gap-1.5 glass-card px-3 py-1.5 text-sm hover:border-amber-500/30 transition-all">
+                <Star size={14} className="text-amber-400" />
+                <span className="font-bold">{points?.total_points || 0}</span>
+                <span className="text-[var(--color-muted)]">积分</span>
+              </Link>
+
+              {/* Today Checkin */}
+              {!todayChecked && (
+                <Link to="/checkin" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/15 text-emerald-400 text-sm font-semibold hover:bg-emerald-500/25 transition-all">
+                  <Calendar size={14} />
+                  <span>签到</span>
+                </Link>
+              )}
+
+              {/* User Avatar */}
+              <Link to="/profile" className="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-white/5 transition-all">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-blue-500/20">
+                  <span className="text-xs font-bold text-white">{user.email?.charAt(0).toUpperCase()}</span>
+                </div>
+                <span className="text-sm text-[var(--color-muted)] max-w-[120px] truncate">{user.email?.split('@')[0]}</span>
+              </Link>
+            </div>
+          ) : (
+            <Link to="/auth" className="btn-primary text-sm px-5 py-2">
+              登录 / 注册
+            </Link>
+          )}
+        </header>
+
+        {/* Mobile Header */}
         <header className="lg:hidden flex items-center justify-between px-4 py-3 glass-header sticky top-0 z-30">
           <div className="flex items-center gap-3">
             <button onClick={() => setMobileOpen(!mobileOpen)} className="text-[var(--color-muted)] hover:text-[var(--color-text)] p-1 rounded-lg hover:bg-white/5">
@@ -268,10 +283,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Link to="/auth" className="text-[var(--color-muted)] hover:text-[var(--color-text)]">
+            <Link to="/profile" className="text-[var(--color-muted)] hover:text-[var(--color-text)]">
               <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-blue-500/20">
                 {user ? (
-                  <span className="text-sm font-bold text-white">{user.email?.charAt(0).toUpperCase()}</span>
+                  <span className="text-xs font-bold text-white">{user.email?.charAt(0).toUpperCase()}</span>
                 ) : (
                   <User size={14} className="text-white" />
                 )}
@@ -299,14 +314,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               ))}
 
               <div className="border-t border-[var(--glass-border)] mt-2 pt-2">
-                <Link to="/auth" onClick={() => setMobileOpen(false)}
+                <Link to="/profile" onClick={() => setMobileOpen(false)}
                   className={`flex items-center gap-3 px-5 py-3 text-sm transition-all nav-item ${
-                    location.pathname === '/auth'
+                    location.pathname === '/profile' || location.pathname === '/auth'
                       ? 'nav-item-active text-[var(--color-primary)] font-semibold'
                       : 'text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-white/[0.03]'
                   }`}>
                   <User size={18} />
-                  <span>{user ? user.email : '登录 / 注册'}</span>
+                  <span>{user ? user.email?.split('@')[0] : '登录 / 注册'}</span>
                 </Link>
               </div>
 

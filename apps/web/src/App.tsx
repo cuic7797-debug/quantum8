@@ -31,6 +31,8 @@ const AIPlaybookPage = lazy(() => import('./pages/AIPlaybookPage'));
 const PredictionScorePage = lazy(() => import('./pages/PredictionScorePage'));
 const StrategyLeaderboardPage = lazy(() => import('./pages/StrategyLeaderboardPage'));
 const CheckinPage = lazy(() => import("./pages/CheckinPage"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+const PointsStorePage = lazy(() => import("./pages/PointsStorePage"));
 
 function Loading() {
   return (
@@ -75,6 +77,8 @@ export default function App() {
             <Route path="/prediction-score" element={<PredictionScorePage />} />
             <Route path="/leaderboard" element={<StrategyLeaderboardPage />} />
             <Route path="/checkin" element={<CheckinPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/points-store" element={<PointsStorePage />} />
           </Routes>
         </PageTransition>
       </Suspense>
