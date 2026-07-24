@@ -25,6 +25,7 @@ const navGroups: NavGroup[] = [
     icon: Home,
     items: [
       { path: '/', label: '首页', icon: Home, key: '1' },
+      { path: '/dashboard', label: '我的仪表盘', icon: BarChart3, key: 'z' },
       { path: '/data', label: '数据管理', icon: Database, key: 'd' },
       { path: '/data-quality', label: '数据质量', icon: BarChart3, key: 'q' },
       { path: '/lottery', label: '多彩票', icon: Crosshair, key: 'l' },

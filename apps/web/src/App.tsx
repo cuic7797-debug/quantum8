@@ -23,6 +23,7 @@ const DataQualityPage = lazy(() => import('./pages/DataQualityPage'));
 const LotteryPage = lazy(() => import('./pages/LotteryPage'));
 const AdvancedStatsPage = lazy(() => import('./pages/AdvancedStatsPage'));
 const StrategyMarketPage = lazy(() => import('./pages/StrategyMarketPage'));
+const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const AuthPage = lazy(() => import('./pages/AuthPage'));
 
 function Loading() {
@@ -61,6 +62,7 @@ export default function App() {
           <Route path="/lottery" element={<LotteryPage />} />
           <Route path="/advanced-stats" element={<AdvancedStatsPage />} />
           <Route path="/strategy-market" element={<StrategyMarketPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/auth" element={<AuthPage />} />
         </Routes>
       </Suspense>

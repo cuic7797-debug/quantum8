@@ -19,3 +19,4 @@ export {
 export { geneticAlgorithm } from './genetic';
 export { clusterNumbers, getClusterDetails } from './cluster';
 export { autocorrelation, decompose, bollingerBands, movingAverage } from './timeseries';
+export { runBacktest, monteCarloSimulation } from './backtest';
