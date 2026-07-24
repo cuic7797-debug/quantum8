@@ -33,6 +33,7 @@ const StrategyLeaderboardPage = lazy(() => import('./pages/StrategyLeaderboardPa
 const CheckinPage = lazy(() => import("./pages/CheckinPage"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const PointsStorePage = lazy(() => import("./pages/PointsStorePage"));
+const AdminPage = lazy(() => import("./pages/AdminPage"));
 
 function Loading() {
   return (
@@ -79,6 +80,7 @@ export default function App() {
             <Route path="/checkin" element={<CheckinPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/points-store" element={<PointsStorePage />} />
+            <Route path="/admin" element={<AdminPage />} />
           </Routes>
         </PageTransition>
       </Suspense>

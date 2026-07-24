@@ -125,6 +125,8 @@ export default function ProfilePage() {
             { icon: <Trophy size={20} />, label: '我的策略', desc: '查看保存的策略', path: '/strategy', color: 'text-purple-400' },
             { icon: <Star size={20} />, label: '我的收藏', desc: '查看收藏的号码', path: '/favorites', color: 'text-blue-400' },
             { icon: <Shield size={20} />, label: '我的等级', desc: '查看等级权益', path: '/checkin', color: 'text-[var(--color-primary)]' },
+            { icon: <Shield size={20} />, label: '管理员后台', desc: '管理用户与积分', path: '/admin', color: 'text-amber-400' },
+
           ].map(item => (
             <button key={item.label} onClick={() => navigate(item.path)}
               className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/[0.03] transition-colors text-left">

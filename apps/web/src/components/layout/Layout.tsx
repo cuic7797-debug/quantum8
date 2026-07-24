@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, BarChart3, Crosshair, TrendingUp, FileText, Database, Scissors, Grid3X3, Shrink, Beaker, FlaskConical, Activity, Network, Clock, Star, User, Menu, X, ChevronDown, Brain, Target, Trophy, Calendar, CreditCard } from "lucide-react";
+import { Home, BarChart3, Crosshair, TrendingUp, FileText, Database, Scissors, Grid3X3, Shrink, Beaker, FlaskConical, Activity, Network, Clock, Star, User, Menu, X, ChevronDown, Brain, Target, Trophy, Calendar, CreditCard, Shield } from "lucide-react";
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useCheckin } from '@/hooks/useCheckin';
@@ -80,6 +80,7 @@ const navGroups: NavGroup[] = [
       { path: '/favorites', label: '我的收藏', icon: Star, key: '8' },
       { path: '/checkin', label: '每日签到', icon: Calendar, key: 'i' },
       { path: '/points-store', label: '积分商城', icon: CreditCard, key: 'x' },
+      { path: '/admin', label: '管理员', icon: Shield, key: 'a' },
       { path: '/profile', label: '个人中心', icon: User, key: 'u' },
     ],
   },
