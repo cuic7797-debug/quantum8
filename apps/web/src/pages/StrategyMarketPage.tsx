@@ -39,7 +39,6 @@ export default function StrategyMarketPage() {
   const [generating, setGenerating] = useState(false);
   const [results, setResults] = useState<any[]>([]);
   const [sortBy, setSortBy] = useState<'likes' | 'winRate' | 'avgScore'>('likes');
-  if (ld || ls) return <div className="flex items-center justify-center h-64"><div className="flex flex-col items-center gap-3"><div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" /><span className="text-base text-[var(--color-muted)]">加载中...</span></div></div>;
   const [filterTag, setFilterTag] = useState<string | null>(null);
 
   const allTags = useMemo(() => {
@@ -53,6 +52,7 @@ export default function StrategyMarketPage() {
     if (filterTag) filtered = filtered.filter(s => s.tags.includes(filterTag));
     return [...filtered].sort((a, b) => b[sortBy] - a[sortBy]);
   }, [sortBy, filterTag]);
+  if (ld || ls) return <div className="flex items-center justify-center h-64"><div className="flex flex-col items-center gap-3"><div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" /><span className="text-base text-[var(--color-muted)]">加载中...</span></div></div>;
 
   function runStrategy(strat: CommunityStrategy) {
     if (!stats.length || !draws.length) return;

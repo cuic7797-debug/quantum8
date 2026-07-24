@@ -16,8 +16,8 @@ export default function ShrinkPage() {
   const [maxBets, setMaxBets] = useState(20);
   const [mode, setMode] = useState<'greedy' | 'weighted'>('greedy');
   const [result, setResult] = useState<ReturnType<typeof greedyShrink> | null>(null);
-  if (ld || ls) return <div className="flex items-center justify-center h-64"><div className="flex flex-col items-center gap-3"><div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" /><span className="text-base text-[var(--color-muted)]">加载中...</span></div></div>;
   const [generating, setGenerating] = useState(false);
+  if (ld || ls) return <div className="flex items-center justify-center h-64"><div className="flex flex-col items-center gap-3"><div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" /><span className="text-base text-[var(--color-muted)]">加载中...</span></div></div>;
 
   function togglePool(n: number) {
     setPool(prev => prev.includes(n) ? prev.filter(x => x !== n) : [...prev, n].sort((a, b) => a - b));

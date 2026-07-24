@@ -40,7 +40,6 @@ export default function StrategyLeaderboardPage() {
   const { draws, loading: ld } = useDraws(100);
   const { stats, loading: ls } = useNumberStats();
   const [sortBy, setSortBy] = useState<'likes' | 'winRate' | 'roi' | 'risk'>('likes');
-  if (ld || ls) return <div className="flex items-center justify-center h-64"><div className="flex flex-col items-center gap-3"><div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" /><span className="text-base text-[var(--color-muted)]">加载中...</span></div></div>;
   const [backtested, setBacktested] = useState(false);
   const [backtesting, setBacktesting] = useState(false);
   const [entries, setEntries] = useState<LeaderboardEntry[]>(COMMUNITY_STRATEGIES);
@@ -111,6 +110,7 @@ export default function StrategyLeaderboardPage() {
       return 0;
     });
   }, [entries, sortBy]);
+  if (ld || ls) return <div className="flex items-center justify-center h-64"><div className="flex flex-col items-center gap-3"><div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" /><span className="text-base text-[var(--color-muted)]">加载中...</span></div></div>;
 
   function getRankBadge(rank: number) {
     if (rank === 1) return '\uD83E\uDD47';

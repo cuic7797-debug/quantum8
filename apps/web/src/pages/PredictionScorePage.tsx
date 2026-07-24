@@ -9,7 +9,6 @@ export default function PredictionScorePage() {
   const { draws, loading: ld } = useDraws(100);
   const { stats, loading: ls } = useNumberStats();
   const [sortBy, setSortBy] = useState<'ensemble' | 'markov' | 'bayesian' | 'entropy' | 'trend'>('ensemble');
-  if (ld || ls) return <div className="flex items-center justify-center h-64"><div className="flex flex-col items-center gap-3"><div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" /><span className="text-base text-[var(--color-muted)]">加载中...</span></div></div>;
   const [showCount, setShowCount] = useState(40);
 
   const scores = useMemo(() => {
@@ -78,6 +77,7 @@ export default function PredictionScorePage() {
                 sortBy === 'entropy' ? 'entropyScore' : 'trendScore';
     return [...scores].sort((a, b) => b[key] - a[key]);
   }, [scores, sortBy]);
+  if (ld || ls) return <div className="flex items-center justify-center h-64"><div className="flex flex-col items-center gap-3"><div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" /><span className="text-base text-[var(--color-muted)]">加载中...</span></div></div>;
 
   function getGrade(score: number): { label: string; color: string } {
     if (score >= 70) return { label: 'A+', color: 'text-emerald-400 bg-emerald-500/15' };
