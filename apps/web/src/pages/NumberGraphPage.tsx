@@ -18,21 +18,25 @@ interface Edge {
   weight: number;
 }
 
+const clusterColors: Record<string, string> = {
+  hot: '#ef4444',
+  warm: '#f59e0b',
+  cool: '#3b82f6',
+  cold: '#64748b',
+};
+
 export default function NumberGraphPage() {
   const { draws, loading: ld } = useDraws(100);
   const svgRef = useRef<SVGSVGElement>(null);
   const [hovered, setHovered] = useState<number | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
-  const [running, setRunning] = useState(false);
   const nodesRef = useRef<Node[]>([]);
   const edgesRef = useRef<Edge[]>([]);
   const animRef = useRef<number>();
 
-  if (ld) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('loading')}</div>;
-  if (!draws.length) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('no_data')}</div>;
-
-  // Build co-occurrence data
+  // ALL hooks must be before any early return
   const { nodes, edges } = useMemo(() => {
+    if (!draws.length) return { nodes: [], edges: [] };
     const freq = new Map<number, number>();
     const coAppear = new Map<string, number>();
 
@@ -47,7 +51,7 @@ export default function NumberGraphPage() {
       }
     });
 
-    const maxFreq = Math.max(...freq.values());
+    const maxFreq = Math.max(...freq.values(), 1);
     const threshold = 3;
 
     const nodeArr: Node[] = Array.from({ length: 80 }, (_, i) => {
@@ -76,8 +80,8 @@ export default function NumberGraphPage() {
     return { nodes: nodeArr, edges: edgeArr };
   }, [draws]);
 
-  // Force simulation
   useEffect(() => {
+    if (!nodes.length) return;
     nodesRef.current = nodes.map(n => ({ ...n }));
     edgesRef.current = edges.map(e => ({ ...e }));
 
@@ -86,7 +90,6 @@ export default function NumberGraphPage() {
       const es = edgesRef.current;
       const alpha = 0.3;
 
-      // Repulsion between all nodes
       for (let i = 0; i < ns.length; i++) {
         for (let j = i + 1; j < ns.length; j++) {
           const dx = ns[j].x - ns[i].x;
@@ -100,22 +103,20 @@ export default function NumberGraphPage() {
         }
       }
 
-      // Attraction along edges
       es.forEach(e => {
         const s = ns.find(n => n.id === e.source);
-        const t = ns.find(n => n.id === e.target);
-        if (!s || !t) return;
-        const dx = t.x - s.x;
-        const dy = t.y - s.y;
+        const tgt = ns.find(n => n.id === e.target);
+        if (!s || !tgt) return;
+        const dx = tgt.x - s.x;
+        const dy = tgt.y - s.y;
         const dist = Math.sqrt(dx * dx + dy * dy) || 1;
         const force = (dist - 80) * 0.01 * (e.weight / 10);
         s.vx += (dx / dist) * force;
         s.vy += (dy / dist) * force;
-        t.vx -= (dx / dist) * force;
-        t.vy -= (dy / dist) * force;
+        tgt.vx -= (dx / dist) * force;
+        tgt.vy -= (dy / dist) * force;
       });
 
-      // Center gravity
       ns.forEach(n => {
         n.vx += (300 - n.x) * 0.001;
         n.vy += (300 - n.y) * 0.001;
@@ -141,17 +142,13 @@ export default function NumberGraphPage() {
     return () => { if (animRef.current) cancelAnimationFrame(animRef.current); };
   }, [nodes, edges]);
 
-  const clusterColors: Record<string, string> = {
-    hot: '#ef4444',
-    warm: '#f59e0b',
-    cool: '#3b82f6',
-    cold: '#64748b',
-  };
-
   const connectedEdges = selected !== null
     ? edges.filter(e => e.source === selected || e.target === selected)
     : [];
   const connectedNums = new Set(connectedEdges.map(e => e.source === selected ? e.target : e.source));
+
+  if (ld) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('loading')}</div>;
+  if (!draws.length) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('no_data')}</div>;
 
   return (
     <div className="space-y-4">
@@ -160,15 +157,14 @@ export default function NumberGraphPage() {
 
       <div className="glass-card p-4 overflow-hidden">
         <svg ref={svgRef} viewBox="0 0 600 600" className="w-full" style={{ maxHeight: '70vh' }}>
-          {/* Edges */}
           {edges.map((e, i) => {
             const s = nodesRef.current.find(n => n.id === e.source);
-            const t = nodesRef.current.find(n => n.id === e.target);
-            if (!s || !t) return null;
+            const tgt = nodesRef.current.find(n => n.id === e.target);
+            if (!s || !tgt) return null;
             const isHighlighted = selected !== null && (e.source === selected || e.target === selected);
             return (
               <line key={i}
-                x1={s.x} y1={s.y} x2={t.x} y2={t.y}
+                x1={s.x} y1={s.y} x2={tgt.x} y2={tgt.y}
                 stroke={isHighlighted ? '#3b82f6' : 'rgba(148,163,184,0.1)'}
                 strokeWidth={isHighlighted ? Math.min(e.weight / 3, 4) : Math.min(e.weight / 5, 1.5)}
                 opacity={selected !== null ? (isHighlighted ? 0.8 : 0.1) : 0.3}
@@ -176,7 +172,6 @@ export default function NumberGraphPage() {
             );
           })}
 
-          {/* Nodes */}
           {nodesRef.current.map(n => {
             const isHovered = hovered === n.id;
             const isSelected = selected === n.id;
@@ -188,19 +183,16 @@ export default function NumberGraphPage() {
                 onMouseLeave={() => setHovered(null)}
                 onClick={() => setSelected(selected === n.id ? null : n.id)}
                 style={{ cursor: 'pointer' }}>
-                {/* Glow */}
                 {(isHovered || isSelected) && (
                   <circle cx={n.x} cy={n.y} r={r + 6}
                     fill={clusterColors[n.cluster]} opacity={0.2} />
                 )}
-                {/* Node */}
                 <circle cx={n.x} cy={n.y} r={r}
                   fill={clusterColors[n.cluster]}
                   opacity={selected !== null ? (isSelected || isConnected ? 1 : 0.2) : 0.8}
                   stroke={isSelected ? '#fff' : 'transparent'}
                   strokeWidth={isSelected ? 2 : 0}
                 />
-                {/* Label */}
                 <text x={n.x} y={n.y + 1}
                   textAnchor="middle" dominantBaseline="middle"
                   fill="white" fontSize={r > 12 ? 9 : 7} fontWeight="bold" fontFamily="monospace"
@@ -213,7 +205,6 @@ export default function NumberGraphPage() {
         </svg>
       </div>
 
-      {/* Legend */}
       <div className="glass-card p-4">
         <div className="flex flex-wrap gap-4 text-xs">
           {Object.entries(clusterColors).map(([k, v]) => (
@@ -226,7 +217,6 @@ export default function NumberGraphPage() {
         </div>
       </div>
 
-      {/* Selected number detail */}
       {selected !== null && (
         <div className="glass-card p-4">
           <h3 className="font-semibold mb-2">号码 {selected.toString().padStart(2, '0')} 关联详情</h3>

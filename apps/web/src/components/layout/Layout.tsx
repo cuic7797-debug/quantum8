@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, BarChart3, Crosshair, Network, Activity, Clock2, FlaskConical, Clock, Beaker, FileText, Database, Menu, X, User, Scissors, Grid3X3, Shrink, Star } from 'lucide-react';
+import { Home, BarChart3, Crosshair, Network, Activity, TrendingUp, FlaskConical, Clock, Beaker, FileText, Database, Menu, X, User, Scissors, Grid3X3, Shrink, Star } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import ThemeToggle from '@/components/common/ThemeToggle';
@@ -21,7 +21,7 @@ const navItems = [
   { path: '/history', label: t('nav.history'), icon: Clock, key: '8' },
   { path: '/number-profile', label: '号码画像', icon: Activity, key: 'p' },
   { path: '/number-graph', label: '号码图谱', icon: Network, key: 'g' },
-  { path: '/time-series', label: '时序分析', icon: Clock2, key: 't' },
+  { path: '/time-series', label: '时序分析', icon: TrendingUp, key: 't' },
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {

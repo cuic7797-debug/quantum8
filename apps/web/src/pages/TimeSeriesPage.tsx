@@ -10,10 +10,15 @@ export default function TimeSeriesPage() {
   const [period, setPeriod] = useState(100);
   const [selectedMetric, setSelectedMetric] = useState<'sum' | 'odd' | 'span'>('sum');
 
-  if (ld) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('loading')}</div>;
-  if (!draws.length) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('no_data')}</div>;
+  const chartHeight = 200;
+  const chartWidth = 800;
 
-  const recentDraws = draws.slice(0, period).reverse(); // chronological order
+  const metricLabels = { sum: '和值', odd: '奇数个数', span: '跨度' };
+
+  const recentDraws = useMemo(() => {
+    if (!draws.length) return [];
+    return draws.slice(0, period).reverse();
+  }, [draws, period]);
 
   const metrics = useMemo(() => {
     return recentDraws.map(d => ({
@@ -23,42 +28,34 @@ export default function TimeSeriesPage() {
     }));
   }, [recentDraws]);
 
-  const data = metrics.map(m => m[selectedMetric]);
-  const labels = recentDraws.map(d => d.draw_number);
+  const data = useMemo(() => metrics.map(m => m[selectedMetric]), [metrics, selectedMetric]);
+  const labels = useMemo(() => recentDraws.map(d => d.draw_number), [recentDraws]);
 
-  // Autocorrelation
-  const acf = autocorrelation(data, 30);
+  const acf = useMemo(() => autocorrelation(data, 30), [data]);
+  const decomposition = useMemo(() => decompose(data, 7), [data]);
+  const bb = useMemo(() => bollingerBands(data, 20, 2), [data]);
+  const ma5 = useMemo(() => movingAverage(data, 5), [data]);
+  const ma10 = useMemo(() => movingAverage(data, 10), [data]);
+  const ma20 = useMemo(() => movingAverage(data, 20), [data]);
 
-  // Decomposition
-  const decomposition = decompose(data, 7);
+  const dataMin = useMemo(() => data.length ? Math.min(...data) : 0, [data]);
+  const dataMax = useMemo(() => data.length ? Math.max(...data) : 100, [data]);
+  const dataPadding = (dataMax - dataMin) * 0.1;
+  const yMin = dataMin - dataPadding;
+  const yMax = dataMax + dataPadding;
 
-  // Bollinger Bands
-  const bb = bollingerBands(data, 20, 2);
-
-  // Moving averages
-  const ma5 = movingAverage(data, 5);
-  const ma10 = movingAverage(data, 10);
-  const ma20 = movingAverage(data, 20);
-
-  const metricLabels = { sum: '和值', odd: '奇数个数', span: '跨度' };
-  const chartHeight = 200;
-  const chartWidth = 800;
-
-  function dataToPath(values: number[], yMin: number, yMax: number): string {
+  function dataToPath(values: number[], yLow: number, yHigh: number): string {
     if (!values.length) return '';
-    const range = yMax - yMin || 1;
+    const range = yHigh - yLow || 1;
     return values.map((v, i) => {
       const x = (i / (values.length - 1)) * chartWidth;
-      const y = chartHeight - ((v - yMin) / range) * chartHeight;
+      const y = chartHeight - ((v - yLow) / range) * chartHeight;
       return `${i === 0 ? 'M' : 'L'}${x},${y}`;
     }).join(' ');
   }
 
-  const dataMin = Math.min(...data);
-  const dataMax = Math.max(...data);
-  const dataPadding = (dataMax - dataMin) * 0.1;
-  const yMin = dataMin - dataPadding;
-  const yMax = dataMax + dataPadding;
+  if (ld) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('loading')}</div>;
+  if (!draws.length) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('no_data')}</div>;
 
   return (
     <div className="space-y-4">
@@ -67,7 +64,6 @@ export default function TimeSeriesPage() {
         <PeriodSelector value={period} onChange={setPeriod} />
       </div>
 
-      {/* Metric Selector */}
       <div className="glass-card p-3 flex gap-2">
         {(['sum', 'odd', 'span'] as const).map(m => (
           <button key={m} onClick={() => setSelectedMetric(m)}
@@ -81,11 +77,9 @@ export default function TimeSeriesPage() {
         ))}
       </div>
 
-      {/* Main Chart with Bollinger Bands */}
       <Collapsible title={`📊 ${metricLabels[selectedMetric]}走势 + 布林带`} step={1}>
         <div className="glass-inset p-3 overflow-x-auto">
           <svg viewBox={`-30 -10 ${chartWidth + 40} ${chartHeight + 40}`} className="w-full" style={{ minWidth: 400 }}>
-            {/* Grid lines */}
             {[0, 0.25, 0.5, 0.75, 1].map(p => {
               const y = chartHeight * p;
               const val = yMax - (yMax - yMin) * p;
@@ -96,28 +90,18 @@ export default function TimeSeriesPage() {
                 </g>
               );
             })}
-
-            {/* Bollinger Bands */}
             <path d={dataToPath(bb.upper, yMin, yMax)} fill="none" stroke="rgba(139,92,246,0.3)" strokeWidth={1} />
             <path d={dataToPath(bb.lower, yMin, yMax)} fill="none" stroke="rgba(139,92,246,0.3)" strokeWidth={1} />
             <path d={dataToPath(bb.middle, yMin, yMax)} fill="none" stroke="rgba(139,92,246,0.5)" strokeWidth={1} strokeDasharray="4,4" />
-
-            {/* Data line */}
             <path d={dataToPath(data, yMin, yMax)} fill="none" stroke="#3b82f6" strokeWidth={1.5} />
-
-            {/* Moving averages */}
             <path d={dataToPath(ma5, yMin, yMax)} fill="none" stroke="#10b981" strokeWidth={1} opacity={0.7} />
             <path d={dataToPath(ma10, yMin, yMax)} fill="none" stroke="#f59e0b" strokeWidth={1} opacity={0.7} />
             <path d={dataToPath(ma20, yMin, yMax)} fill="none" stroke="#ef4444" strokeWidth={1} opacity={0.7} />
-
-            {/* Data points */}
             {data.map((v, i) => {
               const x = (i / (data.length - 1)) * chartWidth;
               const y = chartHeight - ((v - yMin) / (yMax - yMin)) * chartHeight;
               return <circle key={i} cx={x} cy={y} r={2} fill="#3b82f6" />;
             })}
-
-            {/* X-axis labels */}
             {data.filter((_, i) => i % Math.ceil(data.length / 8) === 0).map((_, idx) => {
               const i = idx * Math.ceil(data.length / 8);
               const x = (i / (data.length - 1)) * chartWidth;
@@ -138,16 +122,15 @@ export default function TimeSeriesPage() {
         </div>
       </Collapsible>
 
-      {/* Trend Decomposition */}
       <Collapsible title="📉 趋势分解（趋势 + 季节 + 残差）" step={2}>
         <div className="space-y-3">
           {[
-            { label: '趋势分量', data: decomposition.trend, color: '#3b82f6', desc: '长期趋势方向' },
-            { label: '季节分量', data: decomposition.seasonal, color: '#10b981', desc: `周期=${decomposition.period}期的循环模式` },
-            { label: '残差分量', data: decomposition.residual, color: '#f59e0b', desc: '随机波动部分' },
-          ].map(({ label, data: d, color, desc }) => {
-            const dMin = Math.min(...d);
-            const dMax = Math.max(...d);
+            { label: '趋势分量', d: decomposition.trend, color: '#3b82f6', desc: '长期趋势方向' },
+            { label: '季节分量', d: decomposition.seasonal, color: '#10b981', desc: `周期=${decomposition.period}期的循环模式` },
+            { label: '残差分量', d: decomposition.residual, color: '#f59e0b', desc: '随机波动部分' },
+          ].map(({ label, d, color, desc }) => {
+            const dMin = d.length ? Math.min(...d) : 0;
+            const dMax = d.length ? Math.max(...d) : 1;
             return (
               <div key={label} className="glass-inset p-3">
                 <div className="flex items-center justify-between mb-1">
@@ -157,8 +140,9 @@ export default function TimeSeriesPage() {
                 <svg viewBox={`0 0 ${chartWidth} 60`} className="w-full" style={{ minWidth: 300 }}>
                   <line x1={0} y1={30} x2={chartWidth} y2={30} stroke="rgba(148,163,184,0.1)" strokeDasharray="4,4" />
                   <path d={d.map((v, i) => {
-                    const x = (i / (d.length - 1)) * chartWidth;
-                    const y = 30 - ((v - (dMax + dMin) / 2) / ((dMax - dMin) / 2 || 1)) * 25;
+                    const x = (i / (d.length - 1 || 1)) * chartWidth;
+                    const range = (dMax - dMin) / 2 || 1;
+                    const y = 30 - ((v - (dMax + dMin) / 2) / range) * 25;
                     return `${i === 0 ? 'M' : 'L'}${x},${y}`;
                   }).join(' ')} fill="none" stroke={color} strokeWidth={1.5} />
                 </svg>
@@ -168,30 +152,23 @@ export default function TimeSeriesPage() {
         </div>
       </Collapsible>
 
-      {/* Autocorrelation */}
       <Collapsible title="🔗 自相关分析" step={3} defaultOpen={false}>
         <div className="glass-inset p-3 overflow-x-auto">
           <svg viewBox={`-30 -10 ${chartWidth + 40} ${chartHeight + 40}`} className="w-full" style={{ minWidth: 400 }}>
-            {/* Zero line */}
             <line x1={0} y1={chartHeight / 2} x2={chartWidth} y2={chartHeight / 2} stroke="rgba(148,163,184,0.2)" />
-            {/* Significance lines */}
             <line x1={0} y1={chartHeight * 0.28} x2={chartWidth} y2={chartHeight * 0.28} stroke="rgba(239,68,68,0.3)" strokeDasharray="4,4" />
             <line x1={0} y1={chartHeight * 0.72} x2={chartWidth} y2={chartHeight * 0.72} stroke="rgba(239,68,68,0.3)" strokeDasharray="4,4" />
-
-            {/* ACF bars */}
             {acf.acf.map((v, i) => {
               const x = (i / (acf.acf.length - 1 || 1)) * chartWidth;
               const barHeight = Math.abs(v) * chartHeight * 0.45;
               const y = v >= 0 ? chartHeight / 2 - barHeight : chartHeight / 2;
               const isSignificant = acf.significantLags.includes(acf.lags[i]);
               return (
-                <rect key={i} x={x - 4} y={y} width={8} height={barHeight}
+                <rect key={i} x={x - 4} y={y} width={8} height={Math.max(barHeight, 1)}
                   fill={isSignificant ? '#3b82f6' : 'rgba(148,163,184,0.3)'}
                   rx={2} />
               );
             })}
-
-            {/* Labels */}
             {acf.lags.filter((_, i) => i % 5 === 0).map((lag, i) => {
               const x = (lag / (acf.lags.length || 1)) * chartWidth;
               return <text key={i} x={x} y={chartHeight + 15} textAnchor="middle" fill="#64748b" fontSize={8}>{lag}</text>;
@@ -208,25 +185,24 @@ export default function TimeSeriesPage() {
         </div>
       </Collapsible>
 
-      {/* Statistics */}
       <Collapsible title="📊 统计摘要" step={4} defaultOpen={false}>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: '均值', value: (data.reduce((a, b) => a + b, 0) / data.length).toFixed(1) },
-            { label: '标准差', value: Math.sqrt(data.reduce((s, x) => s + Math.pow(x - data.reduce((a, b) => a + b, 0) / data.length, 2), 0) / data.length).toFixed(1) },
-            { label: '最大值', value: Math.max(...data).toString() },
-            { label: '最小值', value: Math.min(...data).toString() },
-            { label: '偏度', value: (() => {
+            { label: '均值', value: data.length ? (data.reduce((a, b) => a + b, 0) / data.length).toFixed(1) : 'N/A' },
+            { label: '标准差', value: data.length ? Math.sqrt(data.reduce((s, x) => { const m = data.reduce((a, b) => a + b, 0) / data.length; return s + Math.pow(x - m, 2); }, 0) / data.length).toFixed(1) : 'N/A' },
+            { label: '最大值', value: data.length ? Math.max(...data).toString() : 'N/A' },
+            { label: '最小值', value: data.length ? Math.min(...data).toString() : 'N/A' },
+            { label: '偏度', value: data.length > 2 ? (() => {
               const mean = data.reduce((a, b) => a + b, 0) / data.length;
               const std = Math.sqrt(data.reduce((s, x) => s + Math.pow(x - mean, 2), 0) / data.length);
               return std > 0 ? (data.reduce((s, x) => s + Math.pow((x - mean) / std, 3), 0) / data.length).toFixed(2) : '0';
-            })() },
-            { label: '峰度', value: (() => {
+            })() : 'N/A' },
+            { label: '峰度', value: data.length > 2 ? (() => {
               const mean = data.reduce((a, b) => a + b, 0) / data.length;
               const std = Math.sqrt(data.reduce((s, x) => s + Math.pow(x - mean, 2), 0) / data.length);
               return std > 0 ? (data.reduce((s, x) => s + Math.pow((x - mean) / std, 4), 0) / data.length - 3).toFixed(2) : '0';
-            })() },
-            { label: '布林带宽', value: bb.bandwidth[bb.bandwidth.length - 1]?.toFixed(1) + '%' || 'N/A' },
+            })() : 'N/A' },
+            { label: '布林带宽', value: bb.bandwidth.length ? (bb.bandwidth[bb.bandwidth.length - 1]?.toFixed(1) + '%') : 'N/A' },
             { label: '数据点', value: data.length + '期' },
           ].map(s => (
             <div key={s.label} className="glass-inset p-3 text-center">
