@@ -46,9 +46,6 @@ export default function DashboardPage() {
     } catch {}
   }, []);
 
-  if (ld || ls) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('loading')}</div>;
-
-  // User stats
   const picks = useMemo(() => {
     try { return JSON.parse(localStorage.getItem('quantum8_picks') || '[]'); } catch { return []; }
   }, []);
@@ -58,6 +55,8 @@ export default function DashboardPage() {
   const killedNums = useMemo(() => {
     try { return JSON.parse(localStorage.getItem('quantum8_killed_numbers') || '[]'); } catch { return []; }
   }, []);
+
+  if (ld || ls) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('loading')}</div>;
 
   // Recent draw insights
   const latestDraw = draws[0];
