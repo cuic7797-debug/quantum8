@@ -103,3 +103,6 @@ export interface ScoreResult {
   riskLevel: '低' | '中' | '高';
   reasons: string[];
 }
+
+// 多彩票类型
+export * from './lottery';

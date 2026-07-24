@@ -20,6 +20,8 @@ const NumberGraphPage = lazy(() => import('./pages/NumberGraphPage'));
 const TimeSeriesPage = lazy(() => import('./pages/TimeSeriesPage'));
 const ComparePage = lazy(() => import('./pages/ComparePage'));
 const DataQualityPage = lazy(() => import('./pages/DataQualityPage'));
+const LotteryPage = lazy(() => import('./pages/LotteryPage'));
+const AdvancedStatsPage = lazy(() => import('./pages/AdvancedStatsPage'));
 const AuthPage = lazy(() => import('./pages/AuthPage'));
 
 function Loading() {
@@ -55,6 +57,8 @@ export default function App() {
           <Route path="/time-series" element={<TimeSeriesPage />} />
           <Route path="/compare" element={<ComparePage />} />
           <Route path="/data-quality" element={<DataQualityPage />} />
+          <Route path="/lottery" element={<LotteryPage />} />
+          <Route path="/advanced-stats" element={<AdvancedStatsPage />} />
           <Route path="/auth" element={<AuthPage />} />
         </Routes>
       </Suspense>

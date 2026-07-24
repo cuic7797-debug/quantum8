@@ -27,6 +27,7 @@ const navGroups: NavGroup[] = [
       { path: '/', label: '首页', icon: Home, key: '1' },
       { path: '/data', label: '数据管理', icon: Database, key: 'd' },
       { path: '/data-quality', label: '数据质量', icon: BarChart3, key: 'q' },
+      { path: '/lottery', label: '多彩票', icon: Crosshair, key: 'l' },
     ],
   },
   {
@@ -37,6 +38,7 @@ const navGroups: NavGroup[] = [
       { path: '/time-series', label: '时序分析', icon: TrendingUp, key: 't' },
       { path: '/report', label: 'AI 分析报告', icon: FileText, key: '6' },
       { path: '/history', label: '历史开奖', icon: Clock, key: 'h' },
+      { path: '/advanced-stats', label: '高级统计', icon: TrendingUp, key: 's' },
     ],
   },
   {
