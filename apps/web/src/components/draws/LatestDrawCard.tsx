@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Draw } from '@/hooks/useDraws';
 import { useNumberStats } from '@/hooks/useNumberStats';
 import NumberBall from '@/components/common/NumberBall';
+import ShareButton from '@/components/common/ShareButton';
 import { t } from '@/hooks/useI18n';
 
 interface Props { draw: Draw; }
@@ -19,6 +20,7 @@ export default function LatestDrawCard({ draw }: Props) {
         </div>
         <div className="flex items-center gap-3">
           <span className="text-xs text-[var(--color-muted)]">{draw.draw_date}</span>
+          <ShareButton numbers={draw.numbers} title={`第${draw.draw_number}期开奖号码`} />
           <button onClick={() => setShowDetail(!showDetail)}
             className="text-xs text-[var(--color-primary)] hover:underline">
             {showDetail ? '收起' : '详情'}
