@@ -1,6 +1,8 @@
 import CopyButton from '@/components/common/CopyButton';
+import ShareStrategy from '@/components/common/ShareStrategy';
 import Collapsible from '@/components/common/Collapsible';
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useNumberStats } from '@/hooks/useNumberStats';
 import { useDraws } from '@/hooks/useDraws';
 import NumberBall from '@/components/common/NumberBall';
@@ -20,12 +22,31 @@ interface Strategy {
 const STORAGE_KEY = 'quantum8_strategies';
 const PT = [t('play5'), t('play6'), t('play7'), t('play8'), t('play9'), t('play10')];
 
+function decodeStrategy(encoded: string): Partial<Strategy> | null {
+  try {
+    const data = JSON.parse(atob(encoded));
+    return {
+      name: data.n || '导入策略',
+      description: data.d || '',
+      playType: data.p || '选八',
+      hotCount: data.h || 6,
+      coldCount: data.c || 3,
+      balanceCount: data.b || 1,
+      zoneBalance: data.z === 1,
+      sumRange: data.s || [200, 400],
+      oddEvenRange: data.o || [6, 14],
+      maxConsecutive: data.m || 3,
+    };
+  } catch { return null; }
+}
+
 export default function StrategyPage() {
   const { user } = useAuth();
   const cloud = useUserStrategies();
   const { stats } = useNumberStats();
   const { draws } = useDraws(100);
   const [strategies, setStrategies] = useState<Strategy[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [showCreate, setShowCreate] = useState(false);
   const [editing, setEditing] = useState<Strategy | null>(null);
   const [generating, setGenerating] = useState(false);
@@ -260,6 +281,7 @@ export default function StrategyPage() {
                 <button onClick={() => handleEdit(s)} className="px-4 py-2 rounded-lg bg-[var(--color-bg)] text-[var(--color-muted)] text-sm hover:bg-[var(--color-border)] transition-all">
                   {t('edit')}
                 </button>
+                <ShareStrategy strategy={s} />
                 <button onClick={() => handleDelete(s.id)} className="px-4 py-2 rounded-lg bg-red-500/10 text-red-400 text-sm hover:bg-red-500/20 transition-all">
                   {t('delete_strategy')}
                 </button>
