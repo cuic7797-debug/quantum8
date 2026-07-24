@@ -68,25 +68,25 @@ export default function NumberLifecycle() {
               <NumberBall number={selected} size="md" />
               <div>
                 <div className="font-bold">号码 {selected}</div>
-                <div className={'text-xs font-semibold ' + lc.stageColor}>{lc.stage}</div>
+                <div className={'text-sm font-semibold ' + lc.stageColor}>{lc.stage}</div>
               </div>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <div className="glass-card p-2 text-center">
-                <div className="text-[10px] text-[var(--color-muted)]">当前遗漏</div>
+                <div className="text-xs text-[var(--color-muted)]">当前遗漏</div>
                 <div className="font-mono font-bold">{lc.currentMiss}期</div>
               </div>
               <div className="glass-card p-2 text-center">
-                <div className="text-[10px] text-[var(--color-muted)]">近10期出现</div>
+                <div className="text-xs text-[var(--color-muted)]">近10期出现</div>
                 <div className="font-mono font-bold">{lc.recent10Appear}次</div>
               </div>
               <div className="glass-card p-2 text-center">
-                <div className="text-[10px] text-[var(--color-muted)]">平均热周期</div>
+                <div className="text-xs text-[var(--color-muted)]">平均热周期</div>
                 <div className="font-mono font-bold">{lc.avgHotLen}期</div>
               </div>
               <div className="glass-card p-2 text-center">
-                <div className="text-[10px] text-[var(--color-muted)]">平均冷周期</div>
+                <div className="text-xs text-[var(--color-muted)]">平均冷周期</div>
                 <div className="font-mono font-bold">{lc.avgColdLen}期</div>
               </div>
             </div>
@@ -98,7 +98,7 @@ export default function NumberLifecycle() {
                   <div key={i} className={'flex-1 h-4 rounded-sm ' + (v ? 'bg-[var(--color-primary)]' : 'bg-[var(--color-border)]')} title={v ? '出现' : '未出现'} />
                 ))}
               </div>
-              <div className="flex justify-between text-[9px] text-[var(--color-muted)] mt-0.5">
+              <div className="flex justify-between text-xs text-[var(--color-muted)] mt-0.5">
                 <span>30期前</span><span>最新</span>
               </div>
             </div>
@@ -106,7 +106,7 @@ export default function NumberLifecycle() {
         );
       })()}
 
-      <div className="text-[10px] text-[var(--color-muted)] text-center">点击任意号码查看详细生命周期</div>
+      <div className="text-xs text-[var(--color-muted)] text-center">点击任意号码查看详细生命周期</div>
     </div>
   );
 }

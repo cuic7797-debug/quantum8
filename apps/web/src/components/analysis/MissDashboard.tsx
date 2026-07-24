@@ -37,24 +37,24 @@ export default function MissDashboard() {
       {/* Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         <div className="glass-inset p-2.5 text-center">
-          <div className="text-[10px] text-[var(--color-muted)]">最大遗漏号</div>
+          <div className="text-xs text-[var(--color-muted)]">最大遗漏号</div>
           <div className="font-bold font-mono text-sm">{maxMissNum?.number || '-'}</div>
-          <div className="text-[9px] text-red-400">{maxMissNum?.currentMiss || 0}期</div>
+          <div className="text-xs text-red-400">{maxMissNum?.currentMiss || 0}期</div>
         </div>
         <div className="glass-inset p-2.5 text-center">
-          <div className="text-[10px] text-[var(--color-muted)]">平均遗漏</div>
+          <div className="text-xs text-[var(--color-muted)]">平均遗漏</div>
           <div className="font-bold font-mono text-sm">{avgMiss}</div>
-          <div className="text-[9px] text-[var(--color-muted)]">80个号码</div>
+          <div className="text-xs text-[var(--color-muted)]">80个号码</div>
         </div>
         <div className="glass-inset p-2.5 text-center">
-          <div className="text-[10px] text-[var(--color-muted)]">待回补号</div>
+          <div className="text-xs text-[var(--color-muted)]">待回补号</div>
           <div className="font-bold font-mono text-sm text-amber-400">{overdueCount}</div>
-          <div className="text-[9px] text-[var(--color-muted)]">missRatio≥80</div>
+          <div className="text-xs text-[var(--color-muted)]">missRatio≥80</div>
         </div>
         <div className="glass-inset p-2.5 text-center">
-          <div className="text-[10px] text-[var(--color-muted)]">活跃号</div>
+          <div className="text-xs text-[var(--color-muted)]">活跃号</div>
           <div className="font-bold font-mono text-sm text-emerald-400">{hotCount}</div>
-          <div className="text-[9px] text-[var(--color-muted)]">hotScore≥60</div>
+          <div className="text-xs text-[var(--color-muted)]">hotScore≥60</div>
         </div>
       </div>
 
@@ -100,13 +100,13 @@ export default function MissDashboard() {
               <div className="flex-1 h-3 bg-[var(--color-bg)] rounded-full overflow-hidden">
                 <div className={'h-full rounded-full transition-all ' + (isOverdue ? 'bg-amber-500' : val > maxVal * 0.7 ? 'bg-red-500/60' : 'bg-[var(--color-primary)]/60')} style={{ width: Math.max(2, pct) + '%' }} />
               </div>
-              <span className="text-[10px] font-mono w-10 text-right text-[var(--color-muted)]">{typeof val === 'number' ? val.toFixed(view === 'ratio' ? 0 : 1) : val}</span>
+              <span className="text-sm font-mono w-10 text-right text-[var(--color-muted)]">{typeof val === 'number' ? val.toFixed(view === 'ratio' ? 0 : 1) : val}</span>
             </div>
           );
         })}
       </div>
 
-      <div className="text-[10px] text-[var(--color-muted)] text-center">
+      <div className="text-xs text-[var(--color-muted)] text-center">
         共{filtered.length}个号码 · 遗漏比 = 当前遗漏 / 平均遗漏 × 100
       </div>
     </div>

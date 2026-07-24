@@ -29,16 +29,16 @@ export default function AuthPage() {
           <div className="w-16 h-16 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center mx-auto">
             <span className="text-2xl">👤</span>
           </div>
-          <h2 className="text-xl font-bold">个人中心</h2>
+          <h2 className="text-2xl font-bold">个人中心</h2>
           <p className="text-sm text-[var(--color-muted)]">{user.email}</p>
-          <div className="grid grid-cols-2 gap-3 text-center">
+          <div className="grid grid-cols-2 gap-4 text-center">
             <div className="glass-inset p-3">
               <div className="text-lg font-bold">☁️</div>
-              <div className="text-xs text-[var(--color-muted)]">云端同步</div>
+              <div className="text-sm text-[var(--color-muted)]">云端同步</div>
             </div>
             <div className="glass-inset p-3">
               <div className="text-lg font-bold text-emerald-400">✓</div>
-              <div className="text-xs text-[var(--color-muted)]">已登录</div>
+              <div className="text-sm text-[var(--color-muted)]">已登录</div>
             </div>
           </div>
           <button onClick={signOut}
@@ -78,8 +78,8 @@ export default function AuthPage() {
           <div className="w-16 h-16 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center mx-auto mb-3">
             <span className="text-2xl">🔐</span>
           </div>
-          <h2 className="text-xl font-bold">{mode === 'login' ? '登录' : '注册'}</h2>
-          <p className="text-xs text-[var(--color-muted)] mt-1">
+          <h2 className="text-2xl font-bold">{mode === 'login' ? '登录' : '注册'}</h2>
+          <p className="text-sm text-[var(--color-muted)] mt-1">
             {mode === 'login' ? '登录后可云端同步策略和选号记录' : '创建账号，数据云端同步'}
           </p>
         </div>
@@ -114,7 +114,7 @@ export default function AuthPage() {
         </div>
       </div>
 
-      <div className="text-center text-[10px] text-[var(--color-muted)]">
+      <div className="text-center text-sm text-[var(--color-muted)]">
         登录使用 Supabase Auth，数据安全加密存储
       </div>
     </div>

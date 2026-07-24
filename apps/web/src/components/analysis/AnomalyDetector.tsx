@@ -118,13 +118,13 @@ export default function AnomalyDetector({ draws }: Props) {
       <div className="space-y-2">
         {anomalies.map((a, i) => (
           <div key={i} className="glass-inset p-3 flex items-start gap-3">
-            <span className={`text-[10px] px-2 py-0.5 rounded-full shrink-0 ${sevColors[a.severity]}`}>
+            <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${sevColors[a.severity]}`}>
               {sevLabels[a.severity]}
             </span>
             <div className="flex-1">
-              <div className="text-xs font-bold">{a.title}</div>
-              <div className="text-[10px] text-[var(--color-muted)] mt-0.5">{a.description}</div>
-              {a.drawNumber && <div className="text-[10px] text-[var(--color-muted)]">{"\u671F\u53F7: " + a.drawNumber}</div>}
+              <div className="text-sm font-bold">{a.title}</div>
+              <div className="text-xs text-[var(--color-muted)] mt-0.5">{a.description}</div>
+              {a.drawNumber && <div className="text-xs text-[var(--color-muted)]">{"\u671F\u53F7: " + a.drawNumber}</div>}
             </div>
           </div>
         ))}

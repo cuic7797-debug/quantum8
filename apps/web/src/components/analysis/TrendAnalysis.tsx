@@ -66,9 +66,9 @@ export default function TrendAnalysis() {
           { label: '趋势方向', value: trendDir, sub: '强度 ' + trendStrength.toFixed(0) + '%' },
         ].map(f => (
           <div key={f.label} className="glass-inset p-2.5 text-center">
-            <div className="text-[10px] text-[var(--color-muted)]">{f.label}</div>
+            <div className="text-xs text-[var(--color-muted)]">{f.label}</div>
             <div className="font-mono font-bold text-sm mt-0.5">{f.value}</div>
-            <div className="text-[9px] text-[var(--color-muted)] opacity-60">{f.sub}</div>
+            <div className="text-xs text-[var(--color-muted)] opacity-60">{f.sub}</div>
           </div>
         ))}
       </div>
@@ -94,7 +94,7 @@ export default function TrendAnalysis() {
             );
           })}
         </div>
-        <div className="flex gap-3 mt-2 text-[9px]">
+        <div className="flex gap-3 mt-2 text-xs">
           <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-[var(--color-primary)]/60" /> 和值</span>
           <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-amber-400" /> MA5</span>
         </div>
@@ -106,7 +106,7 @@ export default function TrendAnalysis() {
           <div className="text-xs text-[var(--color-muted)] mb-2">奇偶比趋势</div>
           <div className="space-y-0.5">
             {odds.slice(0, 12).map((o, i) => (
-              <div key={i} className="flex items-center gap-1 text-[10px]">
+              <div key={i} className="flex items-center gap-1 text-xs">
                 <span className="w-4 text-[var(--color-muted)] font-mono">{recent30[i]?.draw_number.slice(-2)}</span>
                 <div className="flex-1 flex h-3 rounded overflow-hidden">
                   <div className="bg-purple-500" style={{ width: (o / 20 * 100) + '%' }} />
@@ -116,7 +116,7 @@ export default function TrendAnalysis() {
               </div>
             ))}
           </div>
-          <div className="flex gap-3 mt-1 text-[9px]">
+          <div className="flex gap-3 mt-1 text-xs">
             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-purple-500" /> 奇</span>
             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-cyan-500" /> 偶</span>
           </div>
@@ -126,7 +126,7 @@ export default function TrendAnalysis() {
           <div className="text-xs text-[var(--color-muted)] mb-2">连号/跨度趋势</div>
           <div className="space-y-0.5">
             {concs.slice(0, 12).map((c, i) => (
-              <div key={i} className="flex items-center gap-1 text-[10px]">
+              <div key={i} className="flex items-center gap-1 text-xs">
                 <span className="w-4 text-[var(--color-muted)] font-mono">{recent30[i]?.draw_number.slice(-2)}</span>
                 <div className="flex-1 h-3 bg-[var(--color-border)] rounded overflow-hidden flex">
                   <div className="bg-orange-500/70" style={{ width: Math.min(100, c * 20) + '%' }} />
@@ -145,7 +145,7 @@ export default function TrendAnalysis() {
         <div className="grid grid-cols-4 gap-1">
           {['一区', '二区', '三区', '四区'].map((z, zi) => (
             <div key={z} className="text-center">
-              <div className="text-[9px] text-[var(--color-muted)] mb-1">{z}</div>
+              <div className="text-xs text-[var(--color-muted)] mb-1">{z}</div>
               {recent30.slice(0, 10).map((d, i) => {
                 const vals = [d.zone1_count, d.zone2_count, d.zone3_count, d.zone4_count];
                 const v = vals[zi];
@@ -159,12 +159,12 @@ export default function TrendAnalysis() {
             </div>
           ))}
         </div>
-        <div className="flex justify-between text-[9px] text-[var(--color-muted)] mt-1">
+        <div className="flex justify-between text-xs text-[var(--color-muted)] mt-1">
           <span>10期前</span><span>最新</span>
         </div>
       </div>
 
-      <div className="text-[10px] text-[var(--color-muted)] text-center">波动性: {volatility} · 以上分析基于近30期数据</div>
+      <div className="text-xs text-[var(--color-muted)] text-center">波动性: {volatility} · 以上分析基于近30期数据</div>
     </div>
   );
 }

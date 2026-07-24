@@ -73,9 +73,9 @@ export default function FavoritesPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold gradient-text-primary">⭐ 我的收藏</h2>
+        <h2 className="text-2xl font-bold gradient-text-primary">⭐ 我的收藏</h2>
         <div className="flex gap-2">
           <button onClick={exportCSV} className="text-xs px-3 py-1.5 rounded-lg text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-white/5 flex items-center gap-1 transition-all">
             <Download size={12} /> 导出
@@ -84,7 +84,7 @@ export default function FavoritesPage() {
       </div>
 
       {/* 统计概览 */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
           { label: '选号记录', value: picks.length, icon: '🎯', color: 'text-blue-400' },
           { label: '自定义策略', value: stratCount, icon: '🧪', color: 'text-purple-400' },
@@ -94,7 +94,7 @@ export default function FavoritesPage() {
           <div key={item.label} className="glass-card p-3 text-center">
             <div className="text-lg">{item.icon}</div>
             <div className={'font-bold text-lg ' + item.color}>{item.value}</div>
-            <div className="text-[10px] text-[var(--color-muted)]">{item.label}</div>
+            <div className="text-sm text-[var(--color-muted)]">{item.label}</div>
           </div>
         ))}
       </div>
@@ -133,9 +133,9 @@ export default function FavoritesPage() {
                   onClick={() => selectMode && toggleSelect(i)}>
                   <div className="flex-1 cursor-pointer">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span className="text-[10px] text-[var(--color-muted)]">{new Date(p.time).toLocaleDateString('zh-CN')}</span>
-                      <span className="text-[10px] bg-[var(--color-primary)]/20 text-[var(--color-primary)] px-1.5 py-0.5 rounded">{p.playType}</span>
-                      {p.strategy && <span className="text-[10px] text-[var(--color-muted)]">{p.strategy}</span>}
+                      <span className="text-sm text-[var(--color-muted)]">{new Date(p.time).toLocaleDateString('zh-CN')}</span>
+                      <span className="text-xs bg-[var(--color-primary)]/20 text-[var(--color-primary)] px-1.5 py-0.5 rounded">{p.playType}</span>
+                      {p.strategy && <span className="text-sm text-[var(--color-muted)]">{p.strategy}</span>}
                     </div>
                     <div className="flex gap-0.5 flex-wrap">{p.numbers.map(n => <NumberBall key={n} number={n} size="sm" />)}</div>
                   </div>
@@ -161,7 +161,7 @@ export default function FavoritesPage() {
               <div key={s.id || s.name} className="flex items-center justify-between py-2 px-3 glass-inset">
                 <div>
                   <div className="text-sm font-semibold">{s.name}</div>
-                  <div className="text-[10px] text-[var(--color-muted)]">
+                  <div className="text-sm text-[var(--color-muted)]">
                     {(s.config || s).playType || '选十'} · 热{(s.config || s).hotCount || 4}/冷{(s.config || s).coldCount || 4}/平{(s.config || s).balanceCount || 2}
                   </div>
                 </div>

@@ -27,8 +27,8 @@ export default function CopyButton({ text, label = '复制', className = '' }: P
 
   return (
     <button onClick={handleCopy}
-      className={'inline-flex items-center gap-1 text-xs transition-all ' + (copied ? 'text-emerald-400' : 'text-[var(--color-primary)] hover:text-[var(--color-primary)]/80') + ' ' + className}>
-      {copied ? <><Check size={12} /> 已复制</> : <><Copy size={12} /> {label}</>}
+      className={'inline-flex items-center gap-1.5 text-sm transition-all ' + (copied ? 'text-emerald-400' : 'text-[var(--color-primary)] hover:text-[var(--color-primary)]/80') + ' ' + className}>
+      {copied ? <><Check size={14} /> 已复制</> : <><Copy size={14} /> {label}</>}
     </button>
   );
 }

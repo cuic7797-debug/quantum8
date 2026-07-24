@@ -126,9 +126,9 @@ export default function StrategyLeaderboardPage() {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <h2 className="text-xl font-bold gradient-text-primary">{'\uD83C\uDFC6 \u7B56\u7565\u6392\u884C\u699C'}</h2>
+    <div className="space-y-5">
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <h2 className="text-2xl font-bold gradient-text-primary">{'\uD83C\uDFC6 \u7B56\u7565\u6392\u884C\u699C'}</h2>
         <button onClick={runAllBacktests} disabled={backtesting || !draws.length}
           className="btn-primary text-sm disabled:opacity-50">
           {backtesting ? '\u23F3 \u56DE\u6D4B\u4E2D...' : backtested ? '\uD83D\uDD04 \u91CD\u65B0\u56DE\u6D4B' : '\uD83D\uDCCA \u4E00\u952E\u56DE\u6D4B\u5168\u90E8'}
@@ -154,42 +154,42 @@ export default function StrategyLeaderboardPage() {
       <div className="space-y-3">
         {sorted.map((entry, i) => (
           <div key={entry.name} className="glass-card p-4 hover:border-[var(--color-primary)]/30 transition-all">
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-4">
               <div className="text-2xl w-8 text-center shrink-0">{getRankBadge(i + 1)}</div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <span className="font-bold text-sm">{entry.name}</span>
-                  <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${riskColors[entry.risk]}`}>{riskLabels[entry.risk]}</span>
-                  <span className="text-[10px] text-[var(--color-muted)]">by {entry.author}</span>
+                  <span className={`text-xs px-1.5 py-0.5 rounded-full ${riskColors[entry.risk]}`}>{riskLabels[entry.risk]}</span>
+                  <span className="text-sm text-[var(--color-muted)]">by {entry.author}</span>
                 </div>
-                <div className="text-xs text-[var(--color-muted)] mb-2">{entry.description}</div>
+                <div className="text-sm text-[var(--color-muted)] mb-2">{entry.description}</div>
                 <div className="grid grid-cols-4 gap-2">
                   <div className="text-center">
-                    <div className="text-[10px] text-[var(--color-muted)]">{'\u2764\uFE0F \u4EBA\u6C14'}</div>
+                    <div className="text-sm text-[var(--color-muted)]">{'\u2764\uFE0F \u4EBA\u6C14'}</div>
                     <div className="font-bold text-sm">{entry.likes}</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-[10px] text-[var(--color-muted)]">{'\uD83C\uDFAF \u547D\u4E2D\u7387'}</div>
+                    <div className="text-sm text-[var(--color-muted)]">{'\uD83C\uDFAF \u547D\u4E2D\u7387'}</div>
                     <div className="font-bold text-sm">{backtested ? entry.winRate + '%' : '\u2014'}</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-[10px] text-[var(--color-muted)]">{'\uD83D\uDCB0 ROI'}</div>
+                    <div className="text-sm text-[var(--color-muted)]">{'\uD83D\uDCB0 ROI'}</div>
                     <div className={`font-bold text-sm ${entry.roi > 0 ? 'text-emerald-400' : entry.roi < 0 ? 'text-red-400' : ''}`}>
                       {backtested ? (entry.roi > 0 ? '+' : '') + entry.roi + '%' : '\u2014'}
                     </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-[10px] text-[var(--color-muted)]">{'\uD83C\uDFAE \u73A9\u6CD5'}</div>
+                    <div className="text-sm text-[var(--color-muted)]">{'\uD83C\uDFAE \u73A9\u6CD5'}</div>
                     <div className="font-bold text-sm">{entry.strategy.playType}</div>
                   </div>
                 </div>
                 <div className="flex gap-2 mt-2 flex-wrap">
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400">{'\u70ED' + entry.strategy.hotCount}</span>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400">{'\u51B7' + entry.strategy.coldCount}</span>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400">{'\u5E73' + entry.strategy.balanceCount}</span>
-                  {entry.strategy.zoneBalance && <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400">{'\u56DB\u533A\u5E73\u8861'}</span>}
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-gray-500/10 text-gray-400">{'\u8FDE\u53F7\u2264' + entry.strategy.maxConsecutive}</span>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-gray-500/10 text-gray-400">{entry.strategy.noteType}</span>
+                  <span className="text-xs px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400">{'\u70ED' + entry.strategy.hotCount}</span>
+                  <span className="text-xs px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400">{'\u51B7' + entry.strategy.coldCount}</span>
+                  <span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400">{'\u5E73' + entry.strategy.balanceCount}</span>
+                  {entry.strategy.zoneBalance && <span className="text-xs px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400">{'\u56DB\u533A\u5E73\u8861'}</span>}
+                  <span className="text-xs px-1.5 py-0.5 rounded bg-gray-500/10 text-gray-400">{'\u8FDE\u53F7\u2264' + entry.strategy.maxConsecutive}</span>
+                  <span className="text-xs px-1.5 py-0.5 rounded bg-gray-500/10 text-gray-400">{entry.strategy.noteType}</span>
                 </div>
               </div>
             </div>

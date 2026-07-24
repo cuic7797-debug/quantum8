@@ -41,7 +41,7 @@ export default function NumberTrendMini({ count = 10 }: Props) {
             );
           })}
         </div>
-        <div className="text-[10px] text-[var(--color-muted)] mt-1">均值 {avgSum}</div>
+        <div className="text-xs text-[var(--color-muted)] mt-1">均值 {avgSum}</div>
       </div>
 
       {/* Odd/Even mini chart */}
@@ -55,7 +55,7 @@ export default function NumberTrendMini({ count = 10 }: Props) {
             </div>
           ))}
         </div>
-        <div className="flex justify-between text-[10px] text-[var(--color-muted)] mt-1">
+        <div className="flex justify-between text-xs text-[var(--color-muted)] mt-1">
           <span>奇</span><span>偶</span>
         </div>
       </div>
@@ -68,7 +68,7 @@ export default function NumberTrendMini({ count = 10 }: Props) {
             {sorted.slice(0, 5).map(([n, c]) => (
               <div key={n} className="flex items-center gap-1">
                 <NumberBall number={n} size="sm" />
-                <span className="text-[10px] text-[var(--color-muted)]">×{c}</span>
+                <span className="text-xs text-[var(--color-muted)]">×{c}</span>
               </div>
             ))}
           </div>
@@ -79,7 +79,7 @@ export default function NumberTrendMini({ count = 10 }: Props) {
             {sorted.slice(-5).reverse().map(([n, c]) => (
               <div key={n} className="flex items-center gap-1">
                 <NumberBall number={n} size="sm" />
-                <span className="text-[10px] text-[var(--color-muted)]">×{c}</span>
+                <span className="text-xs text-[var(--color-muted)]">×{c}</span>
               </div>
             ))}
           </div>

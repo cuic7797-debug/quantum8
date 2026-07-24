@@ -88,9 +88,9 @@ export default function PredictionScorePage() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <h2 className="text-xl font-bold gradient-text-primary">🎯 号码预测评分</h2>
+    <div className="space-y-5">
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <h2 className="text-2xl font-bold gradient-text-primary">🎯 号码预测评分</h2>
         <div className="flex gap-2">
           {(['ensemble', 'markov', 'bayesian', 'entropy', 'trend'] as const).map(key => (
             <button key={key} onClick={() => setSortBy(key)}
@@ -102,34 +102,34 @@ export default function PredictionScorePage() {
       </div>
 
       {/* Summary */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="glass-card p-3 text-center">
           <div className="text-lg">🏆</div>
-          <div className="text-xs text-[var(--color-muted)] mb-1">TOP 1 号码</div>
+          <div className="text-sm text-[var(--color-muted)] mb-1">TOP 1 号码</div>
           {sorted.length > 0 && (
             <>
               <div className="font-bold text-lg">{sorted[0].number.toString().padStart(2, '0')}</div>
-              <div className="text-[10px] text-[var(--color-muted)]">得分 {sorted[0].ensembleScore.toFixed(1)}</div>
+              <div className="text-sm text-[var(--color-muted)]">得分 {sorted[0].ensembleScore.toFixed(1)}</div>
             </>
           )}
         </div>
         <div className="glass-card p-3 text-center">
           <div className="text-lg">📈</div>
-          <div className="text-xs text-[var(--color-muted)] mb-1">上升趋势</div>
+          <div className="text-sm text-[var(--color-muted)] mb-1">上升趋势</div>
           <div className="font-bold text-lg text-emerald-400">{scores.filter(s => s.trend === '上升').length}</div>
-          <div className="text-[10px] text-[var(--color-muted)]">个号码</div>
+          <div className="text-sm text-[var(--color-muted)]">个号码</div>
         </div>
         <div className="glass-card p-3 text-center">
           <div className="text-lg">📉</div>
-          <div className="text-xs text-[var(--color-muted)] mb-1">下降趋势</div>
+          <div className="text-sm text-[var(--color-muted)] mb-1">下降趋势</div>
           <div className="font-bold text-lg text-red-400">{scores.filter(s => s.trend === '下降').length}</div>
-          <div className="text-[10px] text-[var(--color-muted)]">个号码</div>
+          <div className="text-sm text-[var(--color-muted)]">个号码</div>
         </div>
         <div className="glass-card p-3 text-center">
           <div className="text-lg">⚖️</div>
-          <div className="text-xs text-[var(--color-muted)] mb-1">平稳趋势</div>
+          <div className="text-sm text-[var(--color-muted)] mb-1">平稳趋势</div>
           <div className="font-bold text-lg text-amber-400">{scores.filter(s => s.trend === '平稳').length}</div>
-          <div className="text-[10px] text-[var(--color-muted)]">个号码</div>
+          <div className="text-sm text-[var(--color-muted)]">个号码</div>
         </div>
       </div>
 
@@ -166,14 +166,14 @@ export default function PredictionScorePage() {
                     <td className="py-2 px-2 text-[var(--color-muted)]">{i + 1}</td>
                     <td className="py-2 px-2 text-center"><NumberBall number={s.number} size="sm" /></td>
                     <td className="py-2 px-2 text-center">
-                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${grade.color}`}>{grade.label}</span>
+                      <span className={`px-1.5 py-0.5 rounded text-xs font-bold ${grade.color}`}>{grade.label}</span>
                     </td>
                     <td className="py-2 px-2 text-center font-mono">{s.ensembleScore.toFixed(1)}</td>
                     <td className="py-2 px-2 text-center font-mono">{s.markovScore.toFixed(1)}</td>
                     <td className="py-2 px-2 text-center font-mono">{s.bayesianScore.toFixed(1)}</td>
                     <td className="py-2 px-2 text-center font-mono">{s.entropyScore.toFixed(1)}</td>
                     <td className="py-2 px-2 text-center">
-                      <span className={`text-[10px] ${s.trend === '上升' ? 'text-emerald-400' : s.trend === '下降' ? 'text-red-400' : 'text-amber-400'}`}>
+                      <span className={`text-xs ${s.trend === '上升' ? 'text-emerald-400' : s.trend === '下降' ? 'text-red-400' : 'text-amber-400'}`}>
                         {s.trend === '上升' ? '📈' : s.trend === '下降' ? '📉' : '➡️'} {s.trend}
                       </span>
                     </td>
@@ -187,16 +187,16 @@ export default function PredictionScorePage() {
 
       {/* Radar Chart for TOP 10 */}
       <Collapsible title="🕸️ TOP 10 号码多维度雷达" step={2} defaultOpen={false}>
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
           {sorted.slice(0, 10).map(s => (
             <div key={s.number} className="glass-card p-3 text-center">
               <NumberBall number={s.number} size="lg" />
               <div className="mt-2 space-y-1">
-                <div className="flex justify-between text-[10px]"><span className="text-[var(--color-muted)]">集成</span><span className="font-mono">{s.ensembleScore.toFixed(0)}</span></div>
-                <div className="flex justify-between text-[10px]"><span className="text-[var(--color-muted)]">马尔可夫</span><span className="font-mono">{s.markovScore.toFixed(0)}</span></div>
-                <div className="flex justify-between text-[10px]"><span className="text-[var(--color-muted)]">贝叶斯</span><span className="font-mono">{s.bayesianScore.toFixed(0)}</span></div>
-                <div className="flex justify-between text-[10px]"><span className="text-[var(--color-muted)]">熵值</span><span className="font-mono">{s.entropyScore.toFixed(0)}</span></div>
-                <div className="flex justify-between text-[10px]"><span className="text-[var(--color-muted)]">趋势</span><span className="font-mono">{s.trendScore.toFixed(0)}</span></div>
+                <div className="flex justify-between text-xs"><span className="text-[var(--color-muted)]">集成</span><span className="font-mono">{s.ensembleScore.toFixed(0)}</span></div>
+                <div className="flex justify-between text-xs"><span className="text-[var(--color-muted)]">马尔可夫</span><span className="font-mono">{s.markovScore.toFixed(0)}</span></div>
+                <div className="flex justify-between text-xs"><span className="text-[var(--color-muted)]">贝叶斯</span><span className="font-mono">{s.bayesianScore.toFixed(0)}</span></div>
+                <div className="flex justify-between text-xs"><span className="text-[var(--color-muted)]">熵值</span><span className="font-mono">{s.entropyScore.toFixed(0)}</span></div>
+                <div className="flex justify-between text-xs"><span className="text-[var(--color-muted)]">趋势</span><span className="font-mono">{s.trendScore.toFixed(0)}</span></div>
               </div>
             </div>
           ))}

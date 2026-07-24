@@ -131,16 +131,16 @@ export default function MatrixPage() {
   const totalCombos = pool.length >= pickCount ? comb(pool.length, pickCount) : 0;
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold">🎰 旋转矩阵</h2>
-      <div className="text-xs text-[var(--color-muted)] bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-2">
+    <div className="space-y-5">
+      <h2 className="text-2xl font-bold">🎰 旋转矩阵</h2>
+      <div className="text-sm text-[var(--color-muted)] bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-2">
         ⚠ 通过贪心算法优化号码组合，以最少注数覆盖最多号码对
       </div>
 
       {/* 选号池 */}
       <Collapsible title="选择号码池" step={1} badge={pool.length + '个号'}>
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs text-[var(--color-muted)]">已选 {pool.length} 个号，至少需要 {pickCount} 个</span>
+          <span className="text-sm text-[var(--color-muted)]">已选 {pool.length} 个号，至少需要 {pickCount} 个</span>
           <button onClick={autoSelectPool} className="text-xs text-[var(--color-primary)] hover:underline">🤖 AI推荐号码池</button>
         </div>
         <div className="grid grid-cols-10 gap-1.5">
@@ -159,7 +159,7 @@ export default function MatrixPage() {
       <Collapsible title="矩阵参数" step={2} badge={'选' + pickCount + ' ' + maxBets + '注'}>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="text-xs text-[var(--color-muted)] block mb-1">每注选号数</label>
+            <label className="text-sm text-[var(--color-muted)] block mb-1">每注选号数</label>
             <div className="flex gap-1">
               {[5, 6, 7, 8, 9, 10].map(n => (
                 <button key={n} onClick={() => { setPickCount(n); setResult(null); }}
@@ -170,7 +170,7 @@ export default function MatrixPage() {
             </div>
           </div>
           <div>
-            <label className="text-xs text-[var(--color-muted)] block mb-1">最大注数</label>
+            <label className="text-sm text-[var(--color-muted)] block mb-1">最大注数</label>
             <div className="flex gap-1">
               {[10, 20, 50, 100].map(n => (
                 <button key={n} onClick={() => { setMaxBets(n); setResult(null); }}
@@ -181,7 +181,7 @@ export default function MatrixPage() {
             </div>
           </div>
         </div>
-        <div className="mt-3 glass-inset p-2 text-xs text-[var(--color-muted)]">
+        <div className="mt-3 glass-inset p-2 text-sm text-[var(--color-muted)]">
           号码池 {pool.length} 个号 → C({pool.length},{pickCount}) = {totalCombos} 种组合 → 矩阵优化为 {maxBets} 注
         </div>
       </Collapsible>
@@ -199,15 +199,15 @@ export default function MatrixPage() {
             {/* Coverage stats */}
             <div className="grid grid-cols-3 gap-2">
               <div className="glass-inset p-2.5 text-center">
-                <div className="text-[10px] text-[var(--color-muted)]">总号码对</div>
+                <div className="text-sm text-[var(--color-muted)]">总号码对</div>
                 <div className="font-bold font-mono text-sm">{result.totalPairs}</div>
               </div>
               <div className="glass-inset p-2.5 text-center">
-                <div className="text-[10px] text-[var(--color-muted)]">已覆盖</div>
+                <div className="text-sm text-[var(--color-muted)]">已覆盖</div>
                 <div className="font-bold font-mono text-sm text-emerald-400">{result.coveredPairs}</div>
               </div>
               <div className="glass-inset p-2.5 text-center">
-                <div className="text-[10px] text-[var(--color-muted)]">覆盖率</div>
+                <div className="text-sm text-[var(--color-muted)]">覆盖率</div>
                 <div className="font-bold font-mono text-sm text-amber-400">{result.coverage}%</div>
               </div>
             </div>
@@ -217,7 +217,7 @@ export default function MatrixPage() {
               <div className="h-3 bg-[var(--color-border)] rounded-full overflow-hidden">
                 <div className="h-full bg-gradient-to-r from-emerald-500 to-amber-500 rounded-full transition-all" style={{ width: result.coverage + '%' }} />
               </div>
-              <div className="flex justify-between text-[9px] text-[var(--color-muted)] mt-1">
+              <div className="flex justify-between text-sm text-[var(--color-muted)] mt-1">
                 <span>0%</span><span>50%</span><span>100%</span>
               </div>
             </div>
@@ -226,7 +226,7 @@ export default function MatrixPage() {
             <div className="space-y-1.5 max-h-96 overflow-y-auto">
               {result.bets.map((bet, i) => (
                 <div key={i} className="flex items-center gap-2 glass-inset px-3 py-1.5">
-                  <span className="text-[10px] text-[var(--color-muted)] w-5 font-mono">{i + 1}</span>
+                  <span className="text-sm text-[var(--color-muted)] w-5 font-mono">{i + 1}</span>
                   <div className="flex gap-0.5 flex-wrap flex-1">
                     {bet.map(n => <NumberBall key={n} number={n} size="sm" />)}
                   </div>

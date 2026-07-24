@@ -150,7 +150,7 @@ export default function MonteCarloSim() {
               { label: '最大亏损', value: `${result.maxLoss.toFixed(0)}元`, color: 'text-red-400' },
             ].map(item => (
               <div key={item.label} className="glass-inset p-3 text-center">
-                <div className="text-[10px] text-[var(--color-muted)]">{item.label}</div>
+                <div className="text-xs text-[var(--color-muted)]">{item.label}</div>
                 <div className={`font-bold font-mono text-sm mt-1 ${item.color}`}>{item.value}</div>
               </div>
             ))}
@@ -167,7 +167,7 @@ export default function MonteCarloSim() {
                 return <div key={i} className={`flex-1 ${color} rounded-t`} style={{ height: `${Math.max(2, h)}%` }} />;
               })}
             </div>
-            <div className="flex justify-between text-[10px] text-[var(--color-muted)] mt-1">
+            <div className="flex justify-between text-xs text-[var(--color-muted)] mt-1">
               <span>亏损 {Math.abs(result.maxLoss).toFixed(0)}</span>
               <span>0</span>
               <span>盈利 +{result.maxProfit.toFixed(0)}</span>
@@ -183,7 +183,7 @@ export default function MonteCarloSim() {
             </div>
           </div>
 
-          <div className="text-[10px] text-[var(--color-muted)] text-center">
+          <div className="text-xs text-[var(--color-muted)] text-center">
             ⚠ 模拟结果基于历史数据，不代表未来收益。{costPerBet}元/注 × {rounds}期 = 每轮投入{costPerBet * rounds}元
           </div>
         </div>

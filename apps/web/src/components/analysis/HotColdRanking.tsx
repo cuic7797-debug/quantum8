@@ -12,34 +12,34 @@ export default function HotColdRanking({ stats }: Props) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div className="glass-card p-5">
-        <h3 className="text-sm font-semibold mb-3">{t('hot_top10')}</h3>
-        <div className="space-y-1.5">
+      <div className="glass-card">
+        <h3 className="text-base font-semibold mb-4">{t('hot_top10')}</h3>
+        <div className="space-y-2.5">
           {hotTop10.map((s, i) => (
-            <div key={s.number} className="flex items-center gap-2 text-sm">
-              <span className="text-xs text-[var(--color-muted)] w-4">{i + 1}</span>
-              <span className="font-mono font-bold w-6">{formatNumber(s.number)}</span>
-              <div className="flex-1 h-4 glass-inset overflow-hidden">
+            <div key={s.number} className="flex items-center gap-3 text-sm">
+              <span className="text-sm text-[var(--color-muted)] w-5">{i + 1}</span>
+              <span className="font-mono font-bold w-7 text-base">{formatNumber(s.number)}</span>
+              <div className="flex-1 h-5 glass-inset overflow-hidden">
                 <div className="h-full bg-red-500/70 rounded" style={{ width: `${(s.hotScore / maxHot) * 100}%` }} />
               </div>
-              <span className="text-xs text-[var(--color-muted)] w-12 text-right">{t('recent_10')} {s.recent10Rate}%</span>
-              <span className={`font-mono font-bold w-8 text-right ${getHotColor(s.hotScore)}`}>{s.hotScore}</span>
+              <span className="text-sm text-[var(--color-muted)] w-14 text-right">{t('recent_10')} {s.recent10Rate}%</span>
+              <span className={`font-mono font-bold w-10 text-right text-base ${getHotColor(s.hotScore)}`}>{s.hotScore}</span>
             </div>
           ))}
         </div>
       </div>
-      <div className="glass-card p-5">
-        <h3 className="text-sm font-semibold mb-3">{t('cold_top10')}</h3>
-        <div className="space-y-1.5">
+      <div className="glass-card">
+        <h3 className="text-base font-semibold mb-4">{t('cold_top10')}</h3>
+        <div className="space-y-2.5">
           {coldTop10.map((s, i) => (
-            <div key={s.number} className="flex items-center gap-2 text-sm">
-              <span className="text-xs text-[var(--color-muted)] w-4">{i + 1}</span>
-              <span className="font-mono font-bold w-6">{formatNumber(s.number)}</span>
-              <div className="flex-1 h-4 glass-inset overflow-hidden">
+            <div key={s.number} className="flex items-center gap-3 text-sm">
+              <span className="text-sm text-[var(--color-muted)] w-5">{i + 1}</span>
+              <span className="font-mono font-bold w-7 text-base">{formatNumber(s.number)}</span>
+              <div className="flex-1 h-5 glass-inset overflow-hidden">
                 <div className="h-full bg-blue-500/70 rounded" style={{ width: `${(s.currentMiss / maxMiss) * 100}%` }} />
               </div>
-              <span className="text-xs text-[var(--color-muted)] w-12 text-right">{t('missed')} {s.currentMiss}{t('periods')}</span>
-              <span className={`font-mono font-bold w-8 text-right ${getMissColor(s.currentMiss)}`}>{s.missRatio || '-'}</span>
+              <span className="text-sm text-[var(--color-muted)] w-14 text-right">{t('missed')} {s.currentMiss}{t('periods')}</span>
+              <span className={`font-mono font-bold w-10 text-right text-base ${getMissColor(s.currentMiss)}`}>{s.missRatio || '-'}</span>
             </div>
           ))}
         </div>

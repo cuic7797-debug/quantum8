@@ -65,7 +65,7 @@ export default function HistoryPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold">{t('history_record')}</h2>
+      <h2 className="text-2xl font-bold">{t('history_record')}</h2>
       {user && <div className="text-xs text-emerald-400 bg-emerald-500/10 rounded-lg px-4 py-2">☁️ 选号记录已同步到云端</div>}
       <div className="flex gap-2">
         <button onClick={() => setTab('check')}
@@ -81,7 +81,7 @@ export default function HistoryPage() {
       {tab === 'check' && (
         <div className="glass-card p-5 space-y-4">
           <div>
-            <label className="text-sm text-[var(--color-muted)] mb-1 block">{t('select_draw')}</label>
+            <label className="text-base text-[var(--color-muted)] mb-1 block">{t('select_draw')}</label>
             <select value={sd} onChange={e => setSd(e.target.value)}
               className="w-full glass-input px-3 py-2 text-sm">
               <option value="">{t('please_select')}</option>
@@ -89,7 +89,7 @@ export default function HistoryPage() {
             </select>
           </div>
           <div>
-            <label className="text-sm text-[var(--color-muted)] mb-1 block">{t('enter_numbers')}</label>
+            <label className="text-base text-[var(--color-muted)] mb-1 block">{t('enter_numbers')}</label>
             <input type="text" value={cn} onChange={e => setCn(e.target.value)} placeholder="1 5 12 23 34 45 56 67 78 80"
               className="w-full glass-input px-3 py-2 text-sm font-mono" />
           </div>
@@ -104,12 +104,12 @@ export default function HistoryPage() {
                   {t('hit_count')}: {cr.h} {t('pcs')}
                 </div>
               </div>
-              {cr.h > 0 ? <div className="flex flex-wrap gap-1">{cr.m.map(n => <NumberBall key={n} number={n} size="md" highlight />)}</div> : <div className="text-sm text-[var(--color-muted)]">{t('no_match')}</div>}
+              {cr.h > 0 ? <div className="flex flex-wrap gap-1">{cr.m.map(n => <NumberBall key={n} number={n} size="md" highlight />)}</div> : <div className="text-base text-[var(--color-muted)]">{t('no_match')}</div>}
             </div>
           )}
           {sd && (
             <div className="glass-inset p-4">
-              <div className="text-xs text-[var(--color-muted)] mb-2">{t('draw_numbers')}</div>
+              <div className="text-sm text-[var(--color-muted)] mb-2">{t('draw_numbers')}</div>
               <div className="flex flex-wrap gap-1">{draws.find(d => d.draw_number === sd)?.numbers.map(n => <NumberBall key={n} number={n} size="md" />)}</div>
             </div>
           )}
@@ -136,9 +136,9 @@ export default function HistoryPage() {
                   <div key={i} className="flex items-center justify-between py-3 border-b border-[var(--color-border)] last:border-0">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <span className="text-xs text-[var(--color-muted)]">{new Date(p.time).toLocaleDateString()}</span>
+                        <span className="text-sm text-[var(--color-muted)]">{new Date(p.time).toLocaleDateString()}</span>
                         <span className="text-xs bg-[var(--color-primary)]/20 text-[var(--color-primary)] px-2 py-0.5 rounded">{p.playType}</span>
-                        {p.strategy && <span className="text-xs text-[var(--color-muted)]">| {p.strategy}</span>}
+                        {p.strategy && <span className="text-sm text-[var(--color-muted)]">| {p.strategy}</span>}
                       </div>
                       <div className="flex gap-1 flex-wrap">{p.numbers.map((n: number) => <NumberBall key={n} number={n} size="sm" />)}</div>
                     </div>

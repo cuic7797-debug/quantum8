@@ -123,7 +123,7 @@ export default function SmartAlerts() {
             className="text-[var(--color-muted)] hover:text-white text-xs shrink-0">✕</button>
         </div>
       ))}
-      <div className="text-[10px] text-[var(--color-muted)] text-center">预警基于历史数据统计分析，仅供参考</div>
+      <div className="text-xs text-[var(--color-muted)] text-center">预警基于历史数据统计分析，仅供参考</div>
     </div>
   );
 }

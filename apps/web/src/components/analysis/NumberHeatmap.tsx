@@ -89,9 +89,9 @@ export default function NumberHeatmap() {
           return (
             <div key={m.num} className="aspect-square rounded-lg flex flex-col items-center justify-center relative group cursor-pointer"
               style={{ backgroundColor: getColor(intensity) }}>
-              <span className="text-[10px] font-bold text-white">{m.num}</span>
+              <span className="text-sm font-bold text-white">{m.num}</span>
               <span className="text-[7px] text-white/70">{metric === 'appear' ? m.appearCount : metric === 'hot' ? m.hotScore.toFixed(0) : metric === 'miss' ? m.currentMiss : m.recentRate.toFixed(0)}</span>
-              <div className="hidden group-hover:block absolute z-10 glass-card p-2 shadow-xl text-[10px] left-1/2 -translate-x-1/2 bottom-full mb-1 w-24">
+              <div className="hidden group-hover:block absolute z-10 glass-card p-2 shadow-xl text-xs left-1/2 -translate-x-1/2 bottom-full mb-1 w-24">
                 <div className="font-bold">号码 {m.num}</div>
                 <div>出现 {m.appearCount}次</div>
                 <div>热度 {m.hotScore.toFixed(0)}</div>
@@ -103,7 +103,7 @@ export default function NumberHeatmap() {
         })}
       </div>
 
-      <div className="flex items-center justify-between text-[10px] text-[var(--color-muted)]">
+      <div className="flex items-center justify-between text-xs text-[var(--color-muted)]">
         <span>{metric === 'miss' ? '低遗漏' : '低频'}</span>
         <div className="flex-1 mx-2 h-2 rounded-full" style={{
           background: metric === 'miss'

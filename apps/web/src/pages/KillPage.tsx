@@ -131,29 +131,29 @@ export default function KillPage() {
   const aliveNums = Array.from({ length: 80 }, (_, i) => i + 1).filter(n => !manualKill.includes(n));
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold">🔪 杀号工具</h2>
-      <div className="text-xs text-[var(--color-muted)] bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-2">
+    <div className="space-y-5">
+      <h2 className="text-2xl font-bold">🔪 杀号工具</h2>
+      <div className="text-sm text-[var(--color-muted)] bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-2">
         ⚠ 杀号基于统计分析，排除可能性较低的号码，提升选号效率
       </div>
 
       {/* 智能杀号 */}
       <Collapsible title="🤖 智能杀号策略" step={1} badge={STRATEGIES.find(s => s.key === selectedStrategy)?.name}>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
           {STRATEGIES.map(s => (
             <button key={s.key} onClick={() => setSelectedStrategy(s.key)}
               className={'p-4 rounded-xl text-left transition-all border-2 ' + (
                 selectedStrategy === s.key ? 'bg-[var(--color-primary)]/15 border-[var(--color-primary)]' : 'bg-[var(--color-bg)] border-transparent hover:border-[var(--color-primary)]/30'
               )}>
               <div className="text-2xl">{s.icon}</div>
-              <div className="text-sm font-bold mt-1">{s.name}</div>
-              <div className="text-[10px] text-[var(--color-muted)] mt-0.5">{s.desc}</div>
+              <div className="text-base font-bold mt-1">{s.name}</div>
+              <div className="text-sm text-[var(--color-muted)] mt-0.5">{s.desc}</div>
             </button>
           ))}
         </div>
 
         <div className="flex items-center gap-4 mb-3">
-          <label className="text-xs text-[var(--color-muted)]">杀号数量:</label>
+          <label className="text-sm text-[var(--color-muted)]">杀号数量:</label>
           <div className="flex gap-1">
             {[10, 15, 20, 25, 30, 40].map(n => (
               <button key={n} onClick={() => setKillCount(n)}
@@ -172,18 +172,18 @@ export default function KillPage() {
         {autoKill && showResult && (
           <div className="mt-4 glass-inset p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <div className="text-sm font-semibold">{autoKill.strategy} · 排除{autoKill.killed.length}个</div>
+              <div className="text-base font-semibold">{autoKill.strategy} · 排除{autoKill.killed.length}个</div>
               <div className="text-xs text-emerald-400">置信度 {autoKill.confidence}%</div>
             </div>
-            <div className="text-xs text-[var(--color-muted)]">{autoKill.reason}</div>
+            <div className="text-sm text-[var(--color-muted)]">{autoKill.reason}</div>
             <div className="flex flex-wrap gap-1">
               {autoKill.killed.map(n => <NumberBall key={n} number={n} size="sm" />)}
             </div>
-            <div className="text-xs text-[var(--color-muted)]">
+            <div className="text-sm text-[var(--color-muted)]">
               剩余 <span className="text-emerald-400 font-bold">{autoKill.alive.length}</span> 个号码可用
             </div>
             <div className="flex gap-2">
-              <button onClick={applyAutoKill} className="flex-1 py-2 rounded-lg bg-emerald-500/20 text-emerald-400 text-sm font-semibold hover:bg-emerald-500/30 transition-all">
+              <button onClick={applyAutoKill} className="flex-1 py-2 rounded-lg bg-emerald-500/20 text-emerald-400 text-base font-semibold hover:bg-emerald-500/30 transition-all">
                 ✓ 应用到杀号列表
               </button>
               <button onClick={() => setShowResult(false)} className="px-4 py-2 rounded-lg bg-[var(--color-surface)] text-[var(--color-muted)] text-sm hover:bg-[var(--color-border)] transition-all">
@@ -196,7 +196,7 @@ export default function KillPage() {
 
       {/* 手动杀号 */}
       <Collapsible title="✋ 手动杀号" step={2} badge={manualKill.length + '/40'}>
-        <div className="text-xs text-[var(--color-muted)] mb-2">点击号码加入杀号列表（最多40个）</div>
+        <div className="text-sm text-[var(--color-muted)] mb-2">点击号码加入杀号列表（最多40个）</div>
         <div className="grid grid-cols-10 gap-1.5">
           {Array.from({ length: 80 }, (_, i) => i + 1).map(n => {
             const isKilled = manualKill.includes(n);
@@ -237,7 +237,7 @@ export default function KillPage() {
             <div className="flex gap-2">
               <CopyButton text={aliveNums.join(' ')} label="📋 复制可用号码" className="flex-1 justify-center py-2 glass-inset" />
             </div>
-            <div className="text-[10px] text-[var(--color-muted)] text-center">
+            <div className="text-sm text-[var(--color-muted)] text-center">
               杀号列表已保存，智能选号将自动避开这些号码
             </div>
           </div>

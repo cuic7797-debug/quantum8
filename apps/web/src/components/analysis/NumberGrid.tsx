@@ -29,13 +29,13 @@ export default function NumberGrid({ stats }: Props) {
                 onClick={() => setSelected(s)}
                 className={`flex flex-col items-center p-1.5 rounded-lg transition-all hover:scale-110 cursor-pointer ${bg}`}
                 title={`#${s.number} hot:${s.hotScore} miss:${s.currentMiss}`}>
-                <span className="text-xs font-mono font-bold">{formatNumber(s.number)}</span>
-                <span className="text-[10px] text-white/70">{s.currentMiss}d</span>
+                <span className="text-sm font-mono font-bold">{formatNumber(s.number)}</span>
+                <span className="text-xs text-white/70">{s.currentMiss}d</span>
               </button>
             );
           })}
         </div>
-        <div className="flex items-center gap-4 mt-3 text-[10px] text-[var(--color-muted)]">
+        <div className="flex items-center gap-4 mt-3 text-sm text-[var(--color-muted)]">
           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-blue-800 inline-block" /> 冷</span>
           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-amber-500 inline-block" /> 温</span>
           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-red-500 inline-block" /> 热</span>
@@ -52,7 +52,7 @@ export default function NumberGrid({ stats }: Props) {
                 <NumberBall number={selected.number} size="lg" />
                 <div>
                   <h3 className="font-bold text-lg">{t('number_detail')}</h3>
-                  <p className="text-xs text-[var(--color-muted)]">#{formatNumber(selected.number)}</p>
+                  <p className="text-sm text-[var(--color-muted)]">#{formatNumber(selected.number)}</p>
                 </div>
               </div>
               <button onClick={() => setSelected(null)} className="text-[var(--color-muted)] hover:text-white text-xl">✕</button>
@@ -60,11 +60,11 @@ export default function NumberGrid({ stats }: Props) {
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div className="glass-inset p-3 text-center">
-                  <div className="text-xs text-[var(--color-muted)]">{t('appearances')}</div>
+                  <div className="text-sm text-[var(--color-muted)]">{t('appearances')}</div>
                   <div className="text-xl font-bold font-mono">{selected.totalAppearances}</div>
                 </div>
                 <div className="glass-inset p-3 text-center">
-                  <div className="text-xs text-[var(--color-muted)]">{t('hot_score')}</div>
+                  <div className="text-sm text-[var(--color-muted)]">{t('hot_score')}</div>
                   <div className={`text-xl font-bold font-mono ${selected.hotScore >= 60 ? 'text-red-400' : selected.hotScore >= 40 ? 'text-amber-400' : 'text-blue-400'}`}>{selected.hotScore}</div>
                 </div>
               </div>

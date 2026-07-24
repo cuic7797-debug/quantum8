@@ -96,13 +96,13 @@ export default function ComparePage() {
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold gradient-text-primary">⚖️ 号码对比分析</h2>
-      <div className="text-xs text-[var(--color-muted)]">选择 2-6 个号码进行深度对比</div>
+    <div className="space-y-5">
+      <h2 className="text-2xl font-bold gradient-text-primary">⚖️ 号码对比分析</h2>
+      <div className="text-sm text-[var(--color-muted)]">选择 2-6 个号码进行深度对比</div>
 
       {/* Number Selector */}
       <div className="glass-card p-4">
-        <div className="text-xs text-[var(--color-muted)] mb-2">选择号码（已选 {selected.length}/6）:</div>
+        <div className="text-sm text-[var(--color-muted)] mb-2">选择号码（已选 {selected.length}/6）:</div>
         <div className="grid grid-cols-10 gap-1">
           {Array.from({ length: 80 }, (_, i) => i + 1).map(n => {
             const idx = selected.indexOf(n);
@@ -180,7 +180,7 @@ export default function ComparePage() {
                 <div className="flex items-center gap-2 mb-2">
                   <NumberBall number={d.num} size="sm" />
                   <span className="text-xs font-bold">号码 {d.num.toString().padStart(2, '0')}</span>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded ${clusterColors[d.cluster].bg} ${clusterColors[d.cluster].text}`}>
+                  <span className={`text-xs px-1.5 py-0.5 rounded ${clusterColors[d.cluster].bg} ${clusterColors[d.cluster].text}`}>
                     {clusterColors[d.cluster].label}
                   </span>
                 </div>
@@ -225,7 +225,7 @@ export default function ComparePage() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-[10px] text-[var(--color-muted)]">无共现记录</div>
+                  <div className="text-sm text-[var(--color-muted)]">无共现记录</div>
                 )}
               </div>
             ))}
@@ -247,7 +247,7 @@ export default function ComparePage() {
 
               return (
                 <>
-                  <div className="text-xs text-[var(--color-muted)] leading-relaxed">
+                  <div className="text-sm text-[var(--color-muted)] leading-relaxed">
                     <p>• <strong>最活跃:</strong> <NumberBall number={best.num} size="sm" /> 热度分 {best.stat?.hotScore}，近10期出现 {best.recent10} 次</p>
                     <p>• <strong>最冷门:</strong> <NumberBall number={worst.num} size="sm" /> 热度分 {worst.stat?.hotScore}，当前遗漏 {worst.stat?.currentMiss} 期</p>
                     {rising.length > 0 && <p>• <strong>上升趋势:</strong> {rising.map(d => <NumberBall key={d.num} number={d.num} size="sm" />)}  近期频率上升</p>}

@@ -49,7 +49,7 @@ export default function StatsOverview() {
           <div key={m.label} className={`glass-inset p-3 text-center shadow-lg ${m.glow} hover:scale-[1.02] transition-transform duration-200`}>
             <div className="text-lg">{m.icon}</div>
             <div className={`font-bold font-mono text-sm mt-1 ${m.color}`}>{m.value}</div>
-            <div className="text-[10px] text-[var(--color-muted)] mt-0.5">{m.label}</div>
+            <div className="text-xs text-[var(--color-muted)] mt-0.5">{m.label}</div>
           </div>
         ))}
       </div>

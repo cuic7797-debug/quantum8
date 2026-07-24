@@ -50,8 +50,8 @@ export default function NumberGroups({ onSelect }: { onSelect?: (nums: number[])
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="text-xs font-semibold text-[var(--color-muted)]">号码分组</h4>
-        <button onClick={() => setShowNew(!showNew)} className="text-[10px] text-[var(--color-primary)] hover:underline">+ 新建分组</button>
+        <h4 className="text-sm font-semibold text-[var(--color-muted)]">号码分组</h4>
+        <button onClick={() => setShowNew(!showNew)} className="text-xs text-[var(--color-primary)] hover:underline">+ 新建分组</button>
       </div>
 
       {showNew && (
@@ -75,23 +75,23 @@ export default function NumberGroups({ onSelect }: { onSelect?: (nums: number[])
       {activeGroup && (
         <div className="glass-inset p-3 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold">{activeGroup.name}</span>
+            <span className="text-sm font-semibold">{activeGroup.name}</span>
             <div className="flex gap-2">
               <CopyButton text={activeGroup.numbers.join(' ')} label="复制" />
-              {groups.length > 1 && <button onClick={() => deleteGroup(activeGroup.id)} className="text-[10px] text-red-400 hover:underline">删除</button>}
+              {groups.length > 1 && <button onClick={() => deleteGroup(activeGroup.id)} className="text-xs text-red-400 hover:underline">删除</button>}
             </div>
           </div>
           <div className="grid grid-cols-10 gap-1">
             {Array.from({ length: 80 }, (_, i) => i + 1).map(n => (
               <button key={n} onClick={() => toggleNum(n)}
-                className={'aspect-square rounded text-[10px] font-bold transition-all ' + (activeGroup.numbers.includes(n) ? 'text-white' : 'bg-[var(--color-surface)] text-[var(--color-muted)] hover:bg-[var(--color-border)]')}
+                className={'aspect-square rounded text-sm font-bold transition-all ' + (activeGroup.numbers.includes(n) ? 'text-white' : 'bg-[var(--color-surface)] text-[var(--color-muted)] hover:bg-[var(--color-border)]')}
                 style={activeGroup.numbers.includes(n) ? { backgroundColor: activeGroup.color } : {}}>
                 {n}
               </button>
             ))}
           </div>
           {onSelect && activeGroup.numbers.length > 0 && (
-            <button onClick={() => onSelect(activeGroup.numbers)} className="w-full py-1.5 rounded bg-[var(--color-primary)]/20 text-[var(--color-primary)] text-xs font-semibold">
+            <button onClick={() => onSelect(activeGroup.numbers)} className="w-full py-1.5 rounded bg-[var(--color-primary)]/20 text-[var(--color-primary)] text-sm font-semibold">
               选择此分组 ({activeGroup.numbers.length}个号)
             </button>
           )}

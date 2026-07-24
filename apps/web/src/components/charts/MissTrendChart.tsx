@@ -57,13 +57,13 @@ export default function MissTrendChart({ draws, numbers }: Props) {
               </svg>
             </div>
             <div className="text-right shrink-0 w-20">
-              <div className="text-xs font-mono font-bold">{currentMiss}期</div>
-              <div className="text-[9px] text-[var(--color-muted)]">均{avgMiss}</div>
+              <div className="text-sm font-mono font-bold">{currentMiss}期</div>
+              <div className="text-xs text-[var(--color-muted)]">均{avgMiss}</div>
             </div>
           </div>
         ))}
       </div>
-      <div className="flex items-center gap-4 mt-3 text-[10px] text-[var(--color-muted)]">
+      <div className="flex items-center gap-4 mt-3 text-xs text-[var(--color-muted)]">
         <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-400" /> 出现</span>
         <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[var(--color-primary)]" /> 遗漏中</span>
         <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-400" /> 高遗漏</span>

@@ -41,14 +41,14 @@ export default function ColdHotTransition({ draws }: Props) {
           <div key={a.number} className={`flex items-center gap-3 p-2 rounded-lg ${a.type === 'cold2hot' ? 'bg-emerald-500/10' : 'bg-red-500/10'}`}>
             <NumberBall number={a.number} size="sm" />
             <div className="flex-1">
-              <div className="text-xs font-bold">
+              <div className="text-sm font-bold">
                 {a.type === 'cold2hot' ? '❄️ → 🔥 冷转热' : '🔥 → ❄️ 热转冷'}
               </div>
-              <div className="text-[10px] text-[var(--color-muted)]">
+              <div className="text-xs text-[var(--color-muted)]">
                 前10期 {a.prevCount}次 → 近10期 {a.recentCount}次
               </div>
             </div>
-            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${a.type === 'cold2hot' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+            <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${a.type === 'cold2hot' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
               {a.type === 'cold2hot' ? '关注' : '谨慎'}
             </span>
           </div>

@@ -123,7 +123,7 @@ export default function BettingModes({ playType, onGenerate }: Props) {
               mode === m.key ? 'bg-[var(--color-primary)]/15 border-[var(--color-primary)] text-[var(--color-primary)]' : 'bg-[var(--color-bg)] border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-primary)]/50'
             )}>
             <div className="text-sm font-bold">{m.label}</div>
-            <div className="text-[10px] mt-0.5 opacity-70">{m.desc}</div>
+            <div className="text-xs mt-0.5 opacity-70">{m.desc}</div>
           </button>
         ))}
       </div>
@@ -150,7 +150,7 @@ export default function BettingModes({ playType, onGenerate }: Props) {
       <div className="grid grid-cols-10 gap-1.5">
         {Array.from({ length: 80 }, (_, i) => i + 1).map(n => (
           <button key={n} onClick={() => toggleNum(n)}
-            className={'w-full aspect-square rounded-lg text-xs font-bold transition-all ' + getNumStyle(n)}>
+            className={'w-full aspect-square rounded-lg text-sm font-bold transition-all ' + getNumStyle(n)}>
             {n}
           </button>
         ))}

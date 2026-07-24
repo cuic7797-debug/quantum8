@@ -92,14 +92,14 @@ export default function StrategyMarketPage() {
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold gradient-text-primary">🏪 策略市场</h2>
-      <div className="text-xs text-[var(--color-muted)]">浏览社区策略，一键运行生成推荐号码</div>
+    <div className="space-y-5">
+      <h2 className="text-2xl font-bold gradient-text-primary">🏪 策略市场</h2>
+      <div className="text-sm text-[var(--color-muted)]">浏览社区策略，一键运行生成推荐号码</div>
 
       {/* Filters */}
       <div className="glass-card p-4">
-        <div className="flex items-center gap-3 flex-wrap">
-          <span className="text-xs text-[var(--color-muted)]">排序:</span>
+        <div className="flex items-center gap-4 flex-wrap">
+          <span className="text-sm text-[var(--color-muted)]">排序:</span>
           {(['likes', 'winRate', 'avgScore'] as const).map(key => (
             <button key={key} onClick={() => setSortBy(key)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
@@ -110,14 +110,14 @@ export default function StrategyMarketPage() {
           ))}
         </div>
         <div className="flex items-center gap-2 mt-2 flex-wrap">
-          <span className="text-xs text-[var(--color-muted)]">标签:</span>
+          <span className="text-sm text-[var(--color-muted)]">标签:</span>
           <button onClick={() => setFilterTag(null)}
-            className={`px-2 py-1 rounded text-[10px] transition-all ${!filterTag ? 'bg-[var(--color-primary)]/20 text-[var(--color-primary)]' : 'glass-inset text-[var(--color-muted)]'}`}>
+            className={`px-2 py-1 rounded text-xs transition-all ${!filterTag ? 'bg-[var(--color-primary)]/20 text-[var(--color-primary)]' : 'glass-inset text-[var(--color-muted)]'}`}>
             全部
           </button>
           {allTags.map(tag => (
             <button key={tag} onClick={() => setFilterTag(filterTag === tag ? null : tag)}
-              className={`px-2 py-1 rounded text-[10px] transition-all ${filterTag === tag ? 'bg-[var(--color-primary)]/20 text-[var(--color-primary)]' : 'glass-inset text-[var(--color-muted)]'}`}>
+              className={`px-2 py-1 rounded text-xs transition-all ${filterTag === tag ? 'bg-[var(--color-primary)]/20 text-[var(--color-primary)]' : 'glass-inset text-[var(--color-muted)]'}`}>
               {tag}
             </button>
           ))}
@@ -125,34 +125,34 @@ export default function StrategyMarketPage() {
       </div>
 
       {/* Strategy Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {sortedStrategies.map(s => (
           <div key={s.id} className={`glass-card p-4 transition-all ${selectedStrat === s.id ? 'ring-2 ring-[var(--color-primary)]' : ''}`}>
             <div className="flex items-start justify-between mb-2">
               <div>
                 <h3 className="font-bold text-sm">{s.name}</h3>
-                <div className="text-[10px] text-[var(--color-muted)]">by {s.author}</div>
+                <div className="text-sm text-[var(--color-muted)]">by {s.author}</div>
               </div>
               <span className="text-xs font-bold text-[var(--color-primary)]">❤️ {s.likes}</span>
             </div>
-            <p className="text-xs text-[var(--color-muted)] mb-3 leading-relaxed">{s.description}</p>
+            <p className="text-sm text-[var(--color-muted)] mb-3 leading-relaxed">{s.description}</p>
             <div className="flex flex-wrap gap-1 mb-3">
               {s.tags.map(tag => (
-                <span key={tag} className="text-[10px] bg-[var(--color-primary)]/10 text-[var(--color-primary)] px-2 py-0.5 rounded-full">{tag}</span>
+                <span key={tag} className="text-xs bg-[var(--color-primary)]/10 text-[var(--color-primary)] px-2 py-0.5 rounded-full">{tag}</span>
               ))}
             </div>
             <div className="grid grid-cols-3 gap-2 mb-3 text-center">
               <div className="glass-inset p-1.5">
-                <div className="text-[9px] text-[var(--color-muted)]">胜率</div>
+                <div className="text-sm text-[var(--color-muted)]">胜率</div>
                 <div className="text-xs font-bold font-mono text-emerald-400">{s.winRate}%</div>
               </div>
               <div className="glass-inset p-1.5">
-                <div className="text-[9px] text-[var(--color-muted)]">评分</div>
+                <div className="text-sm text-[var(--color-muted)]">评分</div>
                 <div className="text-xs font-bold font-mono text-amber-400">{s.avgScore}</div>
               </div>
               <div className="glass-inset p-1.5">
-                <div className="text-[9px] text-[var(--color-muted)]">配置</div>
-                <div className="text-[10px] font-mono">热{s.hotCount}冷{s.coldCount}</div>
+                <div className="text-sm text-[var(--color-muted)]">配置</div>
+                <div className="text-xs font-mono">热{s.hotCount}冷{s.coldCount}</div>
               </div>
             </div>
             <button onClick={() => runStrategy(s)} disabled={generating || !stats.length}
@@ -171,7 +171,7 @@ export default function StrategyMarketPage() {
               <div key={i} className="glass-inset p-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${i === 0 ? 'bg-amber-500 text-black' : 'bg-[var(--color-border)] text-[var(--color-muted)]'}`}>{i + 1}</span>
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? 'bg-amber-500 text-black' : 'bg-[var(--color-border)] text-[var(--color-muted)]'}`}>{i + 1}</span>
                     <div className="flex gap-0.5 flex-wrap">{r.numbers.map((n: number) => <NumberBall key={n} number={n} size="sm" />)}</div>
                   </div>
                   <span className="font-bold font-mono text-sm">{r.totalScore}</span>

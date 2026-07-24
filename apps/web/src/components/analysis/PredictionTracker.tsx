@@ -99,7 +99,7 @@ export default function PredictionTracker({ picks, draws }: Props) {
               <div key={s.label} className="glass-inset p-3 text-center">
                 <div className="text-lg">{s.icon}</div>
                 <div className={`font-bold font-mono text-sm mt-1 ${s.color}`}>{s.value}</div>
-                <div className="text-[10px] text-[var(--color-muted)]">{s.label}</div>
+                <div className="text-xs text-[var(--color-muted)]">{s.label}</div>
               </div>
             ))}
           </div>
@@ -114,16 +114,16 @@ export default function PredictionTracker({ picks, draws }: Props) {
             <div key={i} className="glass-inset p-4">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono text-[var(--color-muted)]">{r.drawNumber}</span>
-                  <span className="text-[10px] text-[var(--color-muted)]">{r.drawDate}</span>
-                  <span className="text-[10px] bg-[var(--color-primary)]/20 text-[var(--color-primary)] px-2 py-0.5 rounded-full">{r.pick.playType}</span>
+                  <span className="text-sm font-mono text-[var(--color-muted)]">{r.drawNumber}</span>
+                  <span className="text-xs text-[var(--color-muted)]">{r.drawDate}</span>
+                  <span className="text-xs bg-[var(--color-primary)]/20 text-[var(--color-primary)] px-2 py-0.5 rounded-full">{r.pick.playType}</span>
                 </div>
-                <span className="text-xs font-bold">{r.prize}</span>
+                <span className="text-sm font-bold">{r.prize}</span>
               </div>
               
               {/* Pick numbers */}
               <div className="mb-2">
-                <div className="text-[10px] text-[var(--color-muted)] mb-1">你的预测:</div>
+                <div className="text-xs text-[var(--color-muted)] mb-1">你的预测:</div>
                 <div className="flex flex-wrap gap-1">
                   {r.pick.numbers.map(n => (
                     <NumberBall key={n} number={n} size="sm" highlight={r.matched.includes(n)} />
@@ -133,7 +133,7 @@ export default function PredictionTracker({ picks, draws }: Props) {
               
               {/* Draw numbers */}
               <div className="mb-2">
-                <div className="text-[10px] text-[var(--color-muted)] mb-1">实际开奖:</div>
+                <div className="text-xs text-[var(--color-muted)] mb-1">实际开奖:</div>
                 <div className="flex flex-wrap gap-1">
                   {draws.find(d => d.draw_number === r.drawNumber)?.numbers.map(n => (
                     <NumberBall key={n} number={n} size="sm" highlight={r.matched.includes(n)} />
@@ -150,11 +150,11 @@ export default function PredictionTracker({ picks, draws }: Props) {
                     <div className="h-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] rounded-full"
                       style={{ width: `${r.hitRate}%` }} />
                   </div>
-                  <span className="text-[10px] text-[var(--color-muted)]">{r.hitRate}%</span>
+                  <span className="text-xs text-[var(--color-muted)]">{r.hitRate}%</span>
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {r.matched.map(n => (
-                    <span key={n} className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[9px] font-bold">{n}</span>
+                    <span key={n} className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm font-bold">{n}</span>
                   ))}
                 </div>
               </div>

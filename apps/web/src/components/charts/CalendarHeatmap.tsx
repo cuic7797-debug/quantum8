@@ -74,7 +74,7 @@ export default function CalendarHeatmap({ draws, number }: Props) {
         <h3 className="text-sm font-semibold text-[var(--color-muted)]">
           📅 出现日历 {number ? `（号码 ${number.toString().padStart(2, '0')}）` : '（全部号码）'}
         </h3>
-        <span className="text-[10px] text-[var(--color-muted)]">近90天</span>
+        <span className="text-xs text-[var(--color-muted)]">近90天</span>
       </div>
       
       <div className="overflow-x-auto">
@@ -111,7 +111,7 @@ export default function CalendarHeatmap({ draws, number }: Props) {
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-2 mt-2 text-[10px] text-[var(--color-muted)]">
+      <div className="flex items-center gap-2 mt-2 text-xs text-[var(--color-muted)]">
         <span>少</span>
         {[0.05, 0.15, 0.35, 0.6, 1].map((intensity, i) => (
           <div key={i} className="w-3 h-3 rounded" style={{ background: number ? (i === 4 ? '#3b82f6' : 'rgba(148,163,184,0.05)') : `rgba(59,130,246,${intensity})` }} />

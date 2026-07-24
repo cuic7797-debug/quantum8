@@ -211,8 +211,8 @@ export default function SelectionPage() {
   const allResults = multiRes.length > 0 ? multiRes.flatMap(m => m.results) : res;
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold gradient-text-primary">🎯 智能选号</h2>
+    <div className="space-y-5">
+      <h2 className="text-2xl font-bold gradient-text-primary">🎯 智能选号</h2>
 
       {/* Step 0: 投注模式 */}
       <Collapsible title="选择投注模式" step={1} badge={betMode === 'single' ? '单式' : betMode === 'compound' ? '复式' : '胆拖'}>
@@ -226,7 +226,7 @@ export default function SelectionPage() {
               className={'p-3 rounded-xl text-center transition-all border-2 ' + (betMode === m.key ? 'bg-[var(--color-primary)]/15 border-[var(--color-primary)]' : 'glass-inset border-transparent hover:border-[var(--color-primary)]/30')}>
               <div className="text-lg">{m.icon}</div>
               <div className="text-xs font-bold mt-1">{m.label}</div>
-              <div className="text-[10px] text-[var(--color-muted)]">{m.desc}</div>
+              <div className="text-sm text-[var(--color-muted)]">{m.desc}</div>
             </button>
           ))}
         </div>
@@ -262,15 +262,15 @@ export default function SelectionPage() {
 
           {multiMode ? (
             <div className="space-y-3">
-              <div className="text-[11px] text-[var(--color-muted)]">选择要对比的策略（可多选）:</div>
+              <div className="text-sm text-[var(--color-muted)]">选择要对比的策略（可多选）:</div>
               <div className="grid grid-cols-3 gap-2">
                 {STRATS.map((s, i) => (
                   <button key={s.name} onClick={() => toggleStrat(i)}
                     className={'p-3 rounded-xl text-center transition-all border-2 ' + (selectedStrats.includes(i) ? 'bg-[var(--color-primary)]/15 border-[var(--color-primary)]' : 'glass-inset border-transparent')}>
                     <div className="text-lg">{s.icon}</div>
                     <div className="text-xs font-bold">{s.name}</div>
-                    <div className="text-[10px] text-[var(--color-muted)]">{s.desc}</div>
-                    {selectedStrats.includes(i) && <div className="text-[10px] text-[var(--color-primary)] mt-1">✓ 已选</div>}
+                    <div className="text-sm text-[var(--color-muted)]">{s.desc}</div>
+                    {selectedStrats.includes(i) && <div className="text-xs text-[var(--color-primary)] mt-1">✓ 已选</div>}
                   </button>
                 ))}
               </div>
@@ -282,15 +282,15 @@ export default function SelectionPage() {
                   className={'p-3 rounded-xl text-center transition-all border-2 ' + (stratIdx === i ? 'bg-[var(--color-primary)]/15 border-[var(--color-primary)]' : 'glass-inset border-transparent')}>
                   <div className="text-lg">{s.icon}</div>
                   <div className="text-xs font-bold">{s.name}</div>
-                  <div className="text-[10px] text-[var(--color-muted)]">{s.desc}</div>
+                  <div className="text-sm text-[var(--color-muted)]">{s.desc}</div>
                 </button>
               ))}
             </div>
           ) : (
             <div className="grid grid-cols-3 gap-2">
-              <div><label className="text-[10px] text-[var(--color-muted)]">热号</label><input type="number" min={0} max={pc} value={cHot} onChange={e => setCHot(Math.min(+e.target.value, pc))} className="w-full glass-input px-2 py-1.5 text-sm font-mono" /></div>
-              <div><label className="text-[10px] text-[var(--color-muted)]">冷号</label><input type="number" min={0} max={pc} value={cCold} onChange={e => setCCold(Math.min(+e.target.value, pc))} className="w-full glass-input px-2 py-1.5 text-sm font-mono" /></div>
-              <div><label className="text-[10px] text-[var(--color-muted)]">平衡号</label><input type="number" min={0} max={pc} value={cBalance} onChange={e => setCBalance(Math.min(+e.target.value, pc))} className="w-full glass-input px-2 py-1.5 text-sm font-mono" /></div>
+              <div><label className="text-sm text-[var(--color-muted)]">热号</label><input type="number" min={0} max={pc} value={cHot} onChange={e => setCHot(Math.min(+e.target.value, pc))} className="w-full glass-input px-2 py-1.5 text-sm font-mono" /></div>
+              <div><label className="text-sm text-[var(--color-muted)]">冷号</label><input type="number" min={0} max={pc} value={cCold} onChange={e => setCCold(Math.min(+e.target.value, pc))} className="w-full glass-input px-2 py-1.5 text-sm font-mono" /></div>
+              <div><label className="text-sm text-[var(--color-muted)]">平衡号</label><input type="number" min={0} max={pc} value={cBalance} onChange={e => setCBalance(Math.min(+e.target.value, pc))} className="w-full glass-input px-2 py-1.5 text-sm font-mono" /></div>
             </div>
           )}
         </Collapsible>
@@ -322,7 +322,7 @@ export default function SelectionPage() {
       {/* Generate */}
       <div className="glass-card p-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs text-[var(--color-muted)]">
+          <span className="text-sm text-[var(--color-muted)]">
             {multiMode ? `多策略对比 · ${selectedStrats.length}个策略` : (betMode === 'single' ? 'AI推荐' : betMode === 'compound' ? '复式组合' : '胆拖组合')}
             {' · '}{PLAY_TYPES[playIdx]} · {comboCount()}种组合
           </span>
@@ -337,18 +337,18 @@ export default function SelectionPage() {
       {/* Multi-Strategy Results */}
       {multiRes.length > 0 && (
         <Collapsible title={`多策略对比结果（${multiRes.length}个策略 × ${resultCount}组）`} step={0} badge="对比" defaultOpen={true}>
-          <div className="space-y-4">
+          <div className="space-y-5">
             {multiRes.map((mr, mi) => (
               <div key={mi} className="glass-inset p-4">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-lg">{mr.strategyIcon}</span>
                   <span className="text-sm font-bold">{mr.strategyName}</span>
-                  <span className="text-[10px] text-[var(--color-muted)]">平均分 {mr.results.length ? (mr.results.reduce((a, r) => a + r.totalScore, 0) / mr.results.length).toFixed(1) : 0}</span>
+                  <span className="text-sm text-[var(--color-muted)]">平均分 {mr.results.length ? (mr.results.reduce((a, r) => a + r.totalScore, 0) / mr.results.length).toFixed(1) : 0}</span>
                 </div>
                 <div className="space-y-2">
                   {mr.results.map((r, i) => (
                     <div key={i} className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/[0.03] transition-colors">
-                      <span className={'w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ' + (i === 0 ? 'bg-amber-500 text-black' : 'bg-[var(--color-border)] text-[var(--color-muted)]')}>{i + 1}</span>
+                      <span className={'w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ' + (i === 0 ? 'bg-amber-500 text-black' : 'bg-[var(--color-border)] text-[var(--color-muted)]')}>{i + 1}</span>
                       <div className="flex gap-0.5 flex-wrap flex-1">{r.numbers.map(n => <NumberBall key={n} number={n} size="sm" />)}</div>
                       <span className="font-bold font-mono text-xs shrink-0">{r.totalScore}</span>
                       <CopyButton text={r.numbers.join(' ')} label="复制" />
@@ -372,24 +372,24 @@ export default function SelectionPage() {
               <div key={i} className="glass-inset p-3">
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-2">
-                    <span className={'w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ' + (i === 0 ? 'bg-amber-500 text-black' : i < 3 ? 'bg-[var(--color-muted)] text-black' : 'bg-[var(--color-border)] text-[var(--color-muted)]')}>{i + 1}</span>
+                    <span className={'w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ' + (i === 0 ? 'bg-amber-500 text-black' : i < 3 ? 'bg-[var(--color-muted)] text-black' : 'bg-[var(--color-border)] text-[var(--color-muted)]')}>{i + 1}</span>
                     <div className="flex gap-0.5 flex-wrap">{r.numbers.map(n => <NumberBall key={n} number={n} size="sm" />)}</div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0 ml-2">
                     <span className="font-bold font-mono text-sm">{r.totalScore}</span>
-                    <span className={'text-[10px] px-1.5 py-0.5 rounded ' + (r.riskLevel === '低' ? 'bg-emerald-500/20 text-emerald-400' : r.riskLevel === '中' ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400')}>{r.riskLevel}</span>
+                    <span className={'text-xs px-1.5 py-0.5 rounded ' + (r.riskLevel === '低' ? 'bg-emerald-500/20 text-emerald-400' : r.riskLevel === '中' ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400')}>{r.riskLevel}</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex gap-1 flex-wrap">
                     {r.reasons.slice(0, 3).map((reason, ri) => (
-                      <span key={ri} className="text-[9px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded-full">{reason}</span>
+                      <span key={ri} className="text-xs bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded-full">{reason}</span>
                     ))}
                   </div>
                   <div className="flex items-center gap-2">
                     <CopyButton text={r.numbers.join(' ')} label="复制号码" />
                     <ShareButton numbers={r.numbers} title={`Quantum8 推荐第${i + 1}组`} />
-                    <button onClick={() => savePick(r, i)} className="text-[10px] text-[var(--color-primary)] hover:underline">
+                    <button onClick={() => savePick(r, i)} className="text-xs text-[var(--color-primary)] hover:underline">
                       {showSaveMsg === i ? '✓ 已保存' : '保存'}
                     </button>
                   </div>

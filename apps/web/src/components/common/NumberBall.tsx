@@ -8,9 +8,9 @@ interface Props {
 
 export default function NumberBall({ number, size = 'md', highlight }: Props) {
   const sizeClasses = {
-    sm: 'w-7 h-7 text-xs',
-    md: 'w-9 h-9 text-sm',
-    lg: 'w-11 h-11 text-base',
+    sm: 'w-8 h-8 text-sm',
+    md: 'w-10 h-10 text-base',
+    lg: 'w-12 h-12 text-lg',
   };
 
   return (

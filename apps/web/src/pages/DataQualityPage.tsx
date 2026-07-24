@@ -67,15 +67,15 @@ export default function DataQualityPage() {
   const fConfig = freshnessConfig[quality.freshness] || freshnessConfig.fresh;
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold gradient-text-primary">📊 数据质量仪表盘</h2>
+    <div className="space-y-5">
+      <h2 className="text-2xl font-bold gradient-text-primary">📊 数据质量仪表盘</h2>
 
       <div className="glass-card p-5">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-semibold text-[var(--color-muted)]">数据状态总览</h3>
           <span className={`text-xs px-3 py-1 rounded-full ${fConfig.bg} ${fConfig.color} font-bold`}>{fConfig.label}</span>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
             { label: '总期数', value: quality.totalDraws, icon: '📊', color: 'text-blue-400' },
             { label: '号码覆盖', value: quality.coverage.toFixed(0) + '%', icon: '🎯', color: quality.coverage >= 95 ? 'text-emerald-400' : 'text-amber-400' },
@@ -85,35 +85,35 @@ export default function DataQualityPage() {
             <div key={item.label} className="glass-inset p-3 text-center">
               <div className="text-lg">{item.icon}</div>
               <div className={`font-bold font-mono text-lg mt-1 ${item.color}`}>{item.value}</div>
-              <div className="text-[10px] text-[var(--color-muted)]">{item.label}</div>
+              <div className="text-sm text-[var(--color-muted)]">{item.label}</div>
             </div>
           ))}
         </div>
       </div>
 
       <Collapsible title="📋 数据详情" step={1}>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           <div className="glass-inset p-3">
-            <div className="text-[10px] text-[var(--color-muted)]">起始日期</div>
+            <div className="text-sm text-[var(--color-muted)]">起始日期</div>
             <div className="font-mono text-sm font-bold">{quality.firstDate}</div>
           </div>
           <div className="glass-inset p-3">
-            <div className="text-[10px] text-[var(--color-muted)]">最新日期</div>
+            <div className="text-sm text-[var(--color-muted)]">最新日期</div>
             <div className="font-mono text-sm font-bold">{quality.lastDate}</div>
           </div>
           <div className="glass-inset p-3">
-            <div className="text-[10px] text-[var(--color-muted)]">覆盖号码</div>
+            <div className="text-sm text-[var(--color-muted)]">覆盖号码</div>
             <div className="font-mono text-sm font-bold">{quality.numbersSeen}/80</div>
           </div>
           <div className="glass-inset p-3">
-            <div className="text-[10px] text-[var(--color-muted)]">频率变异系数</div>
+            <div className="text-sm text-[var(--color-muted)]">频率变异系数</div>
             <div className="font-mono text-sm font-bold">{quality.cv}%</div>
           </div>
         </div>
       </Collapsible>
 
       <Collapsible title="⚖️ 号码分布均衡性" step={2}>
-        <div className="text-xs text-[var(--color-muted)] mb-2">
+        <div className="text-sm text-[var(--color-muted)] mb-2">
           变异系数 (CV) = {quality.cv}% {parseFloat(quality.cv) < 15 ? '✅ 分布较均衡' : parseFloat(quality.cv) < 25 ? '⚠️ 分布略有偏态' : '❌ 分布不均衡'}
         </div>
         <div className="grid grid-cols-10 gap-1">
@@ -133,7 +133,7 @@ export default function DataQualityPage() {
             );
           })}
         </div>
-        <div className="flex justify-between text-[10px] text-[var(--color-muted)] mt-1">
+        <div className="flex justify-between text-sm text-[var(--color-muted)] mt-1">
           <span>浅色 = 低频</span>
           <span>深色 = 高频</span>
         </div>
@@ -141,7 +141,7 @@ export default function DataQualityPage() {
 
       {quality.missing.length > 0 && (
         <Collapsible title={`❌ 未出现号码 (${quality.missing.length}个)`} step={3}>
-          <div className="text-xs text-[var(--color-muted)] mb-2">以下号码在 {quality.totalDraws} 期数据中从未出现:</div>
+          <div className="text-sm text-[var(--color-muted)] mb-2">以下号码在 {quality.totalDraws} 期数据中从未出现:</div>
           <div className="flex flex-wrap gap-1">
             {quality.missing.map(n => (
               <span key={n} className="w-8 h-8 rounded-lg bg-red-500/15 text-red-400 flex items-center justify-center text-xs font-bold font-mono">
@@ -154,14 +154,14 @@ export default function DataQualityPage() {
 
       <Collapsible title="⏰ 数据新鲜度" step={4}>
         <div className="glass-inset p-4">
-          <div className="flex items-center gap-3 mb-3">
+          <div className="flex items-center gap-4 mb-3">
             <div className={`text-4xl ${fConfig.color}`}>{quality.freshness === 'fresh' ? '🟢' : quality.freshness === 'stale' ? '🟡' : '🔴'}</div>
             <div>
               <div className={`text-sm font-bold ${fConfig.color}`}>{fConfig.label}</div>
-              <div className="text-xs text-[var(--color-muted)]">{fConfig.desc}</div>
+              <div className="text-sm text-[var(--color-muted)]">{fConfig.desc}</div>
             </div>
           </div>
-          <div className="text-xs text-[var(--color-muted)] space-y-1">
+          <div className="text-sm text-[var(--color-muted)] space-y-1">
             <p>• 最新一期: {quality.lastDate} {quality.hoursSinceLastDraw}小时前</p>
             <p>• 数据范围: {quality.firstDate} ~ {quality.lastDate}</p>
             <p>• 建议: {quality.freshness === 'fresh' ? '数据正常，可放心使用' : '建议刷新数据以获取最新分析'}</p>

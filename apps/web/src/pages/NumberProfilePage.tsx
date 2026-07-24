@@ -54,12 +54,12 @@ export default function NumberProfilePage() {
   const clusterLabel: Record<string, string> = { hot: '🔥 热号', warm: '🌡️ 温号', cool: '❄️ 冷号', cold: '🧊 冰号' };
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold gradient-text-primary">🔍 号码画像</h2>
+    <div className="space-y-5">
+      <h2 className="text-2xl font-bold gradient-text-primary">🔍 号码画像</h2>
 
       {/* Number Selector */}
       <div className="glass-card p-4">
-        <div className="text-xs text-[var(--color-muted)] mb-2">选择号码查看详情:</div>
+        <div className="text-sm text-[var(--color-muted)] mb-2">选择号码查看详情:</div>
         <div className="grid grid-cols-10 gap-1">
           {Array.from({ length: 80 }, (_, i) => i + 1).map(n => (
             <button key={n} onClick={() => setSelected(n)}
@@ -75,7 +75,7 @@ export default function NumberProfilePage() {
             </button>
           ))}
         </div>
-        <div className="flex gap-3 mt-2 text-[10px]">
+        <div className="flex gap-4 mt-2 text-xs">
           <span className="text-red-400">● 热号({clusterSummary.hot.length})</span>
           <span className="text-amber-400">● 温号({clusterSummary.warm.length})</span>
           <span className="text-blue-400">● 冷号({clusterSummary.cool.length})</span>
@@ -93,15 +93,15 @@ export default function NumberProfilePage() {
               <span className={`text-xs font-bold ${clusterColor[clusterInfo?.cluster || 'cool']}`}>
                 {clusterLabel[clusterInfo?.cluster || 'cool']}
               </span>
-              <span className="text-xs text-[var(--color-muted)]">|</span>
+              <span className="text-sm text-[var(--color-muted)]">|</span>
               <span className={`text-xs ${zoneColors[zone - 1]}`}>{zoneNames[zone - 1]}</span>
-              <span className="text-xs text-[var(--color-muted)]">|</span>
-              <span className="text-xs text-[var(--color-muted)]">综合分: <span className="font-bold text-[var(--color-text)]">{clusterInfo?.score.toFixed(1)}</span></span>
+              <span className="text-sm text-[var(--color-muted)]">|</span>
+              <span className="text-sm text-[var(--color-muted)]">综合分: <span className="font-bold text-[var(--color-text)]">{clusterInfo?.score.toFixed(1)}</span></span>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
             { label: '总出现', value: stat?.totalAppearances || 0, icon: '📊', color: 'text-blue-400' },
             { label: '当前遗漏', value: stat?.currentMiss || 0, icon: '⏰', color: 'text-amber-400' },
@@ -111,7 +111,7 @@ export default function NumberProfilePage() {
             <div key={item.label} className="glass-inset p-3 text-center">
               <div className="text-lg">{item.icon}</div>
               <div className={`font-bold font-mono text-lg mt-1 ${item.color}`}>{item.value}</div>
-              <div className="text-[10px] text-[var(--color-muted)]">{item.label}</div>
+              <div className="text-sm text-[var(--color-muted)]">{item.label}</div>
             </div>
           ))}
         </div>
@@ -119,21 +119,21 @@ export default function NumberProfilePage() {
 
       {/* Gap Analysis */}
       <Collapsible title="📊 间隔分析" step={1}>
-        <div className="grid grid-cols-3 gap-3 mb-3">
+        <div className="grid grid-cols-3 gap-4 mb-3">
           <div className="glass-inset p-3 text-center">
-            <div className="text-xs text-[var(--color-muted)]">平均间隔</div>
+            <div className="text-sm text-[var(--color-muted)]">平均间隔</div>
             <div className="font-bold font-mono text-lg">{avgGap}期</div>
           </div>
           <div className="glass-inset p-3 text-center">
-            <div className="text-xs text-[var(--color-muted)]">最大遗漏</div>
+            <div className="text-sm text-[var(--color-muted)]">最大遗漏</div>
             <div className="font-bold font-mono text-lg">{maxGap}期</div>
           </div>
           <div className="glass-inset p-3 text-center">
-            <div className="text-xs text-[var(--color-muted)]">出现次数</div>
+            <div className="text-sm text-[var(--color-muted)]">出现次数</div>
             <div className="font-bold font-mono text-lg">{appearances.length}次</div>
           </div>
         </div>
-        <div className="text-xs text-[var(--color-muted)]">
+        <div className="text-sm text-[var(--color-muted)]">
           近100期中出现 {appearances.length} 次，平均每 {avgGap} 期出现一次。
           {maxGap > 20 ? `最长遗漏达 ${maxGap} 期，存在回补可能。` : '遗漏值处于正常范围。'}
         </div>
@@ -141,11 +141,11 @@ export default function NumberProfilePage() {
 
       {/* Co-occurrence */}
       <Collapsible title="🔗 关联号码" step={2}>
-        <div className="text-xs text-[var(--color-muted)] mb-3">与号码 {selected.toString().padStart(2, '0')} 同期出现频率最高的号码:</div>
+        <div className="text-sm text-[var(--color-muted)] mb-3">与号码 {selected.toString().padStart(2, '0')} 同期出现频率最高的号码:</div>
         <div className="space-y-2">
           {topCoAppear.map(([num, count], i) => (
-            <div key={num} className="flex items-center gap-3">
-              <span className="text-[10px] text-[var(--color-muted)] w-4">{i + 1}</span>
+            <div key={num} className="flex items-center gap-4">
+              <span className="text-sm text-[var(--color-muted)] w-4">{i + 1}</span>
               <NumberBall number={num} size="sm" />
               <div className="flex-1 h-3 glass-inset rounded-full overflow-hidden">
                 <div className="h-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] rounded-full"
@@ -163,7 +163,7 @@ export default function NumberProfilePage() {
           {draws.slice(0, 50).map((d, i) => {
             const appeared = d.numbers.includes(selected);
             return (
-              <div key={d.id} className={`w-8 h-8 rounded flex items-center justify-center text-[9px] font-mono transition-all ${
+              <div key={d.id} className={`w-8 h-8 rounded flex items-center justify-center text-xs font-mono transition-all ${
                 appeared ? 'bg-[var(--color-primary)] text-white shadow-md' : 'glass-inset text-[var(--color-muted)]'
               }`} title={`${d.draw_number} ${d.draw_date}`}>
                 {(draws.length - i).toString().slice(-2)}
@@ -171,7 +171,7 @@ export default function NumberProfilePage() {
             );
           })}
         </div>
-        <div className="text-[10px] text-[var(--color-muted)] mt-2">
+        <div className="text-sm text-[var(--color-muted)] mt-2">
           蓝色 = 出现，灰色 = 未出现（近50期）
         </div>
       </Collapsible>

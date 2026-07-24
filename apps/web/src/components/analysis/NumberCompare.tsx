@@ -46,7 +46,7 @@ export default function NumberCompare() {
           <label className="text-xs text-[var(--color-muted)] block mb-1">号码A</label>
           <div className="flex gap-1 flex-wrap">
             {[numA, ...Array.from({length: 9}, (_, i) => ((numA - 1 + i + 1) % 80) + 1)].slice(0, 10).map(n => (
-              <button key={n} onClick={() => setNumA(n)} className={'w-8 h-8 rounded-full text-xs font-bold transition-all ' + (numA === n ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--color-bg)] text-[var(--color-muted)]')}>
+              <button key={n} onClick={() => setNumA(n)} className={'w-8 h-8 rounded-full text-sm font-bold transition-all ' + (numA === n ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--color-bg)] text-[var(--color-muted)]')}>
                 {n}
               </button>
             ))}
@@ -57,7 +57,7 @@ export default function NumberCompare() {
           <label className="text-xs text-[var(--color-muted)] block mb-1">号码B</label>
           <div className="flex gap-1 flex-wrap">
             {[numB, ...Array.from({length: 9}, (_, i) => ((numB - 1 + i + 1) % 80) + 1)].slice(0, 10).map(n => (
-              <button key={n} onClick={() => setNumB(n)} className={'w-8 h-8 rounded-full text-xs font-bold transition-all ' + (numB === n ? 'bg-rose-500 text-white' : 'bg-[var(--color-bg)] text-[var(--color-muted)]')}>
+              <button key={n} onClick={() => setNumB(n)} className={'w-8 h-8 rounded-full text-sm font-bold transition-all ' + (numB === n ? 'bg-rose-500 text-white' : 'bg-[var(--color-bg)] text-[var(--color-muted)]')}>
                 {n}
               </button>
             ))}
@@ -71,7 +71,7 @@ export default function NumberCompare() {
         <div className="text-center">
           <div className="text-xs text-[var(--color-muted)]">共现</div>
           <div className="font-bold text-lg">{coCount}次</div>
-          <div className="text-[10px] text-[var(--color-muted)]">{coRate}%</div>
+          <div className="text-xs text-[var(--color-muted)]">{coRate}%</div>
         </div>
         <NumberBall number={numB} size="lg" />
       </div>
@@ -82,14 +82,14 @@ export default function NumberCompare() {
           const max = Math.max(m.a, m.b, 1);
           return (
             <div key={m.label} className="glass-inset p-2">
-              <div className="text-[10px] text-[var(--color-muted)] mb-1">{m.label}</div>
+              <div className="text-xs text-[var(--color-muted)] mb-1">{m.label}</div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono w-12 text-right text-[var(--color-primary)]">{m.a}{m.unit}</span>
+                <span className="text-sm font-mono w-12 text-right text-[var(--color-primary)]">{m.a}{m.unit}</span>
                 <div className="flex-1 h-3 rounded overflow-hidden flex">
                   <div className="bg-[var(--color-primary)]" style={{ width: (m.a / max * 50) + '%' }} />
                   <div className="bg-rose-500" style={{ width: (m.b / max * 50) + '%' }} />
                 </div>
-                <span className="text-xs font-mono w-12 text-rose-400">{m.b}{m.unit}</span>
+                <span className="text-sm font-mono w-12 text-rose-400">{m.b}{m.unit}</span>
               </div>
             </div>
           );
@@ -102,16 +102,16 @@ export default function NumberCompare() {
           <div className="text-xs text-[var(--color-muted)] mb-1">号码{numA} 近20期出现</div>
           <div className="flex flex-wrap gap-1">
             {appearA.length > 0 ? appearA.map(d => (
-              <span key={d} className="text-[10px] bg-[var(--color-primary)]/20 text-[var(--color-primary)] px-1.5 py-0.5 rounded">{d}</span>
-            )) : <span className="text-[10px] text-[var(--color-muted)]">未出现</span>}
+              <span key={d} className="text-xs bg-[var(--color-primary)]/20 text-[var(--color-primary)] px-1.5 py-0.5 rounded">{d}</span>
+            )) : <span className="text-xs text-[var(--color-muted)]">未出现</span>}
           </div>
         </div>
         <div className="glass-inset p-3">
           <div className="text-xs text-[var(--color-muted)] mb-1">号码{numB} 近20期出现</div>
           <div className="flex flex-wrap gap-1">
             {appearB.length > 0 ? appearB.map(d => (
-              <span key={d} className="text-[10px] bg-rose-500/20 text-rose-400 px-1.5 py-0.5 rounded">{d}</span>
-            )) : <span className="text-[10px] text-[var(--color-muted)]">未出现</span>}
+              <span key={d} className="text-xs bg-rose-500/20 text-rose-400 px-1.5 py-0.5 rounded">{d}</span>
+            )) : <span className="text-xs text-[var(--color-muted)]">未出现</span>}
           </div>
         </div>
       </div>

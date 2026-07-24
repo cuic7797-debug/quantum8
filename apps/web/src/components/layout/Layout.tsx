@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, BarChart3, Crosshair, TrendingUp, FileText, Database, Scissors, Grid3X3, Shrink, Beaker, FlaskConical, Activity, Network, Clock, Star, User, Menu, X, ChevronDown, Brain, Target, Trophy, BookOpen } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { Home, BarChart3, Crosshair, TrendingUp, FileText, Database, Scissors, Grid3X3, Shrink, Beaker, FlaskConical, Activity, Network, Clock, Star, User, Menu, X, ChevronDown, Brain, Target, Trophy } from "lucide-react";
 import ThemeToggle from '@/components/common/ThemeToggle';
 import Disclaimer from '@/components/common/Disclaimer';
 import { t } from '@/hooks/useI18n';
@@ -78,7 +78,6 @@ const navGroups: NavGroup[] = [
     icon: Star,
     items: [
       { path: '/favorites', label: '我的收藏', icon: Star, key: '8' },
-      { path: '/api-docs', label: 'API 文档', icon: BookOpen, key: 'y' },
     ],
   },
 ];
@@ -95,7 +94,7 @@ function NavGroupSection({ group, location, collapsed, onToggle }: {
     <div className="mb-1">
       <button
         onClick={onToggle}
-        className={`w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-all rounded-r-lg ${
+        className={`w-full flex items-center gap-2.5 px-4 py-2 text-sm font-semibold uppercase tracking-wider transition-all rounded-r-lg ${
           hasActiveChild
             ? 'text-[var(--color-primary)]'
             : 'text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-white/[0.03]'
@@ -110,14 +109,14 @@ function NavGroupSection({ group, location, collapsed, onToggle }: {
             const active = location.pathname === item.path;
             return (
               <Link key={item.path} to={item.path}
-                className={`flex items-center gap-2.5 px-4 py-2 text-sm transition-all rounded-r-lg group nav-item ${
+                className={`flex items-center gap-2.5 px-4 py-2 text-base transition-all rounded-r-lg group nav-item ${
                   active
                     ? 'nav-item-active text-[var(--color-primary)] font-semibold'
                     : 'text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-white/[0.03]'
                 }`}>
                 <item.icon size={16} className={active ? 'drop-shadow-[0_0_6px_rgba(59,130,246,0.4)]' : ''} />
                 <span className="flex-1">{item.label}</span>
-                <span className="text-[10px] opacity-0 group-hover:opacity-40 transition-opacity font-mono">{item.key}</span>
+                <span className="text-xs opacity-0 group-hover:opacity-40 transition-opacity font-mono">{item.key}</span>
               </Link>
             );
           })}
@@ -134,7 +133,7 @@ function MobileNavGroup({ group, location, onClose }: { group: NavGroup; locatio
   return (
     <div className="mb-1">
       <button onClick={() => setOpen(!open)}
-        className={`w-full flex items-center gap-2.5 px-5 py-2.5 text-xs font-semibold uppercase tracking-wider transition-all ${
+        className={`w-full flex items-center gap-2.5 px-5 py-2.5 text-sm font-semibold uppercase tracking-wider transition-all ${
           hasActiveChild ? 'text-[var(--color-primary)]' : 'text-[var(--color-muted)]'
         }`}>
         <group.icon size={14} />
@@ -202,14 +201,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
             <div>
               <h1 className="text-base font-bold gradient-text-primary">Quantum8</h1>
-              <div className="text-[9px] text-[var(--color-muted)]">快乐八数据分析平台</div>
+              <div className="text-xs text-[var(--color-muted)]">快乐八数据分析平台</div>
             </div>
           </Link>
         </div>
 
         {/* Theme Toggle */}
         <div className="px-5 py-2 border-b border-[var(--glass-border)] flex items-center justify-between">
-          <span className="text-[10px] text-[var(--color-muted)]">主题</span>
+          <span className="text-xs text-[var(--color-muted)]">主题</span>
           <ThemeToggle />
         </div>
 
@@ -238,7 +237,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               {loading ? (
                 <div className="w-3 h-3 border border-white/30 border-t-white rounded-full animate-spin" />
               ) : user ? (
-                <span className="text-xs font-bold text-white">{user.email?.charAt(0).toUpperCase()}</span>
+                <span className="text-sm font-bold text-white">{user.email?.charAt(0).toUpperCase()}</span>
               ) : (
                 <User size={14} className="text-white" />
               )}
@@ -251,8 +250,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
         {/* Version */}
         <div className="px-5 py-2 border-t border-[var(--glass-border)]">
-          <div className="text-[9px] text-[var(--color-muted)] opacity-40 flex justify-between">
-            <span>Quantum8 v5.0</span>
+          <div className="text-xs text-[var(--color-muted)] opacity-40 flex justify-between">
+            <span>Quantum8 v5.1</span>
             <span>1-6, r, b, w, y</span>
           </div>
         </div>
@@ -272,7 +271,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <Link to="/auth" className="text-[var(--color-muted)] hover:text-[var(--color-text)]">
               <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-blue-500/20">
                 {user ? (
-                  <span className="text-xs font-bold text-white">{user.email?.charAt(0).toUpperCase()}</span>
+                  <span className="text-sm font-bold text-white">{user.email?.charAt(0).toUpperCase()}</span>
                 ) : (
                   <User size={14} className="text-white" />
                 )}
@@ -312,7 +311,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </div>
 
               <div className="px-5 py-4 border-t border-[var(--glass-border)] mt-2">
-                <div className="text-[10px] text-[var(--color-muted)]">⚠ 数据分析工具，不构成投注建议</div>
+                <div className="text-xs text-[var(--color-muted)]">⚠ 数据分析工具，不构成投注建议</div>
               </div>
             </nav>
           </div>

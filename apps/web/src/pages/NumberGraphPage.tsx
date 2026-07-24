@@ -151,9 +151,9 @@ export default function NumberGraphPage() {
   if (!draws.length) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('no_data')}</div>;
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold gradient-text-primary">🔗 号码关系图谱</h2>
-      <div className="text-xs text-[var(--color-muted)]">力导向图展示号码共现关系，连线越粗表示同期出现频率越高</div>
+    <div className="space-y-5">
+      <h2 className="text-2xl font-bold gradient-text-primary">🔗 号码关系图谱</h2>
+      <div className="text-sm text-[var(--color-muted)]">力导向图展示号码共现关系，连线越粗表示同期出现频率越高</div>
 
       <div className="glass-card p-4 overflow-hidden">
         <svg ref={svgRef} viewBox="0 0 600 600" className="w-full" style={{ maxHeight: '70vh' }}>
@@ -220,7 +220,7 @@ export default function NumberGraphPage() {
       {selected !== null && (
         <div className="glass-card p-4">
           <h3 className="font-semibold mb-2">号码 {selected.toString().padStart(2, '0')} 关联详情</h3>
-          <div className="text-xs text-[var(--color-muted)] mb-2">
+          <div className="text-sm text-[var(--color-muted)] mb-2">
             同期出现 {connectedEdges.length} 个关联号码，共 {connectedEdges.reduce((a, e) => a + e.weight, 0)} 次共现
           </div>
           <div className="flex flex-wrap gap-1">

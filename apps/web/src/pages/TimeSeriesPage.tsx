@@ -58,9 +58,9 @@ export default function TimeSeriesPage() {
   if (!draws.length) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('no_data')}</div>;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold gradient-text-primary">📈 时间序列分析</h2>
+        <h2 className="text-2xl font-bold gradient-text-primary">📈 时间序列分析</h2>
         <PeriodSelector value={period} onChange={setPeriod} />
       </div>
 
@@ -113,7 +113,7 @@ export default function TimeSeriesPage() {
             })}
           </svg>
         </div>
-        <div className="flex flex-wrap gap-3 mt-2 text-[10px]">
+        <div className="flex flex-wrap gap-4 mt-2 text-xs">
           <span className="text-blue-400">● 数据</span>
           <span className="text-emerald-400">● MA5</span>
           <span className="text-amber-400">● MA10</span>
@@ -135,7 +135,7 @@ export default function TimeSeriesPage() {
               <div key={label} className="glass-inset p-3">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-semibold">{label}</span>
-                  <span className="text-[10px] text-[var(--color-muted)]">{desc}</span>
+                  <span className="text-sm text-[var(--color-muted)]">{desc}</span>
                 </div>
                 <svg viewBox={`0 0 ${chartWidth} 60`} className="w-full" style={{ minWidth: 300 }}>
                   <line x1={0} y1={30} x2={chartWidth} y2={30} stroke="rgba(148,163,184,0.1)" strokeDasharray="4,4" />
@@ -175,7 +175,7 @@ export default function TimeSeriesPage() {
             })}
           </svg>
         </div>
-        <div className="mt-2 text-xs text-[var(--color-muted)]">
+        <div className="mt-2 text-sm text-[var(--color-muted)]">
           {acf.period ? (
             <span>检测到周期性: <span className="font-bold text-[var(--color-primary)]">{acf.period}期</span>，可能存在{acf.period}期的循环规律</span>
           ) : (
@@ -186,7 +186,7 @@ export default function TimeSeriesPage() {
       </Collapsible>
 
       <Collapsible title="📊 统计摘要" step={4} defaultOpen={false}>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
             { label: '均值', value: data.length ? (data.reduce((a, b) => a + b, 0) / data.length).toFixed(1) : 'N/A' },
             { label: '标准差', value: data.length ? Math.sqrt(data.reduce((s, x) => { const m = data.reduce((a, b) => a + b, 0) / data.length; return s + Math.pow(x - m, 2); }, 0) / data.length).toFixed(1) : 'N/A' },
@@ -206,7 +206,7 @@ export default function TimeSeriesPage() {
             { label: '数据点', value: data.length + '期' },
           ].map(s => (
             <div key={s.label} className="glass-inset p-3 text-center">
-              <div className="text-[10px] text-[var(--color-muted)]">{s.label}</div>
+              <div className="text-sm text-[var(--color-muted)]">{s.label}</div>
               <div className="font-bold font-mono text-sm mt-1">{s.value}</div>
             </div>
           ))}

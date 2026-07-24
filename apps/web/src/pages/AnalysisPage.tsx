@@ -28,8 +28,8 @@ export default function AnalysisPage() {
   const { draws, loading: ld } = useDraws(period);
   const { stats, loading: ls } = useNumberStats();
   
-  if (ld || ls) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('loading')}</div>;
-  if (!draws.length || !stats.length) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('no_data')}</div>;
+  if (ld || ls) return <div className="flex items-center justify-center h-64 text-base text-[var(--color-muted)]">{t('loading')}</div>;
+  if (!draws.length || !stats.length) return <div className="flex items-center justify-center h-64 text-base text-[var(--color-muted)]">{t('no_data')}</div>;
 
   let h2 = 0, h3 = 0, nc = 0;
   draws.forEach(d => {
@@ -43,114 +43,114 @@ export default function AnalysisPage() {
   const maxFreq = topFreq[0]?.totalAppearances || 1;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">{t('trend_analysis')}</h2>
+        <h2 className="text-2xl font-bold">{t('trend_analysis')}</h2>
         <PeriodSelector value={period} onChange={setPeriod} />
       </div>
 
-      <Collapsible title="🤖 智能查询" step={0} badge="AI">
+      <Collapsible title="智能查询" step={1} badge="AI">
         <NLQuery />
       </Collapsible>
 
-      <Collapsible title="⚡ 异常检测预警" step={1} badge="实时">
+      <Collapsible title="异常检测预警" step={2} badge="实时">
         <AnomalyDetector draws={draws} />
       </Collapsible>
 
-      <Collapsible title="📊 号码热力图与冷热排行" step={2} badge="实时">
+      <Collapsible title="号码热力图与冷热排行" step={3} badge="实时">
         <NumberGrid stats={stats} />
         <div className="mt-4"><HotColdRanking stats={stats} /></div>
       </Collapsible>
 
-      <Collapsible title="🔥 频率排行 TOP 20" step={3} defaultOpen={false}>
-        <div className="space-y-1.5">
+      <Collapsible title="频率排行 TOP 20" step={4} defaultOpen={false}>
+        <div className="space-y-2">
           {topFreq.map(s => (
-            <div key={s.number} className="flex items-center gap-2 text-sm">
+            <div key={s.number} className="flex items-center gap-4 text-sm">
               <NumberBall number={s.number} size="sm" />
-              <div className="flex-1 h-5 glass-inset overflow-hidden">
+              <div className="flex-1 h-6 glass-inset overflow-hidden">
                 <div className="h-full bg-blue-500 rounded" style={{ width: (s.totalAppearances / maxFreq * 100) + '%' }} />
               </div>
-              <span className="text-xs font-mono w-12 text-right">{s.totalAppearances}次</span>
+              <span className="text-sm font-mono w-16 text-right">{s.totalAppearances}次</span>
             </div>
           ))}
         </div>
       </Collapsible>
 
-      <Collapsible title="📈 专业走势图表（大小/奇偶/和值/跨度/余数/四区）" step={4}>
+      <Collapsible title="专业走势图表（大小/奇偶/和值/跨度/余数/四区）" step={5}>
         <ProfessionalTrends />
       </Collapsible>
 
-      <Collapsible title="📊 和值分布与频率分析" step={5} defaultOpen={false}>
+      <Collapsible title="和值分布与频率分析" step={6} defaultOpen={false}>
         <SumDistribution draws={draws} />
         <div className="mt-4"><NumberFrequency draws={draws} top={20} /></div>
       </Collapsible>
 
-      <Collapsible title="⚡ 冷热转换预警" step={6} defaultOpen={false}>
+      <Collapsible title="冷热转换预警" step={7} defaultOpen={false}>
         <ColdHotTransition draws={draws} />
       </Collapsible>
 
-      <Collapsible title="📉 遗漏趋势可视化" step={7} defaultOpen={false}>
+      <Collapsible title="遗漏趋势可视化" step={8} defaultOpen={false}>
         <MissTrendChart draws={draws} />
       </Collapsible>
 
-      <Collapsible title="📉 高级趋势分析（均线/热力图）" step={8} defaultOpen={false}>
+      <Collapsible title="高级趋势分析（均线/热力图）" step={9} defaultOpen={false}>
         <div className="mt-2">
           {stats.length > 0 && <MissTrend stats={stats} />}
         </div>
       </Collapsible>
 
-      <Collapsible title="📉 遗漏统计仪表盘" step={9}>
+      <Collapsible title="遗漏统计仪表盘" step={10}>
         <MissDashboard />
       </Collapsible>
 
-      <Collapsible title="🔢 号码生命周期（冷热周期）" step={10} defaultOpen={false}>
+      <Collapsible title="号码生命周期（冷热周期）" step={11} defaultOpen={false}>
         <NumberLifecycle />
       </Collapsible>
 
-      <Collapsible title="🌡️ 号码热力图（80号码可视化）" step={11} defaultOpen={false}>
+      <Collapsible title="号码热力图（80号码可视化）" step={12} defaultOpen={false}>
         <NumberHeatmap />
       </Collapsible>
 
-      <Collapsible title="🔄 号码对比" step={12} defaultOpen={false}>
+      <Collapsible title="号码对比" step={13} defaultOpen={false}>
         <NumberCompare />
       </Collapsible>
 
-      <Collapsible title="🔍 号码模式识别" step={13} defaultOpen={false}>
+      <Collapsible title="号码模式识别" step={14} defaultOpen={false}>
         <PatternDetection />
       </Collapsible>
 
-      <Collapsible title="📊 专业数据分析（AC值/012路/尾数/重号邻号/跨度/和值区间）" step={14} defaultOpen={false}>
+      <Collapsible title="专业数据分析（AC值/012路/尾数/重号邻号/跨度/和值区间）" step={15} defaultOpen={false}>
         <AdvancedAnalysis />
       </Collapsible>
 
-      <Collapsible title="🔗 号码共现矩阵" step={15} defaultOpen={false}>
+      <Collapsible title="号码共现矩阵" step={16} defaultOpen={false}>
         <CorrelationMatrix />
       </Collapsible>
 
-      <Collapsible title="🔗 连号统计" step={16} defaultOpen={false}>
-        <div className="grid grid-cols-3 gap-3">
-          <div className="text-center glass-inset p-3">
-            <div className="text-2xl font-bold">{h2}</div>
-            <div className="text-xs text-[var(--color-muted)]">含2连号 {((h2 / draws.length) * 100).toFixed(1)}%</div>
+      <Collapsible title="连号统计" step={17} defaultOpen={false}>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="text-center glass-inset p-4">
+            <div className="text-3xl font-bold">{h2}</div>
+            <div className="text-sm text-[var(--color-muted)] mt-1">含2连号 {((h2 / draws.length) * 100).toFixed(1)}%</div>
           </div>
-          <div className="text-center glass-inset p-3">
-            <div className="text-2xl font-bold">{h3}</div>
-            <div className="text-xs text-[var(--color-muted)]">含3连号+ {((h3 / draws.length) * 100).toFixed(1)}%</div>
+          <div className="text-center glass-inset p-4">
+            <div className="text-3xl font-bold">{h3}</div>
+            <div className="text-sm text-[var(--color-muted)] mt-1">含3连号+ {((h3 / draws.length) * 100).toFixed(1)}%</div>
           </div>
-          <div className="text-center glass-inset p-3">
-            <div className="text-2xl font-bold">{nc}</div>
-            <div className="text-xs text-[var(--color-muted)]">无连号 {((nc / draws.length) * 100).toFixed(1)}%</div>
+          <div className="text-center glass-inset p-4">
+            <div className="text-3xl font-bold">{nc}</div>
+            <div className="text-sm text-[var(--color-muted)] mt-1">无连号 {((nc / draws.length) * 100).toFixed(1)}%</div>
           </div>
         </div>
       </Collapsible>
 
-      <Collapsible title="⏰ 遗漏排名 TOP 20" step={17} defaultOpen={false}>
-        <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+      <Collapsible title="遗漏排名 TOP 20" step={18} defaultOpen={false}>
+        <div className="grid grid-cols-4 sm:grid-cols-5 gap-4">
           {[...stats].sort((a, b) => b.currentMiss - a.currentMiss).slice(0, 20).map((s, i) => (
             <div key={s.number} className="flex items-center gap-2 text-sm glass-inset p-2">
-              <span className="text-xs text-[var(--color-muted)] w-4">{i + 1}</span>
+              <span className="text-sm text-[var(--color-muted)] w-5">{i + 1}</span>
               <NumberBall number={s.number} size="sm" />
-              <span className="font-mono text-xs">{s.currentMiss}期</span>
+              <span className="font-mono text-sm">{s.currentMiss}期</span>
             </div>
           ))}
         </div>

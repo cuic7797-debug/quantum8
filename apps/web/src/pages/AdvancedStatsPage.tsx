@@ -65,13 +65,13 @@ export default function AdvancedStatsPage() {
   ] : [];
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold gradient-text-primary">🧪 高级统计分析</h2>
+    <div className="space-y-5">
+      <h2 className="text-2xl font-bold gradient-text-primary">🧪 高级统计分析</h2>
 
       {/* Hypothesis Testing */}
       <Collapsible title="📊 卡方检验（号码均匀性检验）" step={1}>
         <div className="glass-inset p-4 space-y-3">
-          <div className="text-xs text-[var(--color-muted)] leading-relaxed">
+          <div className="text-sm text-[var(--color-muted)] leading-relaxed">
             <p><strong>零假设 H₀:</strong> 号码出现服从均匀分布（每个号码出现概率相等）</p>
             <p><strong>检验统计量:</strong> χ² = {chiSquare.chi2}</p>
             <p><strong>自由度:</strong> 79 · <strong>显著性水平:</strong> α = 0.05 · <strong>临界值:</strong> 101.88</p>
@@ -80,7 +80,7 @@ export default function AdvancedStatsPage() {
             <div className={`text-sm font-bold ${chiSquare.isUniform ? 'text-emerald-400' : 'text-red-400'}`}>
               {chiSquare.isUniform ? '✅ 不拒绝零假设' : '❌ 拒绝零假设'}
             </div>
-            <div className="text-xs text-[var(--color-muted)] mt-1">
+            <div className="text-sm text-[var(--color-muted)] mt-1">
               {chiSquare.isUniform
                 ? `χ² = ${chiSquare.chi2} < 101.88，号码分布与均匀分布无显著差异`
                 : `χ² = ${chiSquare.chi2} > 101.88，号码分布与均匀分布有显著差异，某些号码出现频率偏高/偏低`}
@@ -92,29 +92,29 @@ export default function AdvancedStatsPage() {
       {/* Regression Analysis */}
       <Collapsible title="📈 回归分析（和值趋势）" step={2}>
         <div className="glass-inset p-4 space-y-3">
-          <div className="text-xs text-[var(--color-muted)] leading-relaxed">
+          <div className="text-sm text-[var(--color-muted)] leading-relaxed">
             <p><strong>模型:</strong> 和值 = {regression.intercept.toFixed(1)} + ({regression.slope.toFixed(3)}) × 期序</p>
             <p><strong>R²:</strong> {regression.r2.toFixed(4)} · <strong>趋势:</strong> {regression.direction}</p>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-4">
             <div className="glass-card p-3 text-center">
-              <div className="text-xs text-[var(--color-muted)]">斜率</div>
+              <div className="text-sm text-[var(--color-muted)]">斜率</div>
               <div className={`font-bold font-mono ${regression.slope > 0 ? 'text-emerald-400' : regression.slope < 0 ? 'text-red-400' : 'text-[var(--color-muted)]'}`}>
                 {regression.slope > 0 ? '+' : ''}{regression.slope.toFixed(3)}
               </div>
             </div>
             <div className="glass-card p-3 text-center">
-              <div className="text-xs text-[var(--color-muted)]">R² 拟合度</div>
+              <div className="text-sm text-[var(--color-muted)]">R² 拟合度</div>
               <div className="font-bold font-mono text-[var(--color-primary)]">{regression.r2.toFixed(4)}</div>
             </div>
             <div className="glass-card p-3 text-center">
-              <div className="text-xs text-[var(--color-muted)]">趋势方向</div>
+              <div className="text-sm text-[var(--color-muted)]">趋势方向</div>
               <div className={`font-bold ${regression.direction === '上升' ? 'text-emerald-400' : regression.direction === '下降' ? 'text-red-400' : 'text-[var(--color-muted)]'}`}>
                 {regression.direction === '上升' ? '📈 上升' : regression.direction === '下降' ? '📉 下降' : '➡️ 平稳'}
               </div>
             </div>
           </div>
-          <div className="text-[10px] text-[var(--color-muted)]">
+          <div className="text-sm text-[var(--color-muted)]">
             R² 接近 1 表示拟合良好，接近 0 表示无明显线性趋势。当前 R² = {regression.r2.toFixed(4)}，{regression.r2 > 0.3 ? '存在一定线性趋势' : '线性趋势不明显'}
           </div>
         </div>
@@ -123,7 +123,7 @@ export default function AdvancedStatsPage() {
       {/* Clustering Summary */}
       <Collapsible title="🎯 号码聚类分析" step={3}>
         <div className="space-y-3">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
               { label: '🔥 热号', nums: clusters.hot, color: 'text-red-400', bg: 'bg-red-500/10' },
               { label: '🌡️ 温号', nums: clusters.warm, color: 'text-amber-400', bg: 'bg-amber-500/10' },
@@ -134,12 +134,12 @@ export default function AdvancedStatsPage() {
                 <div className="text-xs font-bold mb-1">{c.label} ({c.nums.length}个)</div>
                 <div className="flex flex-wrap gap-0.5">
                   {c.nums.slice(0, 12).map(n => (
-                    <span key={n} className="w-6 h-6 rounded text-[9px] font-bold font-mono flex items-center justify-center"
+                    <span key={n} className="w-6 h-6 rounded text-xs font-bold font-mono flex items-center justify-center"
                       style={{ background: `${c.color === 'text-red-400' ? '#ef4444' : c.color === 'text-amber-400' ? '#f59e0b' : c.color === 'text-blue-400' ? '#3b82f6' : '#64748b'}20`, color: c.color.replace('text-', '') }}>
                       {n.toString().padStart(2, '0')}
                     </span>
                   ))}
-                  {c.nums.length > 12 && <span className="text-[9px] text-[var(--color-muted)] self-center">+{c.nums.length - 12}</span>}
+                  {c.nums.length > 12 && <span className="text-sm text-[var(--color-muted)] self-center">+{c.nums.length - 12}</span>}
                 </div>
               </div>
             ))}

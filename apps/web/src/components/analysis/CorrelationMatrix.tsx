@@ -89,7 +89,7 @@ export default function CorrelationMatrix() {
           {topPairs.map((p, i) => (
             <div key={`${p.a}-${p.b}`} className="flex items-center justify-between py-2 px-3 glass-inset hover:bg-[var(--color-border)] transition-colors">
               <div className="flex items-center gap-3">
-                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${i < 3 ? 'bg-amber-500 text-black' : 'bg-[var(--color-border)] text-[var(--color-muted)]'}`}>
+                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-sm font-bold ${i < 3 ? 'bg-amber-500 text-black' : 'bg-[var(--color-border)] text-[var(--color-muted)]'}`}>
                   {i + 1}
                 </span>
                 <div className="flex items-center gap-1">
@@ -101,7 +101,7 @@ export default function CorrelationMatrix() {
               <div className="flex items-center gap-4">
                 <div className="text-right">
                   <div className="font-mono font-bold text-sm">{p.count}次</div>
-                  <div className="text-[10px] text-[var(--color-muted)]">{p.rate}%</div>
+                  <div className="text-xs text-[var(--color-muted)]">{p.rate}%</div>
                 </div>
                 <div className="w-20 h-2 bg-[var(--color-border)] rounded-full overflow-hidden">
                   <div className="h-full bg-[var(--color-primary)] rounded-full" style={{ width: `${Math.min(100, (p.count / (topPairs[0]?.count || 1)) * 100)}%` }} />
@@ -151,14 +151,14 @@ export default function CorrelationMatrix() {
                 <NumberBall number={p.a} size="sm" />
                 <span className="text-red-400 text-xs">×</span>
                 <NumberBall number={p.b} size="sm" />
-                <span className="text-[10px] text-red-400 ml-1">{p.count}次</span>
+                <span className="text-xs text-red-400 ml-1">{p.count}次</span>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      <div className="text-[10px] text-[var(--color-muted)] text-center">
+      <div className="text-xs text-[var(--color-muted)] text-center">
         共现分析基于历史数据统计，不代表未来趋势
       </div>
     </div>

@@ -163,15 +163,15 @@ export default function AIPlaybookPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold gradient-text-primary">🧠 AI 策略生成器</h2>
-        <div className="text-xs text-[var(--color-muted)]">基于 {draws.length} 期数据</div>
+        <h2 className="text-2xl font-bold gradient-text-primary">🧠 AI 策略生成器</h2>
+        <div className="text-sm text-[var(--color-muted)]">基于 {draws.length} 期数据</div>
       </div>
 
       {/* Strategy Presets */}
       <Collapsible title="📋 选择策略模板" step={1} defaultOpen>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {PRESETS.map((p, i) => (
             <button key={i} onClick={() => setSelectedPreset(i)}
               className={`glass-card p-3 text-left transition-all hover:scale-[1.02] ${
@@ -179,9 +179,9 @@ export default function AIPlaybookPage() {
               }`}>
               <div className="text-2xl mb-2">{p.icon}</div>
               <div className="font-semibold text-sm mb-1">{p.name}</div>
-              <div className="text-[10px] text-[var(--color-muted)] leading-tight">{p.description}</div>
+              <div className="text-sm text-[var(--color-muted)] leading-tight">{p.description}</div>
               <div className="flex gap-1 mt-2">
-                <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${
+                <span className={`text-xs px-1.5 py-0.5 rounded-full ${
                   p.config.riskLevel === 'conservative' ? 'bg-emerald-500/15 text-emerald-400' :
                   p.config.riskLevel === 'moderate' ? 'bg-amber-500/15 text-amber-400' :
                   'bg-red-500/15 text-red-400'
@@ -198,30 +198,30 @@ export default function AIPlaybookPage() {
       <Collapsible title="⚙️ 自定义参数" step={2} defaultOpen={false}>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label className="text-xs text-[var(--color-muted)] mb-1 block">热号比例: {customHot}%</label>
+            <label className="text-sm text-[var(--color-muted)] mb-1 block">热号比例: {customHot}%</label>
             <input type="range" min={0} max={80} value={customHot} onChange={e => { setCustomHot(+e.target.value); setCustomBalance(100 - +e.target.value - customCold); }}
               className="w-full accent-[var(--color-primary)]" />
           </div>
           <div>
-            <label className="text-xs text-[var(--color-muted)] mb-1 block">冷号比例: {customCold}%</label>
+            <label className="text-sm text-[var(--color-muted)] mb-1 block">冷号比例: {customCold}%</label>
             <input type="range" min={0} max={80} value={customCold} onChange={e => { setCustomCold(+e.target.value); setCustomBalance(100 - customHot - +e.target.value); }}
               className="w-full accent-[var(--color-primary)]" />
           </div>
           <div>
-            <label className="text-xs text-[var(--color-muted)] mb-1 block">均衡比例: {customBalance}%</label>
-            <div className="text-[10px] text-[var(--color-muted)]">（热+冷+均衡=100%）</div>
+            <label className="text-sm text-[var(--color-muted)] mb-1 block">均衡比例: {customBalance}%</label>
+            <div className="text-sm text-[var(--color-muted)]">（热+冷+均衡=100%）</div>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4 mt-4">
           <div>
-            <label className="text-xs text-[var(--color-muted)] mb-1 block">每组选号数</label>
+            <label className="text-sm text-[var(--color-muted)] mb-1 block">每组选号数</label>
             <select value={selectCount} onChange={e => setSelectCount(+e.target.value)}
               className="w-full glass-inset px-3 py-2 text-sm rounded-lg border border-[var(--glass-border)] bg-transparent">
               {[1,2,3,4,5,6,7,8,9,10].map(n => <option key={n} value={n}>选{n}</option>)}
             </select>
           </div>
           <div>
-            <label className="text-xs text-[var(--color-muted)] mb-1 block">生成组数 (最多10)</label>
+            <label className="text-sm text-[var(--color-muted)] mb-1 block">生成组数 (最多10)</label>
             <input type="number" min={1} max={10} value={groupCount} onChange={e => setGroupCount(Math.min(10, Math.max(1, +e.target.value)))}
               className="w-full glass-inset px-3 py-2 text-sm rounded-lg border border-[var(--glass-border)] bg-transparent" />
           </div>
@@ -230,39 +230,39 @@ export default function AIPlaybookPage() {
 
       {/* AI Algorithm Scores */}
       <Collapsible title="📊 AI 算法评分面板" step={3} defaultOpen={false}>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
           <div className="glass-card p-3 text-center">
             <div className="text-lg">🔗</div>
-            <div className="text-[10px] text-[var(--color-muted)]">马尔可夫链</div>
+            <div className="text-sm text-[var(--color-muted)]">马尔可夫链</div>
             <div className="text-xs font-bold text-blue-400">{markovScores.length > 0 ? '✓ 已计算' : '无数据'}</div>
           </div>
           <div className="glass-card p-3 text-center">
             <div className="text-lg">🧮</div>
-            <div className="text-[10px] text-[var(--color-muted)]">贝叶斯推断</div>
+            <div className="text-sm text-[var(--color-muted)]">贝叶斯推断</div>
             <div className="text-xs font-bold text-purple-400">{bayesianScores.length > 0 ? '✓ 已计算' : '无数据'}</div>
           </div>
           <div className="glass-card p-3 text-center">
             <div className="text-lg">📈</div>
-            <div className="text-[10px] text-[var(--color-muted)]">趋势回归</div>
+            <div className="text-sm text-[var(--color-muted)]">趋势回归</div>
             <div className="text-xs font-bold text-emerald-400">{trendScores.length > 0 ? '✓ 已计算' : '无数据'}</div>
           </div>
           <div className="glass-card p-3 text-center">
             <div className="text-lg">🎯</div>
-            <div className="text-[10px] text-[var(--color-muted)]">集成评分</div>
+            <div className="text-sm text-[var(--color-muted)]">集成评分</div>
             <div className="text-xs font-bold text-amber-400">{aiScores.length > 0 ? '✓ 已计算' : '无数据'}</div>
           </div>
         </div>
         {aiScores.length > 0 && (
           <div className="space-y-1">
-            <div className="text-xs text-[var(--color-muted)] mb-2">AI 推荐 TOP 15：</div>
+            <div className="text-sm text-[var(--color-muted)] mb-2">AI 推荐 TOP 15：</div>
             {aiScores.slice(0, 15).map((s, i) => (
               <div key={s.number} className="flex items-center gap-2 py-1">
-                <span className="text-[10px] text-[var(--color-muted)] w-6 text-right">{i + 1}</span>
+                <span className="text-sm text-[var(--color-muted)] w-6 text-right">{i + 1}</span>
                 <NumberBall number={s.number} size="sm" />
                 <div className="flex-1 h-3 glass-inset overflow-hidden rounded">
                   <div className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded" style={{ width: `${s.ensembleScore}%` }} />
                 </div>
-                <span className="text-[10px] font-mono w-10 text-right">{s.ensembleScore}分</span>
+                <span className="text-xs font-mono w-10 text-right">{s.ensembleScore}分</span>
               </div>
             ))}
           </div>
@@ -282,7 +282,7 @@ export default function AIPlaybookPage() {
         <Collapsible title={`🎯 生成结果（${generated.length}组）`} step={4} defaultOpen badge={`${generated.length}组`}>
           <div className="space-y-3">
             {generated.map((group, gi) => (
-              <div key={gi} className="glass-card p-3 flex items-center gap-3">
+              <div key={gi} className="glass-card p-3 flex items-center gap-4">
                 <div className="w-8 h-8 rounded-lg bg-[var(--color-primary)]/15 flex items-center justify-center text-sm font-bold text-[var(--color-primary)] shrink-0">
                   {gi + 1}
                 </div>
@@ -295,7 +295,7 @@ export default function AIPlaybookPage() {
               </div>
             ))}
           </div>
-          <div className="mt-4 flex gap-3">
+          <div className="mt-4 flex gap-4">
             <button onClick={() => {
               const all = generated.map(g => g.map(n => n.toString().padStart(2, '0')).join(' ')).join('\n');
               navigator.clipboard.writeText(all);

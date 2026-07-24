@@ -36,8 +36,8 @@ export default function RiskMetrics({ roi, winRate, sharpeRatio, maxDrawdown, av
           <div key={m.label} className="glass-inset p-3 text-center">
             <div className="text-lg">{m.icon}</div>
             <div className={`font-bold font-mono text-sm mt-1 ${m.color}`}>{m.value}</div>
-            <div className="text-[10px] text-[var(--color-muted)]">{m.label}</div>
-            <div className="text-[9px] text-[var(--color-muted)] opacity-60">{m.desc}</div>
+            <div className="text-xs text-[var(--color-muted)]">{m.label}</div>
+            <div className="text-xs text-[var(--color-muted)] opacity-60">{m.desc}</div>
           </div>
         ))}
       </div>

@@ -148,7 +148,7 @@ export default function NLQuery() {
       <div className="flex flex-wrap gap-1.5 mb-3">
         {PRESET_QUERIES.map(pq => (
           <button key={pq.q} onClick={() => { setQuery(pq.q); processQuery(pq.q); }}
-            className="text-[10px] glass-inset px-2 py-1 rounded-lg hover:bg-white/10 transition-colors">
+            className="text-xs glass-inset px-2 py-1 rounded-lg hover:bg-white/10 transition-colors">
             {pq.icon} {pq.q}
           </button>
         ))}

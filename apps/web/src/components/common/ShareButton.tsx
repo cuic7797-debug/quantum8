@@ -151,22 +151,22 @@ export default function ShareButton({ numbers, title = 'Quantum8 推荐号码', 
   return (
     <div className={`relative inline-block ${className}`}>
       <button onClick={() => setShow(!show)}
-        className="inline-flex items-center gap-1.5 text-xs text-[var(--color-primary)] hover:text-[var(--color-primary)]/80 transition-all">
+        className="inline-flex items-center gap-1.5 text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)]/80 transition-all">
         <Share2 size={13} /> 分享
       </button>
       {show && (
         <div className="absolute right-0 top-full mt-1 z-50 glass-card p-2 min-w-[140px] shadow-xl shadow-black/30 space-y-1">
           <button onClick={shareNative}
-            className="w-full flex items-center gap-2 px-3 py-2 text-xs rounded-lg hover:bg-white/5 text-left transition-colors">
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-white/5 text-left transition-colors">
             <Share2 size={13} /> 系统分享
           </button>
           <button onClick={copyLink}
-            className="w-full flex items-center gap-2 px-3 py-2 text-xs rounded-lg hover:bg-white/5 text-left transition-colors">
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-white/5 text-left transition-colors">
             {copied ? <Check size={13} className="text-emerald-400" /> : <Link2 size={13} />}
             {copied ? '已复制' : '复制链接'}
           </button>
           <button onClick={copyImage}
-            className="w-full flex items-center gap-2 px-3 py-2 text-xs rounded-lg hover:bg-white/5 text-left transition-colors">
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-white/5 text-left transition-colors">
             {copied ? <Check size={13} className="text-emerald-400" /> : <Image size={13} />}
             {copied ? '已复制图片' : '生成图片'}
           </button>

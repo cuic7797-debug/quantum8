@@ -39,7 +39,7 @@ export default function SumDistribution({ draws }: Props) {
           const isAvg = avgSum >= b.min && avgSum <= b.max;
           return (
             <div key={i} className="flex-1 flex flex-col items-center gap-1 group relative">
-              <div className="text-[9px] text-[var(--color-muted)] opacity-0 group-hover:opacity-100 transition-opacity">{b.count}</div>
+              <div className="text-xs text-[var(--color-muted)] opacity-0 group-hover:opacity-100 transition-opacity">{b.count}</div>
               <div className={`w-full rounded-t transition-all duration-300 ${isAvg ? 'bg-gradient-to-t from-[var(--color-primary)] to-[var(--color-accent)]' : 'bg-[var(--color-primary)]/40 hover:bg-[var(--color-primary)]/60'}`}
                 style={{ height: `${h}%`, minHeight: 2 }} />
               <div className="text-[8px] text-[var(--color-muted)] truncate w-full text-center">{b.label}</div>
@@ -47,7 +47,7 @@ export default function SumDistribution({ draws }: Props) {
           );
         })}
       </div>
-      <div className="text-[10px] text-[var(--color-muted)] mt-2 text-center">
+      <div className="text-xs text-[var(--color-muted)] mt-2 text-center">
         共 {total} 期 · 均值 {avgSum} · 区间 {buckets[0]?.label} ~ {buckets[buckets.length - 1]?.label}
       </div>
     </div>
