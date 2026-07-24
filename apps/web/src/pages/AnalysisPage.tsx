@@ -1,3 +1,7 @@
+import SumDistribution from '@/components/charts/SumDistribution';
+import NumberFrequency from '@/components/charts/NumberFrequency';
+import MissTrendChart from '@/components/charts/MissTrendChart';
+import ColdHotTransition from '@/components/charts/ColdHotTransition';
 import PeriodSelector from '@/components/common/PeriodSelector';
 import { useState } from 'react';
 import MissTrend from '@/components/analysis/MissTrend';
@@ -65,6 +69,34 @@ export default function AnalysisPage() {
       {/* 走势分析 */}
       <Collapsible title="📈 专业走势图表（大小/奇偶/和值/跨度/余数/四区）" step={3}>
         <ProfessionalTrends />
+
+      {/* 新增高级图表 */}
+      <Collapsible title="📊 和值分布与频率分析" step={13}>
+        <SumDistribution draws={draws} />
+        <div className="mt-4"><NumberFrequency draws={draws} top={20} /></div>
+      </Collapsible>
+
+      <Collapsible title="⚡ 冷热转换预警" step={14}>
+        <ColdHotTransition draws={draws} />
+      </Collapsible>
+
+      <Collapsible title="📉 遗漏趋势可视化" step={15} defaultOpen={false}>
+        <MissTrendChart draws={draws} />
+      </Collapsible>
+      </Collapsible>
+
+      {/* 新增高级图表 */}
+      <Collapsible title="📊 和值分布与频率分析" step={13}>
+        <SumDistribution draws={draws} />
+        <div className="mt-4"><NumberFrequency draws={draws} top={20} /></div>
+      </Collapsible>
+
+      <Collapsible title="⚡ 冷热转换预警" step={14}>
+        <ColdHotTransition draws={draws} />
+      </Collapsible>
+
+      <Collapsible title="📉 遗漏趋势可视化" step={15} defaultOpen={false}>
+        <MissTrendChart draws={draws} />
       </Collapsible>
 
       <Collapsible title="📉 高级趋势分析（均线/热力图）" step={4} defaultOpen={false}>
