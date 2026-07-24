@@ -11,12 +11,13 @@ interface SavedPick { numbers: number[]; playType: string; score: number; risk: 
 export default function HistoryPage() {
   const { user } = useAuth();
   const { picks: cloudPicks, deletePick: deleteCloudPick } = useUserPicks();
-  const { draws } = useDraws(100);
+  const { draws, loading: ld } = useDraws(100);
   const [tab, setTab] = useState<'check' | 'records'>('check');
   const [cn, setCn] = useState('');
   const [cr, setCr] = useState<{ m: number[]; h: number; d: string } | null>(null);
   const [sd, setSd] = useState('');
   const [picks, setPicks] = useState<SavedPick[]>([]);
+  if (ld) return <div className="flex items-center justify-center h-64"><div className="flex flex-col items-center gap-3"><div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" /><span className="text-base text-[var(--color-muted)]">加载中...</span></div></div>;
 
   useEffect(() => {
     try { setPicks(JSON.parse(localStorage.getItem('quantum8_picks') || '[]')); } catch { setPicks([]); }

@@ -9,13 +9,14 @@ import { greedyShrink, weightedShrink } from '@quantum8/algorithm';
 const PLAY_TYPES = ['选五','选六','选七','选八','选九','选十'];
 
 export default function ShrinkPage() {
-  const { stats } = useNumberStats();
-  const { draws } = useDraws(100);
+  const { stats, loading: ls } = useNumberStats();
+  const { draws, loading: ld } = useDraws(100);
   const [pool, setPool] = useState<number[]>([]);
   const [pickCount, setPickCount] = useState(10);
   const [maxBets, setMaxBets] = useState(20);
   const [mode, setMode] = useState<'greedy' | 'weighted'>('greedy');
   const [result, setResult] = useState<ReturnType<typeof greedyShrink> | null>(null);
+  if (ld || ls) return <div className="flex items-center justify-center h-64"><div className="flex flex-col items-center gap-3"><div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" /><span className="text-base text-[var(--color-muted)]">加载中...</span></div></div>;
   const [generating, setGenerating] = useState(false);
 
   function togglePool(n: number) {

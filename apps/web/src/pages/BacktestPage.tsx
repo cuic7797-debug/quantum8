@@ -28,12 +28,13 @@ interface SavedStrategy {
 }
 
 export default function BacktestPage() {
-  const { draws } = useDraws(500);
+  const { draws, loading: ld } = useDraws(500);
   const [pt, setPt] = useState<PlayType>(t('play10') as PlayType);
   const [bc, setBc] = useState(1);
   const [res, setRes] = useState<Sum | null>(null);
   const [run, setRun] = useState(false);
   const [useStrategy, setUseStrategy] = useState(false);
+  if (ld) return <div className="flex items-center justify-center h-64"><div className="flex flex-col items-center gap-3"><div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" /><span className="text-base text-[var(--color-muted)]">加载中...</span></div></div>;
   const [savedStrategies, setSavedStrategies] = useState<SavedStrategy[]>([]);
   const [selectedStrategy, setSelectedStrategy] = useState<string>('');
   const { user } = useAuth();

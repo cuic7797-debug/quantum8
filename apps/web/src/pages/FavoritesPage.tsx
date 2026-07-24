@@ -16,8 +16,9 @@ export default function FavoritesPage() {
   const { user } = useAuth();
   const { picks: cloudPicks, deletePick } = useUserPicks();
   const { strategies: cloudStrategies } = useUserStrategies();
-  const { draws } = useDraws(200);
+  const { draws, loading: drawsLoading } = useDraws(200);
   const [localPicks, setLocalPicks] = useState<SavedPick[]>([]);
+  if (drawsLoading) return <div className="flex items-center justify-center h-64"><div className="flex flex-col items-center gap-3"><div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" /><span className="text-base text-[var(--color-muted)]">加载中...</span></div></div>;
   const [selectedIdx, setSelectedIdx] = useState<Set<number>>(new Set());
   const [selectMode, setSelectMode] = useState(false);
 

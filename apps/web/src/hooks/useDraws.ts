@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/utils/supabase';
+import { getCached, setCache } from '@/utils/cache';
 
 export interface Draw {
   id: string;
@@ -26,6 +27,14 @@ export function useDraws(limit = 20) {
   const [error, setError] = useState<string | null>(null);
 
   const fetchDraws = useCallback(async () => {
+    const cacheKey = `draws_${limit}`;
+    const cached = getCached<Draw[]>(cacheKey);
+    if (cached) {
+      setDraws(cached);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -38,7 +47,9 @@ export function useDraws(limit = 20) {
         setError(error.message);
         setDraws([]);
       } else {
-        setDraws(data || []);
+        const result = data || [];
+        setDraws(result);
+        setCache(cacheKey, result);
         setError(null);
       }
     } catch (e: any) {

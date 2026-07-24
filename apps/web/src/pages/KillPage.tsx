@@ -27,13 +27,14 @@ interface KillResult {
 }
 
 export default function KillPage() {
-  const { stats } = useNumberStats();
-  const { draws } = useDraws(100);
+  const { stats, loading: ls } = useNumberStats();
+  const { draws, loading: ld } = useDraws(100);
   const [manualKill, setManualKill] = useState<number[]>([]);
   const [selectedStrategy, setSelectedStrategy] = useState<Strategy>('cold');
   const [autoKill, setAutoKill] = useState<KillResult | null>(null);
   const [killCount, setKillCount] = useState(20);
   const [showResult, setShowResult] = useState(false);
+  if (ld || ls) return <div className="flex items-center justify-center h-64"><div className="flex flex-col items-center gap-3"><div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" /><span className="text-base text-[var(--color-muted)]">加载中...</span></div></div>;
 
   // Save to localStorage for integration with SelectionPage
   const STORAGE_KEY = 'quantum8_killed_numbers';
