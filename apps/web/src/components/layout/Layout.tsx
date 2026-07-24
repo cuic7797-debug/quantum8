@@ -26,6 +26,7 @@ const navGroups: NavGroup[] = [
     items: [
       { path: '/', label: '首页', icon: Home, key: '1' },
       { path: '/data', label: '数据管理', icon: Database, key: 'd' },
+      { path: '/data-quality', label: '数据质量', icon: BarChart3, key: 'q' },
     ],
   },
   {
@@ -62,6 +63,7 @@ const navGroups: NavGroup[] = [
     items: [
       { path: '/number-profile', label: '号码画像', icon: Activity, key: 'p' },
       { path: '/number-graph', label: '号码图谱', icon: Network, key: 'g' },
+      { path: '/compare', label: '号码对比', icon: BarChart3, key: 'c' },
     ],
   },
   {

@@ -18,6 +18,8 @@ const FavoritesPage = lazy(() => import('./pages/FavoritesPage'));
 const NumberProfilePage = lazy(() => import('./pages/NumberProfilePage'));
 const NumberGraphPage = lazy(() => import('./pages/NumberGraphPage'));
 const TimeSeriesPage = lazy(() => import('./pages/TimeSeriesPage'));
+const ComparePage = lazy(() => import('./pages/ComparePage'));
+const DataQualityPage = lazy(() => import('./pages/DataQualityPage'));
 const AuthPage = lazy(() => import('./pages/AuthPage'));
 
 function Loading() {
@@ -51,6 +53,8 @@ export default function App() {
           <Route path="/number-profile" element={<NumberProfilePage />} />
           <Route path="/number-graph" element={<NumberGraphPage />} />
           <Route path="/time-series" element={<TimeSeriesPage />} />
+          <Route path="/compare" element={<ComparePage />} />
+          <Route path="/data-quality" element={<DataQualityPage />} />
           <Route path="/auth" element={<AuthPage />} />
         </Routes>
       </Suspense>
