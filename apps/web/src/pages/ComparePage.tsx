@@ -11,18 +11,9 @@ export default function ComparePage() {
   const { stats, loading: ls } = useNumberStats();
   const [selected, setSelected] = useState<number[]>([1, 40, 80]);
 
-  if (ld || ls) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('loading')}</div>;
-  if (!draws.length || !stats.length) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('no_data')}</div>;
 
-  const clusterSummary = clusterNumbers(draws, 50);
+  const clusterSummary = useMemo(() => clusterNumbers(draws, 50), [draws]);
 
-  function toggleNum(n: number) {
-    setSelected(prev =>
-      prev.includes(n) ? prev.filter(x => x !== n) : prev.length < 6 ? [...prev, n] : prev
-    );
-  }
-
-  // Compute comparison data for each selected number
   const comparisonData = useMemo(() => {
     return selected.map(num => {
       const stat = stats.find(s => s.number === num);
@@ -94,6 +85,15 @@ export default function ComparePage() {
 
   const chartW = 200;
   const chartH = 60;
+
+  if (ld || ls) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('loading')}</div>;
+  if (!draws.length || !stats.length) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('no_data')}</div>;
+
+  function toggleNum(n: number) {
+    setSelected(prev =>
+      prev.includes(n) ? prev.filter(x => x !== n) : prev.length < 6 ? [...prev, n] : prev
+    );
+  }
 
   return (
     <div className="space-y-4">

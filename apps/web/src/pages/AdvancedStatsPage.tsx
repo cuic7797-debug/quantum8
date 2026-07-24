@@ -12,9 +12,6 @@ export default function AdvancedStatsPage() {
   const { stats, loading: ls } = useNumberStats();
   const [selectedNum, setSelectedNum] = useState(1);
 
-  if (ld || ls) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('loading')}</div>;
-  if (!draws.length || !stats.length) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('no_data')}</div>;
-
   // Chi-square test for uniform distribution
   const chiSquare = useMemo(() => {
     const expected = draws.length * 20 / 80; // each number should appear ~25% of time
@@ -54,6 +51,9 @@ export default function AdvancedStatsPage() {
   // Selected number radar chart
   const selectedStat = stats.find(s => s.number === selectedNum);
   const selectedCluster = clusterDetails.find(c => c.number === selectedNum);
+
+  if (ld || ls) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('loading')}</div>;
+  if (!draws.length || !stats.length) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('no_data')}</div>;
 
   const radarData = selectedStat && selectedCluster ? [
     { label: '热度', value: selectedStat.hotScore, maxValue: 100 },

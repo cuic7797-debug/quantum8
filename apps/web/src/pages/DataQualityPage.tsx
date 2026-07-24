@@ -2,51 +2,42 @@ import { useMemo } from 'react';
 import { useDraws } from '@/hooks/useDraws';
 import { useNumberStats } from '@/hooks/useNumberStats';
 import Collapsible from '@/components/common/Collapsible';
-import { supabase } from '@/utils/supabase';
 import { t } from '@/hooks/useI18n';
 
 export default function DataQualityPage() {
-  const { draws, loading: ld, refetch } = useDraws(200);
+  const { draws, loading: ld } = useDraws(200);
   const { stats, loading: ls } = useNumberStats();
-
-  if (ld || ls) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('loading')}</div>;
 
   const quality = useMemo(() => {
     if (!draws.length) return null;
 
-    // Data completeness
     const totalExpected = 80;
     const numbersSeen = new Set<number>();
     draws.forEach(d => d.numbers.forEach(n => numbersSeen.add(n)));
     const coverage = (numbersSeen.size / totalExpected) * 100;
 
-    // Date range
     const dates = draws.map(d => d.draw_date).sort();
     const firstDate = dates[0];
     const lastDate = dates[dates.length - 1];
 
-    // Check for gaps in draw numbers
     const drawNums = draws.map(d => parseInt(d.draw_number.replace(/\D/g, ''))).sort((a, b) => a - b);
     let gaps = 0;
     for (let i = 1; i < drawNums.length; i++) {
       if (drawNums[i] - drawNums[i - 1] > 1) gaps++;
     }
 
-    // Data freshness
     const now = new Date();
     const lastDrawDate = new Date(lastDate);
     const hoursSinceLastDraw = Math.round((now.getTime() - lastDrawDate.getTime()) / (1000 * 60 * 60));
     const freshness = hoursSinceLastDraw < 24 ? 'fresh' : hoursSinceLastDraw < 72 ? 'stale' : 'old';
 
-    // Number distribution balance
     const freq = new Map<number, number>();
     draws.forEach(d => d.numbers.forEach(n => freq.set(n, (freq.get(n) || 0) + 1)));
     const freqValues = [...freq.values()];
     const avgFreq = freqValues.reduce((a, b) => a + b, 0) / freqValues.length;
     const stdFreq = Math.sqrt(freqValues.reduce((s, f) => s + Math.pow(f - avgFreq, 2), 0) / freqValues.length);
-    const cv = (stdFreq / avgFreq) * 100; // Coefficient of variation
+    const cv = (stdFreq / avgFreq) * 100;
 
-    // Missing numbers
     const missing = Array.from({ length: 80 }, (_, i) => i + 1).filter(n => !numbersSeen.has(n));
 
     return {
@@ -64,20 +55,21 @@ export default function DataQualityPage() {
     };
   }, [draws]);
 
+  if (ld || ls) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('loading')}</div>;
+  if (!draws.length) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('no_data')}</div>;
   if (!quality) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">暂无数据</div>;
 
-  const freshnessConfig = {
+  const freshnessConfig: Record<string, { color: string; bg: string; label: string; desc: string }> = {
     fresh: { color: 'text-emerald-400', bg: 'bg-emerald-500/15', label: '✅ 数据新鲜', desc: '数据在24小时内' },
     stale: { color: 'text-amber-400', bg: 'bg-amber-500/15', label: '⚠️ 数据较旧', desc: '数据超过24小时' },
     old: { color: 'text-red-400', bg: 'bg-red-500/15', label: '❌ 数据过期', desc: '数据超过72小时' },
   };
-  const fConfig = freshnessConfig[quality.freshness as keyof typeof freshnessConfig];
+  const fConfig = freshnessConfig[quality.freshness] || freshnessConfig.fresh;
 
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-bold gradient-text-primary">📊 数据质量仪表盘</h2>
 
-      {/* Overall Status */}
       <div className="glass-card p-5">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-semibold text-[var(--color-muted)]">数据状态总览</h3>
@@ -99,61 +91,54 @@ export default function DataQualityPage() {
         </div>
       </div>
 
-      {/* Data Details */}
       <Collapsible title="📋 数据详情" step={1}>
-        <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="glass-inset p-3">
-              <div className="text-[10px] text-[var(--color-muted)]">起始日期</div>
-              <div className="font-mono text-sm font-bold">{quality.firstDate}</div>
-            </div>
-            <div className="glass-inset p-3">
-              <div className="text-[10px] text-[var(--color-muted)]">最新日期</div>
-              <div className="font-mono text-sm font-bold">{quality.lastDate}</div>
-            </div>
-            <div className="glass-inset p-3">
-              <div className="text-[10px] text-[var(--color-muted)]">覆盖号码</div>
-              <div className="font-mono text-sm font-bold">{quality.numbersSeen}/80</div>
-            </div>
-            <div className="glass-inset p-3">
-              <div className="text-[10px] text-[var(--color-muted)]">频率变异系数</div>
-              <div className="font-mono text-sm font-bold">{quality.cv}%</div>
-            </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="glass-inset p-3">
+            <div className="text-[10px] text-[var(--color-muted)]">起始日期</div>
+            <div className="font-mono text-sm font-bold">{quality.firstDate}</div>
+          </div>
+          <div className="glass-inset p-3">
+            <div className="text-[10px] text-[var(--color-muted)]">最新日期</div>
+            <div className="font-mono text-sm font-bold">{quality.lastDate}</div>
+          </div>
+          <div className="glass-inset p-3">
+            <div className="text-[10px] text-[var(--color-muted)]">覆盖号码</div>
+            <div className="font-mono text-sm font-bold">{quality.numbersSeen}/80</div>
+          </div>
+          <div className="glass-inset p-3">
+            <div className="text-[10px] text-[var(--color-muted)]">频率变异系数</div>
+            <div className="font-mono text-sm font-bold">{quality.cv}%</div>
           </div>
         </div>
       </Collapsible>
 
-      {/* Distribution Balance */}
       <Collapsible title="⚖️ 号码分布均衡性" step={2}>
-        <div className="space-y-3">
-          <div className="text-xs text-[var(--color-muted)]">
-            变异系数 (CV) = {quality.cv}% {parseFloat(quality.cv) < 15 ? '✅ 分布较均衡' : parseFloat(quality.cv) < 25 ? '⚠️ 分布略有偏态' : '❌ 分布不均衡'}
-          </div>
-          <div className="grid grid-cols-10 gap-1">
-            {Array.from({ length: 80 }, (_, i) => i + 1).map(n => {
-              const freq = draws.reduce((count, d) => count + (d.numbers.includes(n) ? 1 : 0), 0);
-              const maxFreq = Math.max(...Array.from({ length: 80 }, (_, i) => draws.reduce((count, d) => count + (d.numbers.includes(i + 1) ? 1 : 0), 0)));
-              const intensity = maxFreq > 0 ? freq / maxFreq : 0;
-              return (
-                <div key={n} className="aspect-square rounded flex items-center justify-center text-[8px] font-mono"
-                  style={{
-                    background: `rgba(59, 130, 246, ${intensity * 0.8})`,
-                    color: intensity > 0.5 ? 'white' : 'var(--color-muted)',
-                  }}
-                  title={`${n.toString().padStart(2, '0')}: ${freq}次`}>
-                  {n}
-                </div>
-              );
-            })}
-          </div>
-          <div className="flex justify-between text-[10px] text-[var(--color-muted)]">
-            <span>浅色 = 低频</span>
-            <span>深色 = 高频</span>
-          </div>
+        <div className="text-xs text-[var(--color-muted)] mb-2">
+          变异系数 (CV) = {quality.cv}% {parseFloat(quality.cv) < 15 ? '✅ 分布较均衡' : parseFloat(quality.cv) < 25 ? '⚠️ 分布略有偏态' : '❌ 分布不均衡'}
+        </div>
+        <div className="grid grid-cols-10 gap-1">
+          {Array.from({ length: 80 }, (_, i) => i + 1).map(n => {
+            const freqCount = draws.reduce((count, d) => count + (d.numbers.includes(n) ? 1 : 0), 0);
+            const maxFreqCount = Math.max(...Array.from({ length: 80 }, (_, i) => draws.reduce((count, d) => count + (d.numbers.includes(i + 1) ? 1 : 0), 0)));
+            const intensity = maxFreqCount > 0 ? freqCount / maxFreqCount : 0;
+            return (
+              <div key={n} className="aspect-square rounded flex items-center justify-center text-[8px] font-mono"
+                style={{
+                  background: `rgba(59, 130, 246, ${intensity * 0.8})`,
+                  color: intensity > 0.5 ? 'white' : 'var(--color-muted)',
+                }}
+                title={`${n.toString().padStart(2, '0')}: ${freqCount}次`}>
+                {n}
+              </div>
+            );
+          })}
+        </div>
+        <div className="flex justify-between text-[10px] text-[var(--color-muted)] mt-1">
+          <span>浅色 = 低频</span>
+          <span>深色 = 高频</span>
         </div>
       </Collapsible>
 
-      {/* Missing Numbers */}
       {quality.missing.length > 0 && (
         <Collapsible title={`❌ 未出现号码 (${quality.missing.length}个)`} step={3}>
           <div className="text-xs text-[var(--color-muted)] mb-2">以下号码在 {quality.totalDraws} 期数据中从未出现:</div>
@@ -167,7 +152,6 @@ export default function DataQualityPage() {
         </Collapsible>
       )}
 
-      {/* Freshness */}
       <Collapsible title="⏰ 数据新鲜度" step={4}>
         <div className="glass-inset p-4">
           <div className="flex items-center gap-3 mb-3">
