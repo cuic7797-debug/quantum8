@@ -4,6 +4,7 @@ import { useDraws } from '@/hooks/useDraws';
 import NumberBall from '@/components/common/NumberBall';
 import Collapsible from '@/components/common/Collapsible';
 import CopyButton from '@/components/common/CopyButton';
+import ShareButton from '@/components/common/ShareButton';
 import NumberGroups from '@/components/selection/NumberGroups';
 import { applyFilters, generateBatch, scoreCombination } from '@quantum8/algorithm';
 import { useAuth } from '@/hooks/useAuth';
@@ -283,6 +284,7 @@ export default function SelectionPage() {
           </div>
           <div className="mt-3 flex gap-2">
             <CopyButton text={res.map(r => r.numbers.join(' ')).join('\n')} label="📋 一键复制全部号码" className="flex-1 justify-center py-2 glass-inset" />
+            <ShareButton numbers={res.flatMap(r => r.numbers)} title="Quantum8 全部推荐号码" className="flex-1 justify-center py-2 glass-inset" />
           </div>
         </Collapsible>
       )}

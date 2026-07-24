@@ -1,3 +1,5 @@
+import PeriodSelector from '@/components/common/PeriodSelector';
+import { useState } from 'react';
 import MissTrend from '@/components/analysis/MissTrend';
 import { useDraws } from '@/hooks/useDraws';
 import { useNumberStats } from '@/hooks/useNumberStats';
@@ -16,7 +18,8 @@ import AdvancedAnalysis from '@/components/analysis/AdvancedAnalysis';
 import { t } from '@/hooks/useI18n';
 
 export default function AnalysisPage() {
-  const { draws, loading: ld } = useDraws(50);
+  const [period, setPeriod] = useState(100);
+  const { draws, loading: ld } = useDraws(period);
   const { stats, loading: ls } = useNumberStats();
   if (ld || ls) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('loading')}</div>;
   if (!draws.length || !stats.length) return <div className="flex items-center justify-center h-64 text-[var(--color-muted)]">{t('no_data')}</div>;
@@ -34,7 +37,10 @@ export default function AnalysisPage() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-bold">{t('trend_analysis')}</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold">{t('trend_analysis')}</h2>
+        <PeriodSelector value={period} onChange={setPeriod} />
+      </div>
 
       {/* 基础指标 */}
       <Collapsible title="📊 号码热力图与冷热排行" step={1} badge="实时">
