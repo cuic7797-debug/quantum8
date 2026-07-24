@@ -57,6 +57,7 @@ const navGroups: NavGroup[] = [
     items: [
       { path: '/strategy', label: '策略实验室', icon: Beaker, key: '4' },
       { path: '/backtest', label: '策略回测', icon: FlaskConical, key: '5' },
+      { path: '/strategy-market', label: '策略市场', icon: Star, key: 'm' },
     ],
   },
   {
