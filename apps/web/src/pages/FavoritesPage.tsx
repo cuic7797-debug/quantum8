@@ -6,6 +6,8 @@ import NumberBall from '@/components/common/NumberBall';
 import NumberGroups from '@/components/selection/NumberGroups';
 import CopyButton from '@/components/common/CopyButton';
 import Collapsible from '@/components/common/Collapsible';
+import PredictionTracker from '@/components/analysis/PredictionTracker';
+import { useDraws } from '@/hooks/useDraws';
 import { Trash2 } from 'lucide-react';
 
 interface SavedPick { numbers: number[]; playType: string; score: number; risk: string; time: string; strategy: string; }
@@ -14,6 +16,7 @@ export default function FavoritesPage() {
   const { user } = useAuth();
   const { picks: cloudPicks, deletePick } = useUserPicks();
   const { strategies: cloudStrategies } = useUserStrategies();
+  const { draws } = useDraws(200);
   const [localPicks, setLocalPicks] = useState<SavedPick[]>([]);
 
   useEffect(() => {
@@ -109,6 +112,14 @@ export default function FavoritesPage() {
           </div>
         </Collapsible>
       )}
+
+      {/* 预测追踪 */}
+      <Collapsible title="📊 预测追踪" step={5} badge="命中率分析" defaultOpen={false}>
+        <PredictionTracker 
+          picks={picks.map(p => ({ numbers: p.numbers, strategy: p.strategy, playType: p.playType, createdAt: p.time }))}
+          draws={draws}
+        />
+      </Collapsible>
     </div>
   );
 }

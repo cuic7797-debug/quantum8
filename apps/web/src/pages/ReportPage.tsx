@@ -103,6 +103,45 @@ export default function ReportPage() {
         </div>
       </div>
 
+      {/* Comprehensive Score */}
+      <div className="glass-card p-5">
+        <h3 className="font-semibold mb-3">🎯 综合评分</h3>
+        {(() => {
+          const scores = [
+            { label: '热度指数', value: Math.round(hotTop10.slice(0, 5).reduce((a: number, s: any) => a + s.hotScore, 0) / 5) },
+            { label: '均衡度', value: Math.round(Math.max(0, 100 - Math.abs(parseFloat(zonePercents[0]) - 25) * 4)) },
+            { label: '奇偶比', value: Math.round(Math.max(0, 100 - Math.abs(parseFloat(avgOdd) - 10) * 10)) },
+            { label: '和值理性', value: Math.round(Math.max(0, 100 - Math.abs(avgSum - 320) / 5)) },
+            { label: '连号活跃', value: Math.round(Math.min(100, hasConsec * 15)) },
+          ];
+          const overall = Math.round(scores.reduce((a, s) => a + s.value, 0) / scores.length);
+          return (
+            <>
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                {scores.map(item => (
+                  <div key={item.label} className="glass-inset p-3 text-center">
+                    <div className="text-[10px] text-[var(--color-muted)] mb-2">{item.label}</div>
+                    <div className="text-2xl font-bold font-mono text-[var(--color-primary)]">{item.value}</div>
+                    <div className="text-[10px] text-[var(--color-muted)]">/ 100</div>
+                    <div className="h-1.5 glass-inset rounded-full mt-2 overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] rounded-full" style={{ width: item.value + '%' }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 text-center p-3 glass-inset rounded-xl">
+                <span className="text-xs text-[var(--color-muted)]">综合评分: </span>
+                <span className="text-3xl font-bold gradient-text-primary">{overall}</span>
+                <span className="text-xs text-[var(--color-muted)]"> / 100</span>
+                <div className="text-[10px] text-[var(--color-muted)] mt-1">
+                  {overall >= 80 ? '数据表现优秀，号码活跃度高' : overall >= 60 ? '数据表现良好，可参考分析' : '数据表现一般，建议谨慎参考'}
+                </div>
+              </div>
+            </>
+          );
+        })()}
+      </div>
+
       {/* Key Findings */}
       <div className="glass-card p-5 space-y-4">
         <h3 className="font-semibold">📊 关键发现</h3>
@@ -287,9 +326,32 @@ export default function ReportPage() {
         </div>
       </div>
 
+      {/* AI Recommended Numbers */}
+      <div className="glass-card p-5">
+        <h3 className="font-semibold mb-3">🤖 AI 综合推荐</h3>
+        <p className="text-xs text-[var(--color-muted)] mb-3">基于热号、冷号回补、趋势分析的综合推荐（仅供参考）:</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {[
+            { label: '热号型', icon: '🔥', nums: hotTop10.slice(0, 10).map(s => s.number).sort((a, b) => a - b) },
+            { label: '均衡型', icon: '⚖️', nums: [...hotTop10.slice(0, 5), ...coldTop10.slice(0, 5)].map(s => s.number).sort((a, b) => a - b) },
+            { label: '冷号回补', icon: '❄️', nums: coldTop10.slice(0, 10).map(s => s.number).sort((a, b) => a - b) },
+          ].map(rec => (
+            <div key={rec.label} className="glass-inset p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-lg">{rec.icon}</span>
+                <span className="text-sm font-semibold">{rec.label}</span>
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {rec.nums.map(n => <NumberBall key={n} number={n} size="sm" />)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Disclaimer */}
       <div className="text-center text-[10px] text-[var(--color-muted)] py-4">
-        Quantum8 v1.0 · 以上分析仅供参考，不构成投注建议 · 彩票有风险，投注需理性
+        Quantum8 v2.0 · 以上分析仅供参考，不构成投注建议 · 彩票有风险，投注需理性
       </div>
     </div>
   );
