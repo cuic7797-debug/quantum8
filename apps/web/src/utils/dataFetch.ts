@@ -1,15 +1,11 @@
 const CWL_API = "https://www.cwl.gov.cn/cwl_admin/front/cwlkj/search/kjxx/findDrawNotice";
-// CORS proxy for browser-based fetching
-const CORS_PROXIES = [
-  "https://api.allorigins.win/raw?url=",
-  "https://corsproxy.io/?",
-];
 
-interface CWLDraw {
-  code: string;
-  date: string;
-  red: string;
-}
+// Multiple CORS proxy options for reliability
+const CORS_PROXIES = [
+  (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+  (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+  (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+];
 
 export interface FetchResult {
   draws: Array<{
@@ -23,6 +19,7 @@ export interface FetchResult {
     consecutive_count: number; repeat_count: number;
   }>;
   count: number;
+  source: string;
   error?: string;
 }
 
@@ -53,46 +50,68 @@ function calculateFeatures(numbers: number[]) {
     zone1_count, zone2_count, zone3_count, zone4_count, consecutive_count, repeat_count };
 }
 
-async function tryFetch(url: string): Promise<any> {
-  // Try direct fetch first
+async function tryFetchWithTimeout(url: string, timeoutMs = 8000): Promise<any> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const resp = await fetch(url, {
+      signal: controller.signal,
       headers: { "User-Agent": "Mozilla/5.0", "Referer": "https://www.cwl.gov.cn/" },
     });
+    clearTimeout(timer);
     if (resp.ok) return await resp.json();
-  } catch {}
-
-  // Try CORS proxies
-  for (const proxy of CORS_PROXIES) {
-    try {
-      const resp = await fetch(proxy + encodeURIComponent(url));
-      if (resp.ok) return await resp.json();
-    } catch {}
-  }
+  } catch { clearTimeout(timer); }
   return null;
 }
 
 export async function fetchFromCWL(count = 100): Promise<FetchResult> {
-  try {
-    const url = `${CWL_API}?name=kl8&issueCount=${count}`;
-    const data = await tryFetch(url);
-    if (!data) return { draws: [], count: 0, error: "无法连接福彩官网（CORS限制）" };
+  const url = `${CWL_API}?name=kl8&issueCount=${count}`;
 
-    const raw: CWLDraw[] = data.result || [];
-    const draws = raw.map(d => {
-      const numbers = parseNumbers(d.red);
-      const dateStr = d.date.replace(/\(.*\)/, "").trim();
-      return { draw_number: d.code, draw_date: dateStr, ...calculateFeatures(numbers) };
-    }).filter(d => d.numbers.length === 20);
-    return { draws, count: draws.length };
-  } catch (err) {
-    return { draws: [], count: 0, error: String(err) };
+  // Try 1: Direct fetch (works from server/worker)
+  try {
+    const data = await tryFetchWithTimeout(url, 10000);
+    if (data?.result) {
+      const draws = parseCWLResult(data.result);
+      if (draws.length > 0) return { draws, count: draws.length, source: 'cwl-direct' };
+    }
+  } catch {}
+
+  // Try 2: CORS proxies
+  for (let i = 0; i < CORS_PROXIES.length; i++) {
+    try {
+      const proxyUrl = CORS_PROXIES[i](url);
+      const data = await tryFetchWithTimeout(proxyUrl, 12000);
+      if (data?.result) {
+        const draws = parseCWLResult(data.result);
+        if (draws.length > 0) return { draws, count: draws.length, source: `proxy-${i + 1}` };
+      }
+    } catch {}
   }
+
+  // Try 3: Return cached data as fallback
+  const cached = getCachedDraws();
+  if (cached && cached.length > 0) {
+    return { draws: cached, count: cached.length, source: 'cache', error: '使用本地缓存数据（网络不可用）' };
+  }
+
+  return { draws: [], count: 0, source: 'none', error: '无法连接福彩官网，请检查网络或稍后重试' };
+}
+
+function parseCWLResult(result: any[]): FetchResult['draws'] {
+  return result.map(d => {
+    const numbers = parseNumbers(d.red);
+    const dateStr = d.date?.replace(/\(.*\)/, "").trim() || "";
+    return { draw_number: d.code || '', draw_date: dateStr, ...calculateFeatures(numbers) };
+  }).filter(d => d.numbers.length === 20 && d.draw_number);
 }
 
 export function cacheDraws(draws: any[]) {
-  localStorage.setItem('quantum8_cached_draws', JSON.stringify(draws));
-  localStorage.setItem('quantum8_cache_time', new Date().toISOString());
+  try {
+    // Keep last 500 draws in cache
+    const toCache = draws.slice(0, 500);
+    localStorage.setItem('quantum8_cached_draws', JSON.stringify(toCache));
+    localStorage.setItem('quantum8_cache_time', new Date().toISOString());
+  } catch {}
 }
 
 export function getCachedDraws(): any[] | null {
@@ -104,4 +123,15 @@ export function getCachedDraws(): any[] | null {
 
 export function getCacheTime(): string | null {
   return localStorage.getItem('quantum8_cache_time');
+}
+
+// Check data freshness
+export function getDataFreshness(): { status: 'fresh' | 'stale' | 'old' | 'none'; hours: number; message: string } {
+  const cacheTime = getCacheTime();
+  if (!cacheTime) return { status: 'none', hours: -1, message: '无缓存数据' };
+  
+  const hours = Math.round((Date.now() - new Date(cacheTime).getTime()) / (1000 * 60 * 60));
+  if (hours < 24) return { status: 'fresh', hours, message: `数据更新于 ${hours} 小时前` };
+  if (hours < 72) return { status: 'stale', hours, message: `数据更新于 ${hours} 小时前，建议刷新` };
+  return { status: 'old', hours, message: `数据已过期（${hours} 小时前），请刷新` };
 }

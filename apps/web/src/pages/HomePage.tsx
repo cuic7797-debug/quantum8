@@ -10,7 +10,7 @@ import NumberGrid from '@/components/analysis/NumberGrid';
 import HotColdRanking from '@/components/analysis/HotColdRanking';
 import { SkeletonCard, SkeletonGrid } from '@/components/common/Skeleton';
 import { supabase } from '@/utils/supabase';
-import { fetchFromCWL, cacheDraws, getCacheTime } from '@/utils/dataFetch';
+import { fetchFromCWL, cacheDraws, getCacheTime, getDataFreshness } from '@/utils/dataFetch';
 import { t } from '@/hooks/useI18n';
 
 export default function HomePage() {
@@ -109,16 +109,23 @@ export default function HomePage() {
       </div>
 
       {/* Data Status Bar */}
+      {(() => {
+        const freshness = getDataFreshness();
+        return (
       <div className="flex items-center justify-between glass-card px-4 py-2 border border-[var(--color-border)]">
         <div className="text-xs text-[var(--color-muted)]">
           数据截至: {latestDraw.draw_date} | 共 {draws.length} 期
-          {cacheTime && <span className="ml-2">| 本地缓存: {new Date(cacheTime).toLocaleTimeString()}</span>}
+          <span className={freshness.status === 'fresh' ? 'text-emerald-400' : freshness.status === 'stale' ? 'text-amber-400' : 'text-red-400'}>
+            {freshness.message}
+          </span>
         </div>
         <button onClick={handleSync} disabled={syncing}
           className="text-xs px-3 py-1 rounded-lg bg-[var(--color-primary)]/15 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/25 disabled:opacity-50 transition-all">
           {syncing ? '⏳ 同步中...' : '🔄 刷新数据'}
         </button>
       </div>
+        );
+      })()}
 
       {syncMsg && (
         <div className={`text-xs text-center py-2 rounded-lg ${syncMsg.includes('❌') ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
