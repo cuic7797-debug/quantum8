@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { Home, BarChart3, Crosshair, TrendingUp, FileText, Database, Scissors, Grid3X3, Shrink, Beaker, FlaskConical, Activity, Network, Clock, Star, User, Menu, X, ChevronDown, Brain, Target, Trophy } from "lucide-react";
+import { Home, BarChart3, Crosshair, TrendingUp, FileText, Database, Scissors, Grid3X3, Shrink, Beaker, FlaskConical, Activity, Network, Clock, Star, User, Menu, X, ChevronDown, Brain, Target, Trophy, Calendar } from "lucide-react";
 import ThemeToggle from '@/components/common/ThemeToggle';
 import Disclaimer from '@/components/common/Disclaimer';
 import { t } from '@/hooks/useI18n';
