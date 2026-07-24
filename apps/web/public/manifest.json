@@ -5,11 +5,16 @@
   "start_url": "/",
   "display": "standalone",
   "background_color": "#080c18",
-  "theme_color": "#080c18",
-  "orientation": "any",
-  "scope": "/",
-  "categories": ["utilities", "finance"],
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "categories": ["utilities", "entertainment"],
+  "lang": "zh-CN",
   "icons": [
-    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
   ]
 }

@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, BarChart3, Crosshair, TrendingUp, FileText, Database, Scissors, Grid3X3, Shrink, Beaker, FlaskConical, Activity, Network, Clock, Star, User, Menu, X, ChevronDown } from 'lucide-react';
+import { Home, BarChart3, Crosshair, TrendingUp, FileText, Database, Scissors, Grid3X3, Shrink, Beaker, FlaskConical, Activity, Network, Clock, Star, User, Menu, X, ChevronDown, Brain, Target, Trophy, BookOpen } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import ThemeToggle from '@/components/common/ThemeToggle';
@@ -37,6 +37,7 @@ const navGroups: NavGroup[] = [
     items: [
       { path: '/analysis', label: '走势分析', icon: BarChart3, key: '2' },
       { path: '/time-series', label: '时序分析', icon: TrendingUp, key: 't' },
+      { path: '/prediction-score', label: '号码预测评分', icon: Target, key: 'r' },
       { path: '/report', label: 'AI 分析报告', icon: FileText, key: '6' },
       { path: '/history', label: '历史开奖', icon: Clock, key: 'h' },
       { path: '/advanced-stats', label: '高级统计', icon: TrendingUp, key: 's' },
@@ -47,6 +48,7 @@ const navGroups: NavGroup[] = [
     icon: Crosshair,
     items: [
       { path: '/selection', label: '智能选号', icon: Crosshair, key: '3' },
+      { path: '/ai-playbook', label: 'AI 策略生成器', icon: Brain, key: 'b' },
       { path: '/kill', label: '杀号工具', icon: Scissors, key: '9' },
       { path: '/matrix', label: '旋转矩阵', icon: Grid3X3, key: '0' },
       { path: '/shrink', label: '智能缩水', icon: Shrink, key: '-' },
@@ -59,6 +61,7 @@ const navGroups: NavGroup[] = [
       { path: '/strategy', label: '策略实验室', icon: Beaker, key: '4' },
       { path: '/backtest', label: '策略回测', icon: FlaskConical, key: '5' },
       { path: '/strategy-market', label: '策略市场', icon: Star, key: 'm' },
+      { path: '/leaderboard', label: '策略排行榜', icon: Trophy, key: 'w' },
     ],
   },
   {
@@ -75,6 +78,7 @@ const navGroups: NavGroup[] = [
     icon: Star,
     items: [
       { path: '/favorites', label: '我的收藏', icon: Star, key: '8' },
+      { path: '/api-docs', label: 'API 文档', icon: BookOpen, key: 'y' },
     ],
   },
 ];
@@ -85,7 +89,6 @@ function NavGroupSection({ group, location, collapsed, onToggle }: {
   collapsed: boolean;
   onToggle: () => void;
 }) {
-  const isActive = group.items.some(item => location.pathname === item.path);
   const hasActiveChild = group.items.some(item => location.pathname === item.path);
 
   return (
@@ -129,30 +132,30 @@ function MobileNavGroup({ group, location, onClose }: { group: NavGroup; locatio
   const hasActiveChild = group.items.some(item => location.pathname === item.path);
 
   return (
-    <div>
-      <button
-        onClick={() => setOpen(!open)}
-        className={`w-full flex items-center gap-2.5 px-5 py-3 text-xs font-semibold uppercase tracking-wider transition-all ${
+    <div className="mb-1">
+      <button onClick={() => setOpen(!open)}
+        className={`w-full flex items-center gap-2.5 px-5 py-2.5 text-xs font-semibold uppercase tracking-wider transition-all ${
           hasActiveChild ? 'text-[var(--color-primary)]' : 'text-[var(--color-muted)]'
         }`}>
         <group.icon size={14} />
         <span className="flex-1 text-left">{group.name}</span>
-        <ChevronDown size={12} className={`transition-transform duration-200 ${open ? '' : '-rotate-90'}`} />
+        <ChevronDown size={12} className={`transition-transform ${open ? '' : '-rotate-90'}`} />
       </button>
-      {open && group.items.map(item => {
-        const active = location.pathname === item.path;
-        return (
-          <Link key={item.path} to={item.path} onClick={onClose}
-            className={`flex items-center gap-3 pl-10 pr-5 py-2.5 text-sm transition-all nav-item ${
-              active
-                ? 'nav-item-active text-[var(--color-primary)] font-semibold'
-                : 'text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-white/[0.03]'
-            }`}>
-            <item.icon size={16} />
-            <span>{item.label}</span>
-          </Link>
-        );
-      })}
+      {open && (
+        <div className="ml-4 space-y-0.5">
+          {group.items.map(item => (
+            <Link key={item.path} to={item.path} onClick={onClose}
+              className={`flex items-center gap-3 px-5 py-2.5 text-sm transition-all nav-item ${
+                location.pathname === item.path
+                  ? 'nav-item-active text-[var(--color-primary)] font-semibold'
+                  : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
+              }`}>
+              <item.icon size={18} />
+              <span>{item.label}</span>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -161,39 +164,28 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { user, loading } = useAuth();
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
-
-  // Auto-expand group containing active path
-  useEffect(() => {
-    navGroups.forEach(group => {
-      if (group.items.some(item => location.pathname === item.path)) {
-        setCollapsedGroups(prev => {
-          const next = new Set(prev);
-          next.delete(group.name);
-          return next;
-        });
-      }
-    });
-  }, [location.pathname]);
+  const { user, loading } = useAuth();
 
   // Keyboard shortcuts
   useEffect(() => {
-    function handleKey(e: KeyboardEvent) {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
       const allItems = navGroups.flatMap(g => g.items);
-      const item = allItems.find(n => n.key === e.key);
-      if (item) { e.preventDefault(); navigate(item.path); }
-    }
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
+      const item = allItems.find(i => i.key === e.key);
+      if (item) {
+        e.preventDefault();
+        navigate(item.path);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
   }, [navigate]);
 
   function toggleGroup(name: string) {
     setCollapsedGroups(prev => {
       const next = new Set(prev);
-      if (next.has(name)) next.delete(name);
-      else next.add(name);
+      if (next.has(name)) next.delete(name); else next.add(name);
       return next;
     });
   }
@@ -201,23 +193,28 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex flex-col w-56 shrink-0 glass-sidebar sticky top-0 h-screen">
+      <aside className="hidden lg:flex flex-col w-56 glass-sidebar border-r border-[var(--glass-border)] sticky top-0 h-screen overflow-y-auto shrink-0">
         {/* Logo */}
-        <div className="px-5 py-4 border-b border-[var(--glass-border)] flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-blue-500/20">
+        <div className="px-5 py-4 border-b border-[var(--glass-border)]">
+          <Link to="/" className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-blue-500/20">
               <span className="text-white font-bold text-sm">Q8</span>
             </div>
             <div>
-              <h1 className="text-base font-bold gradient-text-primary leading-tight">Quantum8</h1>
-              <p className="text-[9px] text-[var(--color-muted)]">{t('app.subtitle')}</p>
+              <h1 className="text-base font-bold gradient-text-primary">Quantum8</h1>
+              <div className="text-[9px] text-[var(--color-muted)]">快乐八数据分析平台</div>
             </div>
           </Link>
+        </div>
+
+        {/* Theme Toggle */}
+        <div className="px-5 py-2 border-b border-[var(--glass-border)] flex items-center justify-between">
+          <span className="text-[10px] text-[var(--color-muted)]">主题</span>
           <ThemeToggle />
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 py-2 overflow-y-auto">
+        <nav className="flex-1 py-2">
           {navGroups.map(group => (
             <NavGroupSection
               key={group.name}
@@ -230,7 +227,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </nav>
 
         {/* User */}
-        <div className="px-3 py-3 border-t border-[var(--glass-border)]">
+        <div className="px-4 py-3 border-t border-[var(--glass-border)]">
           <Link to="/auth"
             className={`flex items-center gap-2.5 px-4 py-2.5 text-sm transition-all rounded-r-lg nav-item ${
               location.pathname === '/auth'
@@ -255,8 +252,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {/* Version */}
         <div className="px-5 py-2 border-t border-[var(--glass-border)]">
           <div className="text-[9px] text-[var(--color-muted)] opacity-40 flex justify-between">
-            <span>Quantum8 v2.5</span>
-            <span>1-6, p, g, t, h</span>
+            <span>Quantum8 v5.0</span>
+            <span>1-6, r, b, w, y</span>
           </div>
         </div>
       </aside>

@@ -20,3 +20,15 @@ export { geneticAlgorithm } from './genetic';
 export { clusterNumbers, getClusterDetails } from './cluster';
 export { autocorrelation, decompose, bollingerBands, movingAverage } from './timeseries';
 export { runBacktest, monteCarloSimulation } from './backtest';
+export {
+  detectColdHotTransitions,
+  predictSumRange,
+  predictSpanRange,
+  smartShrinkEnhanced,
+} from './enhanced';
+export type {
+  ColdHotAlert,
+  SumPrediction,
+  SpanPrediction,
+  SmartShrinkResult,
+} from './enhanced';

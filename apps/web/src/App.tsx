@@ -25,6 +25,10 @@ const AdvancedStatsPage = lazy(() => import('./pages/AdvancedStatsPage'));
 const StrategyMarketPage = lazy(() => import('./pages/StrategyMarketPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const AuthPage = lazy(() => import('./pages/AuthPage'));
+const AIPlaybookPage = lazy(() => import('./pages/AIPlaybookPage'));
+const PredictionScorePage = lazy(() => import('./pages/PredictionScorePage'));
+const StrategyLeaderboardPage = lazy(() => import('./pages/StrategyLeaderboardPage'));
+const ApiDocsPage = lazy(() => import('./pages/ApiDocsPage'));
 
 function Loading() {
   return (
@@ -64,6 +68,10 @@ export default function App() {
           <Route path="/strategy-market" element={<StrategyMarketPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/ai-playbook" element={<AIPlaybookPage />} />
+          <Route path="/prediction-score" element={<PredictionScorePage />} />
+          <Route path="/leaderboard" element={<StrategyLeaderboardPage />} />
+          <Route path="/api-docs" element={<ApiDocsPage />} />
         </Routes>
       </Suspense>
       <ScrollToTop />
