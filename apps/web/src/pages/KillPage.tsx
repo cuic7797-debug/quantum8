@@ -128,9 +128,9 @@ export default function KillPage() {
   }
 
   async function applyAutoKill() {
-    if (autoKill) saveKillList(autoKill.killed);
     const ok = await tryConsume('杀号工具', 3);
     if (!ok) return;
+    if (autoKill) saveKillList(autoKill.killed);
   }
 
   const aliveNums = Array.from({ length: 80 }, (_, i) => i + 1).filter(n => !manualKill.includes(n));
