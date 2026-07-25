@@ -3,7 +3,7 @@ import { useConsumePoints } from '@/components/common/PointsGate';
 import { useState, useEffect } from 'react';
 import { useDraws } from '@/hooks/useDraws';
 import NumberBall from '@/components/common/NumberBall';
-import { generateRandomCombination, applyFilters } from '@quantum8/algorithm';
+import { generateRandomCombination, applyFilters, runBacktest } from '@quantum8/algorithm';
 import type { PlayType, StrategyConfig } from '@quantum8/types';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserStrategies } from '@/hooks/useUserStrategies';
@@ -20,7 +20,7 @@ const PRIZE: Record<string, Record<number, number>> = {
 };
 
 interface Row { p: string; n: number[]; h: number; pr: number; hits: number[]; }
-interface Sum { r: number; b: number; hi: number; hr: number; c: number; pr: number; roi: number; rows: Row[]; maxPrize: number; hitDistribution: Record<number, number>; }
+interface Sum { r: number; b: number; hi: number; hr: number; c: number; pr: number; roi: number; rows: Row[]; maxPrize: number; hitDistribution: Record<number, number>; sharpeRatio?: number; maxDrawdown?: number; }
 
 interface SavedStrategy {
   id: string; name: string; playType: PlayType;
@@ -106,9 +106,19 @@ export default function BacktestPage() {
         if (i < 30) rows.push({ p: td[i].draw_number, n: tgt, h: bh, pr, hits: bhHits });
       }
       const tb = td.length * bc, tc = tb * 2;
+      // Run proper backtest with risk metrics
+      const btNumbers = generateRandomCombination(pc);
+      const btResult = runBacktest({
+        numbers: btNumbers,
+        draws: draws.slice(1).map(d => ({ numbers: d.numbers, draw_number: d.draw_number, draw_date: d.draw_date })),
+        betCost: 2,
+        prizeTable: tbl,
+      });
+
       setRes({ r: td.length, b: tb, hi: th, hr: parseFloat(((th / td.length) * 100).toFixed(2)),
         c: tc, pr: tp, roi: tc > 0 ? parseFloat((((tp - tc) / tc) * 100).toFixed(2)) : 0,
-        rows, maxPrize: mp, hitDistribution: hitDist });
+        rows, maxPrize: mp, hitDistribution: hitDist,
+        sharpeRatio: btResult.sharpeRatio, maxDrawdown: btResult.maxDrawdown });
       setRun(false);
     }, 200);
   }
@@ -193,6 +203,22 @@ export default function BacktestPage() {
           <div className="glass-card p-4 text-center">
             <div className="text-2xl font-bold font-mono text-amber-400">{res.maxPrize > 0 ? `¥${res.maxPrize}` : '-'}</div>
             <div className="text-sm text-[var(--color-muted)]">{t('max_prize')}</div>
+          </div>
+          {res.sharpeRatio !== undefined && (
+            <div className="text-center">
+              <div className="text-2xl font-bold font-mono text-purple-400">{res.sharpeRatio.toFixed(3)}</div>
+              <div className="text-sm text-[var(--color-muted)]">Sharpe比率</div>
+            </div>
+          )}
+          {res.maxDrawdown !== undefined && (
+            <div className="text-center">
+              <div className="text-2xl font-bold font-mono text-red-400">-{res.maxDrawdown}</div>
+              <div className="text-sm text-[var(--color-muted)]">最大回撤</div>
+            </div>
+          )}
+          <div className="text-center">
+            <div className="text-2xl font-bold font-mono text-blue-400">{res.hi}</div>
+            <div className="text-sm text-[var(--color-muted)]">{t('win_count')}</div>
           </div>
         </div>
 

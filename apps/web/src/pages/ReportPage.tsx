@@ -1,4 +1,5 @@
 import { useDraws } from '@/hooks/useDraws';
+import { ensembleScoring, detectColdHotTransitions, predictSumRange } from '@quantum8/algorithm';
 import { useNumberStats } from '@/hooks/useNumberStats';
 import NumberBall from '@/components/common/NumberBall';
 import { t } from '@/hooks/useI18n';
@@ -326,28 +327,90 @@ export default function ReportPage() {
         </div>
       </div>
 
-      {/* AI Recommended Numbers */}
-      <div className="glass-card p-5">
-        <h3 className="font-semibold mb-3">🤖 AI 综合推荐</h3>
-        <p className="text-sm text-[var(--color-muted)] mb-3">基于热号、冷号回补、趋势分析的综合推荐（仅供参考）:</p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {[
-            { label: '热号型', icon: '🔥', nums: hotTop10.slice(0, 10).map(s => s.number).sort((a, b) => a - b) },
-            { label: '均衡型', icon: '⚖️', nums: [...hotTop10.slice(0, 5), ...coldTop10.slice(0, 5)].map(s => s.number).sort((a, b) => a - b) },
-            { label: '冷号回补', icon: '❄️', nums: coldTop10.slice(0, 10).map(s => s.number).sort((a, b) => a - b) },
-          ].map(rec => (
-            <div key={rec.label} className="glass-inset p-3">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-lg">{rec.icon}</span>
-                <span className="text-sm font-semibold">{rec.label}</span>
-              </div>
-              <div className="flex flex-wrap gap-1">
-                {rec.nums.map(n => <NumberBall key={n} number={n} size="sm" />)}
+      {/* AI Recommended Numbers - Ensemble Scoring */}
+      {(() => {
+        const ensembleResults = ensembleScoring(
+          draws.map(d => ({ numbers: d.numbers })),
+          stats.map(s => ({ number: s.number, hotScore: s.hotScore, currentMiss: s.currentMiss, avgMiss: s.avgMiss, missRatio: s.missRatio, recent10Rate: s.recent10Rate }))
+        );
+        const topEnsemble = ensembleResults.slice(0, 15);
+        const ensembleNums = topEnsemble.map(r => r.number).sort((a, b) => a - b);
+        const coldHotAlerts = detectColdHotTransitions(draws.map(d => ({ numbers: d.numbers })));
+        const risingAlerts = coldHotAlerts.filter(a => a.transition === '冷转热').slice(0, 5);
+        const sumPred = predictSumRange(draws.map(d => ({ sum_value: d.sum_value })));
+        
+        return (
+          <>
+            <div className="glass-card p-5">
+              <h3 className="font-semibold mb-3">🤖 AI 集成评分推荐</h3>
+              <p className="text-sm text-[var(--color-muted)] mb-3">基于马尔可夫链、贝叶斯推断、信息熵、频率分析的综合推荐（仅供参考）:</p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {[
+                  { label: '综合最优 Top10', icon: '🎯', nums: ensembleResults.slice(0, 10).map(r => r.number).sort((a, b) => a - b),
+                    desc: `综合评分 ${ensembleResults[0]?.ensembleScore || 0}` },
+                  { label: '热号趋势型', icon: '🔥', 
+                    nums: ensembleResults.filter(r => r.markovScore > 30).slice(0, 10).map(r => r.number).sort((a, b) => a - b),
+                    desc: `马尔可夫预测概率偏高` },
+                  { label: '冷号回补型', icon: '❄️',
+                    nums: ensembleResults.filter(r => r.missScore > 60).slice(0, 10).map(r => r.number).sort((a, b) => a - b),
+                    desc: `遗漏回补概率较高` },
+                ].map(rec => (
+                  <div key={rec.label} className="glass-inset p-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-lg">{rec.icon}</span>
+                      <span className="text-sm font-semibold">{rec.label}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1 mb-2">
+                      {rec.nums.map(n => <NumberBall key={n} number={n} size="sm" />)}
+                    </div>
+                    <div className="text-xs text-[var(--color-muted)]">{rec.desc}</div>
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
-        </div>
-      </div>
+
+            {/* Cold/Hot Transition Alerts */}
+            {risingAlerts.length > 0 && (
+              <div className="glass-card p-5">
+                <h3 className="font-semibold mb-3">🔄 冷热转换预警</h3>
+                <div className="space-y-2">
+                  {risingAlerts.map(alert => (
+                    <div key={alert.number} className="flex items-center gap-3 glass-inset p-3 rounded-xl">
+                      <NumberBall number={alert.number} size="sm" />
+                      <div className="flex-1">
+                        <span className={`text-sm font-semibold ${alert.severity === '高' ? 'text-red-400' : alert.severity === '中' ? 'text-amber-400' : 'text-emerald-400'}`}>
+                          {alert.transition}
+                        </span>
+                        <span className="text-sm text-[var(--color-muted)] ml-2">{alert.detail}</span>
+                      </div>
+                      <span className="text-xs text-[var(--color-muted)]">置信度 {(alert.confidence * 100).toFixed(0)}%</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Sum Prediction */}
+            <div className="glass-card p-5">
+              <h3 className="font-semibold mb-3">📊 和值预测区间</h3>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="glass-inset p-3 text-center">
+                  <div className="text-lg font-bold text-[var(--color-primary)]">{sumPred.interval68[0]}-{sumPred.interval68[1]}</div>
+                  <div className="text-xs text-[var(--color-muted)]">68% 置信区间</div>
+                </div>
+                <div className="glass-inset p-3 text-center">
+                  <div className="text-lg font-bold text-amber-400">{sumPred.interval95[0]}-{sumPred.interval95[1]}</div>
+                  <div className="text-xs text-[var(--color-muted)]">95% 置信区间</div>
+                </div>
+                <div className="glass-inset p-3 text-center">
+                  <div className="text-lg font-bold">{sumPred.trend === '上升' ? '📈 上升' : sumPred.trend === '下降' ? '📉 下降' : '➡️ 平稳'}</div>
+                  <div className="text-xs text-[var(--color-muted)]">和值趋势</div>
+                </div>
+              </div>
+            </div>
+          </>
+        );
+      })()}
 
       {/* Disclaimer */}
       <div className="text-center text-sm text-[var(--color-muted)] py-4">
