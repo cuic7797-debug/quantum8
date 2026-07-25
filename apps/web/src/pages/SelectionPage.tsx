@@ -333,10 +333,13 @@ export default function SelectionPage() {
           </span>
           <span className="text-xs font-bold text-amber-400">{comboCount() * 2}元</span>
         </div>
-        <button onClick={go} disabled={gen || !stats.length || (multiMode && selectedStrats.length === 0)}
+        <button onClick={go} disabled={gen || !stats.length || !draws.length || (multiMode && selectedStrats.length === 0)}
           className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] text-white font-bold text-base hover:shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 transition-all">
-          {gen ? '⏳ 生成中...' : multiMode ? '🔄 多策略对比生成' : '🎯 生成推荐号码'}
+          {gen ? '⏳ 生成中...' : !stats.length ? '⏳ 等待数据加载...' : !draws.length ? '⏳ 等待开奖数据...' : multiMode ? '🔄 多策略对比生成' : '🎯 生成推荐号码'}
         </button>
+        {stats.length > 0 && draws.length > 0 && (
+          <div className="text-xs text-[var(--color-muted)] text-center mt-2">已加载 {stats.length} 个号码统计 · {draws.length} 期开奖数据</div>
+        )}
       </div>
 
       {/* Multi-Strategy Results */}

@@ -227,7 +227,7 @@ export default function AIPlaybookPage() {
           </div>
           <div>
             <label className="text-sm text-[var(--color-muted)] mb-1 block">生成组数 (最多10)</label>
-            <input type="number" min={1} max={10} value={groupCount} onChange={e => setGroupCount(Math.min(10, Math.max(1, +e.target.value)))}
+            <input type="number" min={1} max={10} value={groupCount} onChange={e => { const v = e.target.value; if (v === "") setGroupCount(1); else { const n = parseInt(v); if (!isNaN(n)) setGroupCount(Math.min(10, Math.max(1, n))); } }}
               className="w-full glass-inset px-3 py-2 text-sm rounded-lg border border-[var(--glass-border)] bg-transparent" />
           </div>
         </div>
