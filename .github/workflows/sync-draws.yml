@@ -2,22 +2,47 @@ name: Sync Lottery Data
 
 on:
   schedule:
-    # 每天 21:36 北京时间 = 13:36 UTC
-    - cron: '36 13 * * *'
-  workflow_dispatch: # 支持手动触发
+    - cron: '35 13 * * *'
+  workflow_dispatch:
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Sync draws from CWL API
-        run: node .github/scripts/sync-draws.js
+      - name: Fetch and sync
+        run: |
+          # Fetch from CWL
+          DATA=$(curl -sf "https://www.cwl.gov.cn/cwl_admin/front/cwlkj/search/kjxx/findDrawNotice?name=kl8&issueCount=10" -H "User-Agent: Mozilla/5.0" -H "Referer: https://www.cwl.gov.cn/")
+          
+          if [ -z "$DATA" ]; then echo "CWL failed"; exit 1; fi
+          
+          # Get existing
+          EXIST=$(curl -sf "$SUPABASE_URL/rest/v1/draws?select=draw_number" -H "apikey: $SUPABASE_KEY" -H "Authorization: Bearer $SUPABASE_KEY")
+          
+          # Python processing
+          python3 - "$DATA" "$EXIST" "$SUPABASE_URL" "$SUPABASE_KEY" << 'PY'
+          import json, sys, urllib.request
+          
+          cwl = json.loads(sys.argv[1])
+          exist = json.loads(sys.argv[2]) if sys.argv[2] else []
+          url = sys.argv[3] + '/rest/v1/draws'
+          key = sys.argv[4]
+          exist_set = {d['draw_number'] for d in exist}
+          n = 0
+          for d in cwl.get('result', []):
+              code = d.get('code', '')
+              if code in exist_set or not code: continue
+              nums = sorted(int(x) for x in d['red'].split(',') if x.strip().isdigit())
+              nums = [x for x in nums if 1 <= x <= 80]
+              if len(nums) != 20: continue
+              s = sorted(nums)
+              rec = {"draw_number": code, "draw_date": d['date'].split('(')[0].strip(), "numbers": nums, "sum_value": sum(nums), "span": s[-1]-s[0], "odd_count": sum(x%2 for x in nums), "even_count": sum(1-x%2 for x in nums), "big_count": sum(x>40 for x in nums), "small_count": sum(x<=40 for x in nums), "zone1_count": sum(x<=20 for x in nums), "zone2_count": sum(20<x<=40 for x in nums), "zone3_count": sum(40<x<=60 for x in nums), "zone4_count": sum(x>60 for x in nums), "consecutive_count": 0, "repeat_count": 0}
+              try:
+                  req = urllib.request.Request(url, json.dumps(rec).encode(), method='POST', headers={'Content-Type': 'application/json', 'apikey': key, 'Authorization': f'Bearer {key}', 'Prefer': 'return=minimal'})
+                  urllib.request.urlopen(req); n += 1; print(f'OK {code}')
+              except Exception as e: print(f'ERR {code}: {e}')
+          print(f'Done: {n} new draws inserted')
+          PY
         env:
           SUPABASE_URL: https://gomowvpstlmwcvvgnujo.supabase.co
-          SUPABASE_KEY: sb_publishable_7Sl3_rntp_65_3xK4nDu2g_KXqMdgbq
+          SUPABASE_KEY: ${{ secrets.SUPABASE_ANON_KEY }}

@@ -1,6 +1,5 @@
-const CWL_API = "https://www.cwl.gov.cn/cwl_admin/front/cwlkj/search/kjxx/findDrawNotice";
-
-// Multiple CORS proxy options for reliability
+const CWL_DIRECT = "https://www.cwl.gov.cn/cwl_admin/front/cwlkj/search/kjxx/findDrawNotice?name=kl8&issueCount=10";
+const CF_PROXY = "/api/sync-draws"; // Cloudflare Pages Function proxy
 const CORS_PROXIES = [
   (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
   (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
@@ -50,13 +49,13 @@ function calculateFeatures(numbers: number[]) {
     zone1_count, zone2_count, zone3_count, zone4_count, consecutive_count, repeat_count };
 }
 
-async function tryFetchWithTimeout(url: string, timeoutMs = 8000): Promise<any> {
+async function tryFetchWithTimeout(url: string, timeoutMs = 8000, options?: RequestInit): Promise<any> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const resp = await fetch(url, {
       signal: controller.signal,
-      headers: { "User-Agent": "Mozilla/5.0", "Referer": "https://www.cwl.gov.cn/" },
+      ...options,
     });
     clearTimeout(timer);
     if (resp.ok) return await resp.json();
@@ -64,12 +63,39 @@ async function tryFetchWithTimeout(url: string, timeoutMs = 8000): Promise<any> 
   return null;
 }
 
-export async function fetchFromCWL(count = 100): Promise<FetchResult> {
-  const url = `${CWL_API}?name=kl8&issueCount=${count}`;
+function parseCWLResult(result: any[]): FetchResult['draws'] {
+  return result.map(d => {
+    const numbers = parseNumbers(d.red);
+    const dateStr = d.date?.replace(/\(.*\)/, "").trim() || "";
+    return { draw_number: d.code || '', draw_date: dateStr, ...calculateFeatures(numbers) };
+  }).filter(d => d.numbers.length === 20 && d.draw_number);
+}
 
-  // Try 1: Direct fetch (works from server/worker)
+export async function fetchFromCWL(count = 100): Promise<FetchResult> {
+  const url = `${CWL_DIRECT.replace('issueCount=10', `issueCount=${count}`)}`;
+
+  // Try 0: Cloudflare Pages Function proxy (server-side, no CORS)
   try {
-    const data = await tryFetchWithTimeout(url, 10000);
+    const resp = await fetch(CF_PROXY, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ count }),
+      signal: AbortSignal.timeout(12000),
+    });
+    if (resp.ok) {
+      const data = await resp.json();
+      if (data?.result) {
+        const draws = parseCWLResult(data.result);
+        if (draws.length > 0) return { draws, count: draws.length, source: 'cf-proxy' };
+      }
+    }
+  } catch {}
+
+  // Try 1: Direct fetch
+  try {
+    const data = await tryFetchWithTimeout(url, 10000, {
+      headers: { "User-Agent": "Mozilla/5.0", "Referer": "https://www.cwl.gov.cn/" },
+    });
     if (data?.result) {
       const draws = parseCWLResult(data.result);
       if (draws.length > 0) return { draws, count: draws.length, source: 'cwl-direct' };
@@ -97,17 +123,8 @@ export async function fetchFromCWL(count = 100): Promise<FetchResult> {
   return { draws: [], count: 0, source: 'none', error: '无法连接福彩官网，请检查网络或稍后重试' };
 }
 
-function parseCWLResult(result: any[]): FetchResult['draws'] {
-  return result.map(d => {
-    const numbers = parseNumbers(d.red);
-    const dateStr = d.date?.replace(/\(.*\)/, "").trim() || "";
-    return { draw_number: d.code || '', draw_date: dateStr, ...calculateFeatures(numbers) };
-  }).filter(d => d.numbers.length === 20 && d.draw_number);
-}
-
 export function cacheDraws(draws: any[]) {
   try {
-    // Keep last 500 draws in cache
     const toCache = draws.slice(0, 500);
     localStorage.setItem('quantum8_cached_draws', JSON.stringify(toCache));
     localStorage.setItem('quantum8_cache_time', new Date().toISOString());
@@ -125,11 +142,9 @@ export function getCacheTime(): string | null {
   return localStorage.getItem('quantum8_cache_time');
 }
 
-// Check data freshness
 export function getDataFreshness(): { status: 'fresh' | 'stale' | 'old' | 'none'; hours: number; message: string } {
   const cacheTime = getCacheTime();
   if (!cacheTime) return { status: 'none', hours: -1, message: '无缓存数据' };
-  
   const hours = Math.round((Date.now() - new Date(cacheTime).getTime()) / (1000 * 60 * 60));
   if (hours < 24) return { status: 'fresh', hours, message: `数据更新于 ${hours} 小时前` };
   if (hours < 72) return { status: 'stale', hours, message: `数据更新于 ${hours} 小时前，建议刷新` };

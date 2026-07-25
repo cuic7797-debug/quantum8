@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useCheckin } from '@/hooks/useCheckin';
 import ThemeToggle from '@/components/common/ThemeToggle';
+import { useAutoSync } from '@/hooks/useAutoSync';
 import Disclaimer from '@/components/common/Disclaimer';
 
 interface NavItem {
@@ -167,6 +168,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  useAutoSync();
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
   const { user, loading } = useAuth();
   const { points, todayChecked } = useCheckin();
