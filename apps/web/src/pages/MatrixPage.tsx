@@ -1,3 +1,4 @@
+import { useConsumePoints } from '@/components/common/PointsGate';
 import { useState } from 'react';
 import { useNumberStats } from '@/hooks/useNumberStats';
 import { useDraws } from '@/hooks/useDraws';
@@ -94,6 +95,7 @@ export default function MatrixPage() {
   const { stats, loading: ls } = useNumberStats();
   const { draws, loading: ld } = useDraws(100);
   const [pool, setPool] = useState<number[]>([]);
+  const { tryConsume } = useConsumePoints();
   const [pickCount, setPickCount] = useState(8);
   const [maxBets, setMaxBets] = useState(20);
   const [result, setResult] = useState<ReturnType<typeof greedyMatrix> | null>(null);
@@ -119,8 +121,10 @@ export default function MatrixPage() {
     setResult(null);
   }
 
-  function generate() {
+  async function generate() {
     if (pool.length < pickCount || !stats.length || !draws.length) return;
+    const ok = await tryConsume('旋转矩阵', 5);
+    if (!ok) return;
     setGenerating(true);
     setTimeout(() => {
       const r = greedyMatrix(pool, pickCount, maxBets, stats, draws.length);

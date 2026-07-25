@@ -1,3 +1,4 @@
+import { useConsumePoints } from '@/components/common/PointsGate';
 import { useState } from 'react';
 import { useNumberStats } from '@/hooks/useNumberStats';
 import { useDraws } from '@/hooks/useDraws';
@@ -37,6 +38,7 @@ interface MultiResult {
 
 export default function SelectionPage() {
   const { user } = useAuth();
+  const { tryConsume } = useConsumePoints();
   const { addPick } = useUserPicks();
 
   let killedNums: number[] = [];
@@ -133,8 +135,10 @@ export default function SelectionPage() {
     return allCombos.map(nums => scoreCombination(nums, stats, draws.length));
   }
 
-  function go() {
+  async function go() {
     if (!stats.length || !draws.length) return;
+    const ok = await tryConsume('智能选号', 5);
+    if (!ok) return;
     setGen(true);
     setMultiRes([]);
     setTimeout(() => {

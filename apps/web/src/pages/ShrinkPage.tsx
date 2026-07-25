@@ -1,3 +1,4 @@
+import { useConsumePoints } from '@/components/common/PointsGate';
 import { useState } from 'react';
 import { useNumberStats } from '@/hooks/useNumberStats';
 import { useDraws } from '@/hooks/useDraws';
@@ -12,6 +13,7 @@ export default function ShrinkPage() {
   const { stats, loading: ls } = useNumberStats();
   const { draws, loading: ld } = useDraws(100);
   const [pool, setPool] = useState<number[]>([]);
+  const { tryConsume } = useConsumePoints();
   const [pickCount, setPickCount] = useState(10);
   const [maxBets, setMaxBets] = useState(20);
   const [mode, setMode] = useState<'greedy' | 'weighted'>('greedy');
@@ -24,8 +26,10 @@ export default function ShrinkPage() {
     setResult(null);
   }
 
-  function go() {
+  async function go() {
     if (pool.length < pickCount || !draws.length) return;
+    const ok = await tryConsume('智能缩水', 5);
+    if (!ok) return;
     setGenerating(true);
     setTimeout(() => {
       const r = mode === 'greedy'

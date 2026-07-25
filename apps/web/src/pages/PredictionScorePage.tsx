@@ -1,3 +1,4 @@
+import { useConsumePoints } from '@/components/common/PointsGate';
 import { useMemo, useState } from 'react';
 import { useDraws } from '@/hooks/useDraws';
 import { useNumberStats } from '@/hooks/useNumberStats';
@@ -9,6 +10,8 @@ export default function PredictionScorePage() {
   const { draws, loading: ld } = useDraws(100);
   const { stats, loading: ls } = useNumberStats();
   const [sortBy, setSortBy] = useState<'ensemble' | 'markov' | 'bayesian' | 'entropy' | 'trend'>('ensemble');
+  const { tryConsume, isAdmin } = useConsumePoints();
+  const [consumed, setConsumed] = useState(false);
   const [showCount, setShowCount] = useState(40);
 
   const scores = useMemo(() => {

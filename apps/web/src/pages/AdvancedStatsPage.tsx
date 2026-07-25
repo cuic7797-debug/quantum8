@@ -1,3 +1,4 @@
+import { useConsumePoints } from '@/components/common/PointsGate';
 import { useMemo, useState } from 'react';
 import { useDraws } from '@/hooks/useDraws';
 import { useNumberStats } from '@/hooks/useNumberStats';
@@ -10,6 +11,8 @@ import { t } from '@/hooks/useI18n';
 export default function AdvancedStatsPage() {
   const { draws, loading: ld } = useDraws(100);
   const { stats, loading: ls } = useNumberStats();
+  const { tryConsume, isAdmin } = useConsumePoints();
+  const [consumed, setConsumed] = useState(false);
   const [selectedNum, setSelectedNum] = useState(1);
 
   // Chi-square test for uniform distribution

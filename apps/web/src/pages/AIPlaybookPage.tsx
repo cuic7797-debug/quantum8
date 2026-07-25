@@ -1,3 +1,4 @@
+import { useConsumePoints } from '@/components/common/PointsGate';
 import { useState, useMemo } from 'react';
 import { useDraws } from '@/hooks/useDraws';
 import { useNumberStats } from '@/hooks/useNumberStats';
@@ -61,6 +62,7 @@ export default function AIPlaybookPage() {
   const { draws, loading: ld } = useDraws(100);
   const { stats, loading: ls } = useNumberStats();
   const [selectedPreset, setSelectedPreset] = useState<number | null>(null);
+  const { tryConsume } = useConsumePoints();
   const [customHot, setCustomHot] = useState(30);
   const [customCold, setCustomCold] = useState(30);
   const [customBalance, setCustomBalance] = useState(40);
@@ -110,8 +112,10 @@ export default function AIPlaybookPage() {
   }, [draws]);
   if (ld || ls) return <div className="flex items-center justify-center h-64"><div className="flex flex-col items-center gap-3"><div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" /><span className="text-base text-[var(--color-muted)]">加载中...</span></div></div>;
 
-  function generate() {
+  async function generate() {
     if (!aiScores.length || selectedPreset === null) return;
+    const ok = await tryConsume('AI策略生成', 10);
+    if (!ok) return;
     const preset = PRESETS[selectedPreset];
     const hotN = Math.floor(selectCount * preset.config.hotRatio);
     const coldN = Math.floor(selectCount * preset.config.coldRatio);

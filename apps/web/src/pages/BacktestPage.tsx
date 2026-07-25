@@ -1,4 +1,5 @@
 import MonteCarloSim from '@/components/backtest/MonteCarloSim';
+import { useConsumePoints } from '@/components/common/PointsGate';
 import { useState, useEffect } from 'react';
 import { useDraws } from '@/hooks/useDraws';
 import NumberBall from '@/components/common/NumberBall';
@@ -30,6 +31,7 @@ interface SavedStrategy {
 export default function BacktestPage() {
   const { draws, loading: ld } = useDraws(500);
   const [pt, setPt] = useState<PlayType>(t('play10') as PlayType);
+  const { tryConsume } = useConsumePoints();
   const [bc, setBc] = useState(1);
   const [res, setRes] = useState<Sum | null>(null);
   const [run, setRun] = useState(false);
@@ -56,8 +58,10 @@ export default function BacktestPage() {
   }, [user, cloud.strategies]);
   if (ld) return <div className="flex items-center justify-center h-64"><div className="flex flex-col items-center gap-3"><div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" /><span className="text-base text-[var(--color-muted)]">加载中...</span></div></div>;
 
-  function go() {
+  async function go() {
     if (draws.length < 10) return;
+    const ok = await tryConsume('策略回测', 10);
+    if (!ok) return;
     setRun(true);
     setTimeout(() => {
       const tbl = PRIZE[pt] || {};

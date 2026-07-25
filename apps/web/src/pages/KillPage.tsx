@@ -1,3 +1,4 @@
+import { useConsumePoints } from '@/components/common/PointsGate';
 import { useState, useEffect } from 'react';
 import { useNumberStats } from '@/hooks/useNumberStats';
 import { useDraws } from '@/hooks/useDraws';
@@ -32,6 +33,7 @@ export default function KillPage() {
   const [manualKill, setManualKill] = useState<number[]>([]);
   const [selectedStrategy, setSelectedStrategy] = useState<Strategy>('cold');
   const [autoKill, setAutoKill] = useState<KillResult | null>(null);
+  const { tryConsume } = useConsumePoints();
   const [killCount, setKillCount] = useState(20);
   const [showResult, setShowResult] = useState(false);
 
@@ -125,8 +127,10 @@ export default function KillPage() {
     setShowResult(true);
   }
 
-  function applyAutoKill() {
+  async function applyAutoKill() {
     if (autoKill) saveKillList(autoKill.killed);
+    const ok = await tryConsume('杀号工具', 3);
+    if (!ok) return;
   }
 
   const aliveNums = Array.from({ length: 80 }, (_, i) => i + 1).filter(n => !manualKill.includes(n));
