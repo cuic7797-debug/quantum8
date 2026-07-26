@@ -136,6 +136,25 @@ export default function SelectionPage() {
     return allCombos.map(nums => scoreCombination(nums, stats, draws.length));
   }
 
+  function generateSafe(count: number, killed: number[], batchSize: number): number[][] {
+    const result: number[][] = [];
+    let attempts = 0;
+    while (result.length < batchSize && attempts < batchSize * 3) {
+      attempts++;
+      const pool = Array.from({ length: 80 }, (_, i) => i + 1).filter(n => !killed.includes(n));
+      if (pool.length < count) break;
+      const combo: number[] = [];
+      const p = [...pool];
+      for (let i = 0; i < count; i++) {
+        const idx = Math.floor(Math.random() * p.length);
+        combo.push(p[idx]);
+        p.splice(idx, 1);
+      }
+      result.push(combo.sort((a, b) => a - b));
+    }
+    return result;
+  }
+
   async function go() {
     setMsg(null);
     if (!stats.length || !draws.length) {
@@ -144,76 +163,63 @@ export default function SelectionPage() {
     }
     const ok = await tryConsume('智能选号', 5);
     if (!ok) {
-      setMsg({ text: '积分不足，每次生成消耗5积分。请签到或购买积分', type: 'error' });
+      setMsg({ text: '积分不足（每次5积分），请签到或购买积分', type: 'error' });
       return;
     }
     setGen(true);
     setMultiRes([]);
-    setTimeout(() => {
+    setRes([]);
+
     try {
+      await new Promise(r => setTimeout(r, 50));
+
       if (multiMode && betMode === 'single') {
-        // Multi-strategy: generate for each selected strategy
-        const results: MultiResult[] = selectedStrats.map(sIdx => ({
-          strategyName: STRATS[sIdx].name,
-          strategyIcon: STRATS[sIdx].icon,
-          results: generateForStrategy(sIdx, resultCount),
-        }));
+        const results: MultiResult[] = selectedStrats.map(sIdx => {
+          const s = STRATS[sIdx];
+          const cfg = { hotCount: s.hot, coldCount: s.cold, balanceCount: s.balance, zoneBalance: pc >= 4, ...ranges };
+          const batch = generateSafe(pc, killedNums, pc <= 3 ? 8000 : 3000);
+          const filtered = applyFilters(batch, cfg);
+          const scored = filtered.slice(0, 80).map(c => scoreCombination(c, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore).slice(0, resultCount);
+          return { strategyName: s.name, strategyIcon: s.icon, results: scored };
+        });
         setMultiRes(results);
-        setRes([]);
-      } else {
+        if (results.length > 0) setMsg({ text: '多策略对比生成完成！', type: 'success' });
+      } else if (betMode === 'single') {
         const s = STRATS[stratIdx];
         const cfg = { hotCount: custom ? cHot : s.hot, coldCount: custom ? cCold : s.cold, balanceCount: custom ? cBalance : s.balance, zoneBalance: pc >= 4, ...ranges };
-        let allCombos: number[][] = [];
-
-        if (betMode === 'single') {
-          const generateSafe = (count: number, batchSize: number): number[][] => {
-            const result: number[][] = [];
-            let attempts = 0;
-            while (result.length < batchSize && attempts < batchSize * 3) {
-              attempts++;
-              const pool = Array.from({ length: 80 }, (_, i) => i + 1).filter(n => !killedNums.includes(n));
-              if (pool.length < count) break;
-              const combo: number[] = [];
-              const p = [...pool];
-              for (let i = 0; i < count; i++) {
-                const idx = Math.floor(Math.random() * p.length);
-                combo.push(p[idx]);
-                p.splice(idx, 1);
-              }
-              result.push(combo.sort((a, b) => a - b));
-            }
-            return result;
-          };
-          const batch = generateSafe(pc, pc <= 3 ? 8000 : 3000);
-          const filtered = applyFilters(batch, cfg);
-          allCombos = filtered.slice(0, 80).map(c => scoreCombination(c, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore).slice(0, resultCount).map(r => r.numbers);
-        } else if (betMode === 'compound') {
-          const batch = generateBatch(pc + 3, 3000);
-          const scored = batch.map(c => scoreCombination(c, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore);
-          const aiPool = scored[0]?.numbers || [];
-          const merged = [...new Set([...selectedNums, ...aiPool])].sort((a, b) => a - b);
-          allCombos = getCombos(merged, pc).slice(0, resultCount);
-        } else if (betMode === 'dantuo') {
-          const batch = generateBatch(pc, 3000);
-          const scored = batch.map(c => scoreCombination(c, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore);
-          const aiTuo = scored[0]?.numbers.filter(n => !danNums.includes(n)) || [];
-          const mergedTuo = [...new Set([...tuoNums, ...aiTuo])].filter(n => !danNums.includes(n)).sort((a, b) => a - b);
-          const need = pc - danNums.length;
-          if (mergedTuo.length >= need) allCombos = getCombos(mergedTuo, need).map(tc => [...danNums, ...tc].sort((a, b) => a - b)).slice(0, resultCount);
-        }
-
-        const scored = allCombos.map(nums => scoreCombination(nums, stats, draws.length));
+        const batch = generateSafe(pc, killedNums, pc <= 3 ? 8000 : 3000);
+        const filtered = applyFilters(batch, cfg);
+        const scored = filtered.slice(0, 80).map(c => scoreCombination(c, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore).slice(0, resultCount);
         setRes(scored);
-      if (scored.length === 0) {
-        setMsg({ text: '过滤后无结果，请尝试更换策略或玩法', type: 'info' });
+        if (scored.length > 0) setMsg({ text: `生成完成！共${scored.length}组推荐号码`, type: 'success' });
+        else setMsg({ text: '过滤后无结果，请尝试更换策略', type: 'info' });
+      } else if (betMode === 'compound') {
+        const batch = generateBatch(pc + 3, 3000);
+        const scored = batch.map(c => scoreCombination(c, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore);
+        const aiPool = scored[0]?.numbers || [];
+        const merged = [...new Set([...selectedNums, ...aiPool])].sort((a, b) => a - b);
+        const allCombos = getCombos(merged, pc).slice(0, resultCount);
+        const finalScored = allCombos.map(nums => scoreCombination(nums, stats, draws.length));
+        setRes(finalScored);
+        if (finalScored.length > 0) setMsg({ text: `复式生成完成！共${finalScored.length}组`, type: 'success' });
+        else setMsg({ text: '请先在号码区选择号码', type: 'info' });
+      } else if (betMode === 'dantuo') {
+        const batch = generateBatch(pc, 3000);
+        const scored = batch.map(c => scoreCombination(c, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore);
+        const aiTuo = scored[0]?.numbers.filter(n => !danNums.includes(n)) || [];
+        const mergedTuo = [...new Set([...tuoNums, ...aiTuo])].filter(n => !danNums.includes(n)).sort((a, b) => a - b);
+        const need = pc - danNums.length;
+        const allCombos = mergedTuo.length >= need ? getCombos(mergedTuo, need).map(tc => [...danNums, ...tc].sort((a, b) => a - b)).slice(0, resultCount) : [];
+        const finalScored = allCombos.map(nums => scoreCombination(nums, stats, draws.length));
+        setRes(finalScored);
+        if (finalScored.length > 0) setMsg({ text: `胆拖生成完成！共${finalScored.length}组`, type: 'success' });
+        else setMsg({ text: '胆码+拖码数量不足，请调整', type: 'info' });
       }
-      }
-      } catch (err) {
-        console.error('Generation error:', err);
-        setMsg({ text: '生成失败，请刷新页面重试', type: 'error' });
-      }
-      setGen(false);
-    }, 100);
+    } catch (err) {
+      console.error('Generation error:', err);
+      setMsg({ text: '生成出错：' + (err instanceof Error ? err.message : '未知错误'), type: 'error' });
+    }
+    setGen(false);
   }
 
   function comboCount() {
