@@ -129,7 +129,7 @@ export default function KillPage() {
 
   async function applyAutoKill() {
     const ok = await tryConsume('杀号工具', 3);
-    if (!ok) return;
+    if (!ok) { alert('积分不足，杀号工具每次消耗3积分'); return; }
     if (autoKill) saveKillList(autoKill.killed);
   }
 

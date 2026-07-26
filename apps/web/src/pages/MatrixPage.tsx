@@ -124,7 +124,7 @@ export default function MatrixPage() {
   async function generate() {
     if (pool.length < pickCount || !stats.length || !draws.length) return;
     const ok = await tryConsume('旋转矩阵', 5);
-    if (!ok) return;
+    if (!ok) { alert('积分不足，旋转矩阵每次消耗5积分'); setGenerating(false); return; }
     setGenerating(true);
     setTimeout(() => {
       const r = greedyMatrix(pool, pickCount, maxBets, stats, draws.length);

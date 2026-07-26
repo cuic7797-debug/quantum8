@@ -61,7 +61,7 @@ export default function BacktestPage() {
   async function go() {
     if (draws.length < 10) return;
     const ok = await tryConsume('策略回测', 10);
-    if (!ok) return;
+    if (!ok) { alert('积分不足，策略回测每次消耗10积分'); return; }
     setRun(true);
     setTimeout(() => {
       const tbl = PRIZE[pt] || {};

@@ -29,7 +29,7 @@ export default function ShrinkPage() {
   async function go() {
     if (pool.length < pickCount || !draws.length) return;
     const ok = await tryConsume('智能缩水', 5);
-    if (!ok) return;
+    if (!ok) { alert('积分不足，智能缩水每次消耗5积分'); setGenerating(false); return; }
     setGenerating(true);
     setTimeout(() => {
       const r = mode === 'greedy'

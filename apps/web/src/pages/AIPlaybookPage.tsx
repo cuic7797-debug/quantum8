@@ -115,7 +115,7 @@ export default function AIPlaybookPage() {
   async function generate() {
     if (!aiScores.length || selectedPreset === null) return;
     const ok = await tryConsume('AI策略生成', 10);
-    if (!ok) return;
+    if (!ok) { alert('积分不足，AI策略生成每次消耗10积分'); return; }
     const preset = PRESETS[selectedPreset];
     const hotN = Math.floor(selectCount * preset.config.hotRatio);
     const coldN = Math.floor(selectCount * preset.config.coldRatio);

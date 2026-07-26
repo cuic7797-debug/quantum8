@@ -63,6 +63,7 @@ export default function SelectionPage() {
   const [multiRes, setMultiRes] = useState<MultiResult[]>([]);
   const [gen, setGen] = useState(false);
   const [showSaveMsg, setShowSaveMsg] = useState<number | null>(null);
+  const [msg, setMsg] = useState<{text: string; type: 'error' | 'success' | 'info'} | null>(null);
   if (ld || ls) return <div className="flex items-center justify-center h-64"><div className="flex flex-col items-center gap-3"><div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" /><span className="text-base text-[var(--color-muted)]">加载中...</span></div></div>;
 
   const pc = playIdx + 1;
@@ -136,12 +137,20 @@ export default function SelectionPage() {
   }
 
   async function go() {
-    if (!stats.length || !draws.length) return;
+    setMsg(null);
+    if (!stats.length || !draws.length) {
+      setMsg({ text: '数据加载中，请稍后再试', type: 'error' });
+      return;
+    }
     const ok = await tryConsume('智能选号', 5);
-    if (!ok) return;
+    if (!ok) {
+      setMsg({ text: '积分不足，每次生成消耗5积分。请签到或购买积分', type: 'error' });
+      return;
+    }
     setGen(true);
     setMultiRes([]);
     setTimeout(() => {
+    try {
       if (multiMode && betMode === 'single') {
         // Multi-strategy: generate for each selected strategy
         const results: MultiResult[] = selectedStrats.map(sIdx => ({
@@ -195,6 +204,13 @@ export default function SelectionPage() {
 
         const scored = allCombos.map(nums => scoreCombination(nums, stats, draws.length));
         setRes(scored);
+      if (scored.length === 0) {
+        setMsg({ text: '过滤后无结果，请尝试更换策略或玩法', type: 'info' });
+      }
+      }
+      } catch (err) {
+        console.error('Generation error:', err);
+        setMsg({ text: '生成失败，请刷新页面重试', type: 'error' });
       }
       setGen(false);
     }, 100);
@@ -339,6 +355,13 @@ export default function SelectionPage() {
         </button>
         {stats.length > 0 && draws.length > 0 && (
           <div className="text-xs text-[var(--color-muted)] text-center mt-2">已加载 {stats.length} 个号码统计 · {draws.length} 期开奖数据</div>
+        )}
+        {msg && (
+          <div className={`mt-3 text-sm text-center px-4 py-2 rounded-lg ${
+            msg.type === 'error' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
+            msg.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+            'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+          }`}>{msg.text}</div>
         )}
       </div>
 
