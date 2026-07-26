@@ -53,10 +53,7 @@ async function tryFetchWithTimeout(url: string, timeoutMs = 8000, options?: Requ
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const resp = await fetch(url, {
-      signal: controller.signal,
-      ...options,
-    });
+    const resp = await fetch(url, { signal: controller.signal, ...options });
     clearTimeout(timer);
     if (resp.ok) return await resp.json();
   } catch { clearTimeout(timer); }
@@ -74,13 +71,10 @@ function parseCWLResult(result: any[]): FetchResult['draws'] {
 export async function fetchFromCWL(count = 100): Promise<FetchResult> {
   const url = `${CWL_DIRECT.replace('issueCount=10', `issueCount=${count}`)}`;
 
-  // Try 0: Cloudflare Pages Function proxy (server-side, no CORS)
+  // Try 0: Cloudflare Pages Function proxy via GET (server-side, no CORS)
   try {
-    const resp = await fetch(CF_PROXY, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ count }),
-      signal: AbortSignal.timeout(12000),
+    const resp = await fetch(`${CF_PROXY}?count=${count}`, {
+      signal: AbortSignal.timeout(15000),
     });
     if (resp.ok) {
       const data = await resp.json();
@@ -91,10 +85,27 @@ export async function fetchFromCWL(count = 100): Promise<FetchResult> {
     }
   } catch {}
 
+  // Try 0b: Cloudflare Pages Function proxy via POST
+  try {
+    const resp = await fetch(CF_PROXY, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ count }),
+      signal: AbortSignal.timeout(15000),
+    });
+    if (resp.ok) {
+      const data = await resp.json();
+      if (data?.result) {
+        const draws = parseCWLResult(data.result);
+        if (draws.length > 0) return { draws, count: draws.length, source: 'cf-proxy-post' };
+      }
+    }
+  } catch {}
+
   // Try 1: Direct fetch
   try {
     const data = await tryFetchWithTimeout(url, 10000, {
-      headers: { "User-Agent": "Mozilla/5.0", "Referer": "https://www.cwl.gov.cn/" },
+      headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "Referer": "https://www.cwl.gov.cn/" },
     });
     if (data?.result) {
       const draws = parseCWLResult(data.result);

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { supabase } from '@/utils/supabase';
-import { fetchFromCWL, cacheDraws } from '@/utils/dataFetch';
+import { fetchFromCWL, cacheDraws, getDataFreshness } from '@/utils/dataFetch';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes
 
@@ -13,6 +13,10 @@ export function useAutoSync() {
 
     async function sync() {
       try {
+        // Only sync if data is not fresh
+        const freshness = getDataFreshness();
+        if (freshness.status === 'fresh') return;
+
         const result = await fetchFromCWL(10);
         if (result.draws.length === 0) return;
 

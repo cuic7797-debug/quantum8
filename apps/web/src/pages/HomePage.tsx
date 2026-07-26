@@ -1,7 +1,7 @@
 import SmartAlerts from '@/components/alerts/SmartAlerts';
 import StatsOverview from '@/components/dashboard/StatsOverview';
 import NumberTrendMini from '@/components/analysis/NumberTrendMini';
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useDraws } from '@/hooks/useDraws';
 import { useNumberStats } from '@/hooks/useNumberStats';
 import LatestDrawCard from '@/components/draws/LatestDrawCard';
@@ -10,7 +10,7 @@ import NumberGrid from '@/components/analysis/NumberGrid';
 import HotColdRanking from '@/components/analysis/HotColdRanking';
 import { SkeletonCard, SkeletonGrid } from '@/components/common/Skeleton';
 import { supabase } from '@/utils/supabase';
-import { fetchFromCWL, cacheDraws, getCacheTime, getDataFreshness } from '@/utils/dataFetch';
+import { fetchFromCWL, cacheDraws, getDataFreshness } from '@/utils/dataFetch';
 import { t } from '@/hooks/useI18n';
 
 export default function HomePage() {
@@ -19,53 +19,62 @@ export default function HomePage() {
   const [syncing, setSyncing] = useState(false);
   const [syncMsg, setSyncMsg] = useState('');
 
-  async function handleSync() {
+  // Auto-sync: check on page load and every 10 minutes
+  const handleSync = useCallback(async (silent = false) => {
+    if (syncing) return;
     setSyncing(true);
-    setSyncMsg('正在从福彩官网获取数据...');
+    if (!silent) setSyncMsg('正在从福彩官网获取最新数据...');
     try {
-      const resp = await fetch('https://gomowvpstlmwcvvgnujo.supabase.co/functions/v1/sync-draws', {
-        method: 'POST',
-        headers: {
-          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-      });
-      const data = await resp.json();
-      if (!data.error) {
-        setSyncMsg(`同步完成: 新增 ${data.inserted} 期，跳过 ${data.skipped} 期`);
-        refetchDraws();
-        refetchStats();
+      const result = await fetchFromCWL(20);
+      if (result.error || result.draws.length === 0) {
+        if (!silent) setSyncMsg('❌ ' + (result.error || '未获取到数据'));
         setSyncing(false);
-        setTimeout(() => setSyncMsg(''), 5000);
+        if (!silent) setTimeout(() => setSyncMsg(''), 5000);
         return;
       }
-    } catch {}
-    setSyncMsg('Edge Function 不可用，尝试直接抓取...');
-    const result = await fetchFromCWL(200);
-    if (result.error) {
-      setSyncMsg(`同步失败: ${result.error}`);
-    } else {
-      cacheDraws(result.draws);
-      setSyncMsg(`获取到 ${result.count} 期数据（已缓存到本地）`);
-      let inserted = 0;
       const { data: existing } = await supabase.from('draws').select('draw_number');
-      const existingSet = new Set((existing || []).map((d: any) => d.draw_number));
+      const existSet = new Set((existing || []).map((d: any) => d.draw_number));
+      let inserted = 0;
       for (const draw of result.draws) {
-        if (existingSet.has(draw.draw_number)) continue;
+        if (existSet.has(draw.draw_number)) continue;
         const { error } = await supabase.from('draws').insert(draw);
         if (!error) inserted++;
       }
+      // Always cache locally
+      cacheDraws(result.draws);
       if (inserted > 0) {
-        setSyncMsg(`获取 ${result.count} 期，新增 ${inserted} 期到数据库`);
+        if (!silent) setSyncMsg(`✅ 新增 ${inserted} 期数据（最新: ${result.draws[0].draw_number}）`);
         refetchDraws();
         refetchStats();
       } else {
-        setSyncMsg(`获取 ${result.count} 期数据（已缓存到本地）`);
+        if (!silent) setSyncMsg(`✅ 数据已是最新（最新期号: ${result.draws[0]?.draw_number || '未知'}）`);
       }
+    } catch (err) {
+      if (!silent) setSyncMsg('❌ 同步失败: ' + (err instanceof Error ? err.message : '网络错误'));
     }
     setSyncing(false);
-    setTimeout(() => setSyncMsg(''), 5000);
-  }
+    if (!silent) setTimeout(() => setSyncMsg(''), 8000);
+  }, [syncing, refetchDraws, refetchStats]);
+
+  // Auto-sync on page load
+  useEffect(() => {
+    const freshness = getDataFreshness();
+    // Sync if data is stale (>6 hours old) or no cache
+    if (freshness.status !== 'fresh') {
+      handleSync(true);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Periodic check every 10 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const freshness = getDataFreshness();
+      if (freshness.status !== 'fresh') {
+        handleSync(true);
+      }
+    }, 10 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [handleSync]);
 
   if (drawsLoading || statsLoading)
     return (
@@ -81,7 +90,7 @@ export default function HomePage() {
     return <div className="flex flex-col items-center justify-center h-64 gap-4">
       <div className="text-4xl">Q8</div>
       <div className="text-base text-[var(--color-muted)]">{t('no_data')}</div>
-      <button onClick={handleSync} disabled={syncing}
+      <button onClick={() => handleSync(false)} disabled={syncing}
         className="btn-primary">
         {syncing ? '同步中...' : '同步数据'}
       </button>
@@ -101,30 +110,6 @@ export default function HomePage() {
       <div className="text-sm text-[var(--color-muted)] glass-card" style={{ padding: '12px 16px' }}>
         {t('disclaimer')}
       </div>
-
-      {(() => {
-        const freshness = getDataFreshness();
-        return (
-      <div className="flex items-center justify-between glass-card" style={{ padding: '12px 16px' }}>
-        <div className="text-sm text-[var(--color-muted)]">
-          数据截至: {latestDraw.draw_date} | 共 {draws.length} 期
-          <span className={freshness.status === 'fresh' ? 'text-emerald-400' : freshness.status === 'stale' ? 'text-amber-400' : 'text-red-400'}>
-            {' '}{freshness.message}
-          </span>
-        </div>
-        <button onClick={handleSync} disabled={syncing}
-          className="text-sm px-4 py-2 rounded-lg bg-[var(--color-primary)]/15 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/25 disabled:opacity-50 transition-all font-medium">
-          {syncing ? '同步中...' : '刷新数据'}
-        </button>
-      </div>
-        );
-      })()}
-
-      {syncMsg && (
-        <div className={`text-sm text-center py-2 rounded-lg ${syncMsg.includes('失败') ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
-          {syncMsg}
-        </div>
-      )}
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
@@ -150,7 +135,14 @@ export default function HomePage() {
         ))}
       </div>
 
-      <LatestDrawCard draw={latestDraw} />
+      {/* Latest draw card with refresh button */}
+      <LatestDrawCard
+        draw={latestDraw}
+        onRefresh={() => handleSync(false)}
+        syncing={syncing}
+        syncMsg={syncMsg}
+      />
+
       <NumberTrendMini count={10} />
       {stats.length > 0 && <NumberGrid stats={stats} />}
       {stats.length > 0 && <HotColdRanking stats={stats} />}
