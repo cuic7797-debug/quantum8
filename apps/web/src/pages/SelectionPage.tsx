@@ -176,23 +176,18 @@ export default function SelectionPage() {
       if (multiMode && betMode === 'single') {
         const results: MultiResult[] = selectedStrats.map(sIdx => {
           const s = STRATS[sIdx];
-          const cfg = { hotCount: s.hot, coldCount: s.cold, balanceCount: s.balance, zoneBalance: pc >= 4, ...ranges };
-          const batch = generateSafe(pc, killedNums, pc <= 3 ? 8000 : 3000);
-          const filtered = applyFilters(batch, cfg);
-          const scored = filtered.slice(0, 80).map(c => scoreCombination(c, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore).slice(0, resultCount);
+          const batch = generateSafe(pc, killedNums, 3000);
+          const scored = batch.map(c => scoreCombination(c, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore).slice(0, resultCount);
           return { strategyName: s.name, strategyIcon: s.icon, results: scored };
         });
         setMultiRes(results);
         if (results.length > 0) setMsg({ text: '多策略对比生成完成！', type: 'success' });
       } else if (betMode === 'single') {
-        const s = STRATS[stratIdx];
-        const cfg = { hotCount: custom ? cHot : s.hot, coldCount: custom ? cCold : s.cold, balanceCount: custom ? cBalance : s.balance, zoneBalance: pc >= 4, ...ranges };
-        const batch = generateSafe(pc, killedNums, pc <= 3 ? 8000 : 3000);
-        const filtered = applyFilters(batch, cfg);
-        const scored = filtered.slice(0, 80).map(c => scoreCombination(c, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore).slice(0, resultCount);
+        const batch = generateSafe(pc, killedNums, 3000);
+        const scored = batch.map(c => scoreCombination(c, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore).slice(0, resultCount);
         setRes(scored);
         if (scored.length > 0) setMsg({ text: `生成完成！共${scored.length}组推荐号码`, type: 'success' });
-        else setMsg({ text: '过滤后无结果，请尝试更换策略', type: 'info' });
+        else setMsg({ text: '生成失败，请重试', type: 'error' });
       } else if (betMode === 'compound') {
         const batch = generateBatch(pc + 3, 3000);
         const scored = batch.map(c => scoreCombination(c, stats, draws.length)).sort((a, b) => b.totalScore - a.totalScore);
