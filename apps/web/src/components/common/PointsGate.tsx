@@ -5,6 +5,11 @@ import { Lock, Star, AlertTriangle } from 'lucide-react';
 
 const ADMIN_EMAILS = ['704451222@qq.com'];
 
+function isAdminEmail(email: string | undefined | null): boolean {
+  if (!email) return false;
+  return ADMIN_EMAILS.some(admin => admin.toLowerCase() === email.toLowerCase());
+}
+
 interface PointsGateProps {
   cost: number;
   action: string;
@@ -12,9 +17,18 @@ interface PointsGateProps {
 }
 
 export default function PointsGate({ cost, action, children }: PointsGateProps) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const { points } = useCheckin();
   const navigate = useNavigate();
+
+  // Don't render anything while auth is loading
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!user) {
     return (
@@ -29,8 +43,7 @@ export default function PointsGate({ cost, action, children }: PointsGateProps) 
     );
   }
 
-  const isAdmin = ADMIN_EMAILS.includes(user.email || '');
-  if (isAdmin) return <>{children}</>;
+  if (isAdminEmail(user.email)) return <>{children}</>;
 
   const userPoints = points?.total_points || 0;
 
@@ -62,16 +75,15 @@ export default function PointsGate({ cost, action, children }: PointsGateProps) 
   return <>{children}</>;
 }
 
-// Hook to consume points after action
 export function useConsumePoints() {
   const { user } = useAuth();
   const { consumePoints } = useCheckin();
-  const isAdmin = user && ['704451222@qq.com'].includes(user.email || '');
+  const admin = isAdminEmail(user?.email);
 
   async function tryConsume(action: string, cost: number): Promise<boolean> {
-    if (isAdmin) return true;
+    if (admin) return true;
     return await consumePoints(action, cost);
   }
 
-  return { tryConsume, isAdmin };
+  return { tryConsume, isAdmin: admin };
 }
