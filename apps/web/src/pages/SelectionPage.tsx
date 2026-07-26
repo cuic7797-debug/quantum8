@@ -161,11 +161,7 @@ export default function SelectionPage() {
       setMsg({ text: '数据加载中，请稍后再试', type: 'error' });
       return;
     }
-    const ok = await tryConsume('智能选号', 5);
-    if (!ok) {
-      setMsg({ text: '积分不足（每次5积分），请签到或购买积分', type: 'error' });
-      return;
-    }
+
     setGen(true);
     setMultiRes([]);
     setRes([]);

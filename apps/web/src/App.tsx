@@ -89,15 +89,15 @@ export default function App() {
             <Route path="/admin" element={<Auth><AdminPage /></Auth>} />
 
             {/* Paid - login + points required */}
-            <Route path="/selection" element={<Paid cost={5} action="智能选号"><SelectionPage /></Paid>} />
-            <Route path="/ai-playbook" element={<Paid cost={10} action="AI策略生成"><AIPlaybookPage /></Paid>} />
-            <Route path="/report" element={<Paid cost={20} action="AI分析报告"><ReportPage /></Paid>} />
-            <Route path="/backtest" element={<Paid cost={10} action="策略回测"><BacktestPage /></Paid>} />
-            <Route path="/prediction-score" element={<Paid cost={8} action="号码预测评分"><PredictionScorePage /></Paid>} />
-            <Route path="/kill" element={<Paid cost={3} action="杀号工具"><KillPage /></Paid>} />
-            <Route path="/matrix" element={<Paid cost={5} action="旋转矩阵"><MatrixPage /></Paid>} />
-            <Route path="/shrink" element={<Paid cost={5} action="智能缩水"><ShrinkPage /></Paid>} />
-            <Route path="/advanced-stats" element={<Paid cost={3} action="高级统计"><AdvancedStatsPage /></Paid>} />
+            <Route path="/selection" element={<Auth><SelectionPage /></Auth>} />
+            <Route path="/ai-playbook" element={<Auth><AIPlaybookPage /></Auth>} />
+            <Route path="/report" element={<Auth><ReportPage /></Auth>} />
+            <Route path="/backtest" element={<Auth><BacktestPage /></Auth>} />
+            <Route path="/prediction-score" element={<Auth><PredictionScorePage /></Auth>} />
+            <Route path="/kill" element={<Auth><KillPage /></Auth>} />
+            <Route path="/matrix" element={<Auth><MatrixPage /></Auth>} />
+            <Route path="/shrink" element={<Auth><ShrinkPage /></Auth>} />
+            <Route path="/advanced-stats" element={<Auth><AdvancedStatsPage /></Auth>} />
           </Routes>
         </PageTransition>
       </Suspense>
